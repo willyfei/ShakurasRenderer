@@ -33,12 +33,18 @@
     <ClInclude Include="GsPrimitive.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GsDevice.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Shakuras.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GsDevice.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

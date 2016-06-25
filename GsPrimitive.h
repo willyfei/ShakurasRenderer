@@ -11,6 +11,17 @@ public:
 	GsColor24(float rr, float gg, float bb) : r(rr), g(gg), b(bb) {}
 
 public:
+	uint32_t u32() const {
+		uint32_t u = 0;
+		unsigned char* pu = (unsigned char*)&u;
+		pu[0] = (int)(r * 255);
+		pu[1] = (int)(g * 255);
+		pu[2] = (int)(b * 255);
+		pu[3] = 255;
+		return u;
+	}
+
+public:
 	float r, g, b;
 };
 
@@ -50,8 +61,8 @@ inline GsTexCoord operator*(const GsTexCoord& tc1, float t) {
 	return GsTexCoord(tc1.u * t, tc1.v * t);
 }
 inline GsTexCoord operator/(const GsTexCoord& tc1, float d) {
-	float inv = 1.0f / d;
-	return GsTexCoord(tc1.u * inv, tc1.v * inv);
+	float t = 1.0f / d;
+	return GsTexCoord(tc1.u * t, tc1.v * t);
 }
 
 
@@ -89,7 +100,8 @@ inline GsVertex operator*(const GsVertex& v1, float t) {
 	return GsVertex(v1.pos * t, v1.tc * t, v1.color * t, v1.rhw * t);
 }
 inline GsVertex operator/(const GsVertex& v1, float d) {
-	return GsVertex(v1.pos / d, v1.tc / d, v1.color / d, v1.rhw / d);
+	float t = 1.0f / d;
+	return GsVertex(v1.pos * t, v1.tc * t, v1.color * t, v1.rhw * t);
 }
 
 
@@ -120,6 +132,10 @@ public:
 	float top, bottom;
 	GsEdge left, right;
 };
+
+
+typedef std::array<GsVertex, 3> GsTriangle;
+typedef std::array<GsVertex, 2> GsLine;
 
 
 SHAKURAS_END;

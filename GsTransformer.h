@@ -26,7 +26,7 @@ public:
 		wvp = (world * view) * projection;
 	}
 
-	Vector4f homogenize(const Vector4f& v) {
+	Vector4f homogenize(const Vector4f& v) const {
 		Vector4f r;
 		float rhw = 1.0f / v.w;
 		r.x = (v.x * rhw + 1.0f) * w * 0.5f;
@@ -43,6 +43,9 @@ public:
 	Matrix44f wvp;
 	float w, h;
 };
+
+
+SHAKURAS_SHARED_PTR(GsTransformer);
 
 
 SHAKURAS_END;

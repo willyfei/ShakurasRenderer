@@ -145,6 +145,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GsDevice.h" />
     <ClInclude Include="GsPrimitive.h" />
     <ClInclude Include="UtilityAndMath.h" />
     <ClInclude Include="GsTransformer.h" />
@@ -152,6 +153,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GsDevice.cpp" />
     <ClCompile Include="Shakuras.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

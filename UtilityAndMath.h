@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <memory>
 
 
 #define SHAKURAS_BEGIN namespace shakuras {
@@ -17,8 +18,8 @@ public:
 
 public:
 	Vector4() : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {}
-	Vector4(S xx, S, yy, S zz) : x(xx), y(yy), z(zz), w(1.0f) {}
-	Vector4(S xx, S, yy, S zz, S ww) : x(xx), y(yy), z(zz), w(ww) {}
+	Vector4(S xx, S yy, S zz) : x(xx), y(yy), z(zz), w(1.0f) {}
+	Vector4(S xx, S yy, S zz, S ww) : x(xx), y(yy), z(zz), w(ww) {}
 
 public:
 	S length() const {
@@ -105,7 +106,7 @@ public:
 		m[3][0] = m[3][1] = m[3][2] = 0.0f;
 	}
 
-	Vector4<S> transform(const Vector4<S>& v1) {
+	Vector4<S> transform(const Vector4<S>& v1) const {
 		Vector4<S> v2;
 		v2.x = v1.x * m[0][0] + v1.y * m[1][0] + v1.z * m[2][0] + v1.w * m[3][0];
 		v2.y = v1.x * m[0][1] + v1.y * m[1][1] + v1.z * m[2][1] + v1.w * m[3][1];
@@ -261,5 +262,16 @@ template<class T>
 T Interp(const T& v1, const T& v2, float t) {
 	return v1 + (v2 - v1) * t;
 }
+
+
+//”Úœﬁ÷∆
+template<class T>
+T Restrict(T val, T low, T high) {
+	return val < low ? low : (high < val ? high : val);
+}
+
+
+#define SHAKURAS_SHARED_PTR(C) typedef std::shared_ptr<C> C##Ptr
+
 
 SHAKURAS_END;
