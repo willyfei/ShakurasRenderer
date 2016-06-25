@@ -36,6 +36,15 @@
     <ClInclude Include="GsDevice.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GsViewer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GsResource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GsTexture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -45,6 +54,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GsDevice.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GsViewer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GsResource.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

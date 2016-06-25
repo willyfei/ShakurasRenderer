@@ -23,7 +23,7 @@ public:
 
 public:
 	S length() const {
-		return ::sqrt(x * x, y * y, z * z);
+		return ::sqrt(x * x + y * y + z * z);
 	}
 
 	void normalize(S len = 1.0f) {
@@ -104,6 +104,7 @@ public:
 		m[1][0] = m[1][2] = m[1][3] = 0.0f;
 		m[2][0] = m[2][1] = m[2][3] = 0.0f;
 		m[3][0] = m[3][1] = m[3][2] = 0.0f;
+		return *this;
 	}
 
 	Vector4<S> transform(const Vector4<S>& v1) const {
@@ -178,7 +179,7 @@ public:
 		mat.m[0][2] = zaxis.x;
 		mat.m[1][2] = zaxis.y;
 		mat.m[2][2] = zaxis.z;
-		mat.m[3][2] = -dotProduct(zaxis, eye);
+		mat.m[3][2] = -DotProduct(zaxis, eye);
 
 		mat.m[0][3] = mat.m[1][3] = mat.m[2][3] = 0.0f;
 		mat.m[3][3] = 1.0f;
@@ -213,6 +214,7 @@ Matrix44<S> operator+(const Matrix44<S>& m1, const Matrix44<S>& m2) {
 			m3.m[i][ii] = m1.m[i][ii] + m2.m[i][ii];
 		}
 	}
+	return m3;
 }
 template<class S>
 Matrix44<S> operator-(const Matrix44<S>& m1, const Matrix44<S>& m2) {
@@ -235,6 +237,7 @@ Matrix44<S> operator*(const Matrix44<S>& m1, const Matrix44<S>& m2) {
 				m1.m[ii][3] * m2.m[3][i];
 		}
 	}
+	return m3;
 }
 template<class S>
 Matrix44<S> operator*(const Matrix44<S>& m1, S t) {
@@ -244,6 +247,7 @@ Matrix44<S> operator*(const Matrix44<S>& m1, S t) {
 			m2.m[i][ii] = m1[i][ii] * t;
 		}
 	}
+	return m2;
 }
 
 

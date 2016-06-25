@@ -98,22 +98,24 @@ inline int CheckCVV(const Vector4f& v) {
 }
 
 
-void GsDevice::initialize(int ww, int hh, void* fb)
-{
+void GsDevice::initialize(int ww, int hh, void* fb) {
+	w = ww;
+	h = hh;
+
+	framebuffer.resize(h, nullptr);
+	zbuffer.resize(h, std::vector<float>(w, 0.0f));
+
 	char* framebuf = (char*)fb;
-	char* zbuf = (char*)malloc(ww * hh * 4);
-	for (int i = 0; i < hh; i++) {
-		framebuffer[i] = (uint32_t*)(framebuf + ww * 4 * i);
-		zbuffer[i] = (float*)(zbuf + ww * 4 * i);
+	for (int i = 0; i < h; i++) {
+		framebuffer[i] = (uint32_t*)(framebuf + w * 4 * i);
 	}
-	memptr = zbuf;
 }
 
 void GsDevice::drawScanline(GsScanline& scanline, GsStatePtr state)
 {
 	assert(state);
 	uint32_t* framebuf = framebuffer[scanline.y];
-	float* zbuf = zbuffer[scanline.y];
+	std::vector<float>& zbuf = zbuffer[scanline.y];
 	int x = scanline.x;
 	int ww = scanline.w;
 	for (; w > 0; x++, ww--) {
@@ -298,25 +300,19 @@ void GsDevice::drawPixel(int x, int y, uint32_t c)
 	}
 }
 
-void GsDevice::clear(uint32_t color)
-{
+void GsDevice::clear() {
 	int y, x;
 	for (y = 0; y < h; y++) {
 		uint32_t *dst = framebuffer[y];
-		for (x = w; x > 0; dst++, x--) dst[0] = color;
+		uint32_t cc = (h - 1 - y) * 230 / (h - 1);
+		cc = (cc << 16) | (cc << 8) | cc;
+		for (x = w; x > 0; dst++, x--) dst[0] = cc;
 	}
 	for (y = 0; y < h; y++) {
-		float *dst = zbuffer[y];
-		for (x = w; x > 0; dst++, x--) dst[0] = 0.0f;
+		std::vector<float>& dst = zbuffer[y];
+		std::fill(dst.begin(), dst.end(), 0.0f);
 	}
 }
 
-void GsDevice::destory()
-{
-	if (memptr) {
-		free(memptr);
-		memptr = nullptr;
-	}
-}
 
 SHAKURAS_END;

@@ -7,9 +7,7 @@ SHAKURAS_BEGIN;
 
 class GsTransformer {
 public:
-	GsTransformer(int width, int height) {
-		initialize((float)width, (float)height);
-	}
+	GsTransformer() {}
 	
 public:
 	void initialize(float width, float height) {

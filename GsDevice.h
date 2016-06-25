@@ -4,61 +4,28 @@
 #include <vector>
 #include <assert.h>
 #include "GsTransformer.h"
+#include "GsTexture.h"
 
 
 SHAKURAS_BEGIN;
 
 
-class GsTexture {
-public:
-	GsTexture(void* bits, int ww, int hh) {
-		reset(bits, ww, hh);
-	}
-
-public:
-	void reset(void* bits, int ww, int hh) {
-		char* ptr = (char*)bits;
-		for (int i = 0; i < h; ptr += h * 4, i++) {
-			buffer[i] = (uint32_t*)ptr;
-		}
-		w = ww;
-		h = hh;
-	}
-
-	virtual uint32_t at(float u, float v) {
-		u *= (w - 1);
-		v *= (h - 1);
-		int x = (int)(u + 0.5f);
-		int y = (int)(v + 0.5f);
-		x = Restrict(x, 0, w - 1);
-		y = Restrict(y, 0, h - 1);
-		return buffer[y][x];
-	}
-
-public:
-	uint32_t** buffer;
-	int w, h;
-};
-
-
-SHAKURAS_SHARED_PTR(GsTexture);
-
-
 class GsState {
 public:
 	GsState() : drawwireframe(true), drawcolor(false), drawtexture(false), wirecolor(1.0f, 1.0f, 1.0f){}
+	GsState(bool dwf, bool dc, bool dt, GsTextureU32Ptr t, GsColor24 c) 
+		: drawwireframe(dwf), drawcolor(dc), drawtexture(dt), texture(t), wirecolor(c) {}
 
 public:
 	bool drawwireframe;
 	bool drawcolor;
 	bool drawtexture;
-	GsTexturePtr texture;
+	GsTextureU32Ptr texture;
 	GsColor24 wirecolor;
 };
 
 
 SHAKURAS_SHARED_PTR(GsState);
-
 
 
 class GsScanline {
@@ -83,14 +50,12 @@ public:
 
 class GsDevice {
 public:
-	GsDevice() : memptr(nullptr), framebuffer(nullptr), zbuffer(nullptr) {}
+	GsDevice() : w(1), h(1) {}
 
 public:
 	void initialize(int ww, int hh, void* fb);
 
-	void destory();
-
-	void clear(uint32_t color);
+	void clear();
 
 	void drawPixel(int x, int y, uint32_t c);
 
@@ -105,9 +70,8 @@ public:
 	void renderPrimitive(const GsLine& line, GsTransformerPtr trsf, GsStatePtr state);
 
 public:
-	char* memptr;
-	uint32_t** framebuffer;
-	float** zbuffer;
+	std::vector<uint32_t*> framebuffer;
+	std::vector<std::vector<float> > zbuffer;
 	int w, h;
 };
 
