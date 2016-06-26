@@ -39,7 +39,7 @@ public:
 		if (trap.left.v.pos.x >= trap.right.v.pos.x) {
 			w = 0;
 		}
-		step = (trap.left.v - trap.right.v) / width;
+		step = (trap.right.v - trap.left.v) / width;
 	}
 
 public:
@@ -50,7 +50,7 @@ public:
 
 class GsDevice {
 public:
-	GsDevice() : w(1), h(1) {}
+	GsDevice() : width(1), height(1) {}
 
 public:
 	void initialize(int ww, int hh, void* fb);
@@ -72,7 +72,7 @@ public:
 public:
 	std::vector<uint32_t*> framebuffer;
 	std::vector<std::vector<float> > zbuffer;
-	int w, h;
+	int width, height;
 };
 
 

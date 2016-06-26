@@ -27,10 +27,10 @@ public:
 
 
 inline GsColor24 operator+(const GsColor24& c1, const GsColor24& c2) {
-	return GsColor24(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b);
+	return GsColor24(c1.r + c2.r, c1.g + c2.g, c1.b + c2.b);
 }
 inline GsColor24 operator-(const GsColor24& c1, const GsColor24& c2) {
-	return GsColor24(c1.r + c2.r, c1.g + c2.g, c1.b + c2.b);
+	return GsColor24(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b);
 }
 inline GsColor24 operator*(const GsColor24& c1, float t) {
 	return GsColor24(c1.r * t, c1.g * t, c1.b * t);
@@ -52,10 +52,10 @@ public:
 
 
 inline GsTexCoord operator+(const GsTexCoord& tc1, const GsTexCoord& tc2) {
-	return GsTexCoord(tc1.u - tc2.u, tc1.v - tc2.v);
+	return GsTexCoord(tc1.u + tc2.u, tc1.v + tc2.v);
 }
 inline GsTexCoord operator-(const GsTexCoord& tc1, const GsTexCoord& tc2) {
-	return GsTexCoord(tc1.u + tc2.u, tc1.v + tc2.v);
+	return GsTexCoord(tc1.u - tc2.u, tc1.v - tc2.v);
 }
 inline GsTexCoord operator*(const GsTexCoord& tc1, float t) {
 	return GsTexCoord(tc1.u * t, tc1.v * t);

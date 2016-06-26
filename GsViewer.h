@@ -11,7 +11,8 @@ enum GsUserMessage {
 	kUMLeft,
 	kUMRight,
 	kUMEsc,
-	kUMSpace
+	kUMSpace,
+	kUMClose
 };
 
 

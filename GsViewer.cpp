@@ -16,6 +16,7 @@ public:
 		screen_w = screen_h = 0;
 		screen_mx = screen_my = screen_mb = 0;
 		screen_keys.assign(0);
+		screen_close = false;
 		screen_handle = NULL;
 		screen_dc = NULL;
 		screen_hb = NULL;
@@ -81,6 +82,7 @@ public:
 		dispatch();
 
 		screen_keys.assign(0);
+		screen_close = false;
 		memset(screen_fb, 0, w * h * 4);
 
 		objects[screen_handle] = std::dynamic_pointer_cast<GsWindowsViewer>(shared_from_this());
@@ -102,6 +104,8 @@ public:
 			return screen_keys[VK_ESCAPE] != 0;
 		case shakuras::kUMSpace:
 			return screen_keys[VK_SPACE] != 0;
+		case shakuras::kUMClose:
+			return screen_close;
 		default:
 			return false;
 		}
@@ -154,6 +158,7 @@ public:
 	LRESULT onEvent(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		if (hWnd == screen_handle) {
 			switch (msg) {
+			case WM_CLOSE: screen_close = true; return 1;
 			case WM_KEYDOWN: screen_keys[wParam & 511] = 1; return 1;
 			case WM_KEYUP: screen_keys[wParam & 511] = 0; return 1;
 			}
@@ -165,6 +170,7 @@ public:
 	int screen_w, screen_h;
 	int screen_mx, screen_my, screen_mb;
 	std::array<int, 512> screen_keys;
+	bool screen_close;
 	HWND screen_handle;
 	HDC screen_dc;
 	HBITMAP screen_hb;

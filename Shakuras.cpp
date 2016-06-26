@@ -51,7 +51,7 @@ int main()
 	GsDevice device;
 	device.initialize(width, height, viewer->frameBuffer());
 
-	while (!viewer->testUserMessage(kUMEsc)) {
+	while (!viewer->testUserMessage(kUMEsc) && !viewer->testUserMessage(kUMClose)) {
 		viewer->dispatch();
 
 		device.clear();

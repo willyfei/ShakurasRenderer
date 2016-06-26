@@ -99,15 +99,15 @@ inline int CheckCVV(const Vector4f& v) {
 
 
 void GsDevice::initialize(int ww, int hh, void* fb) {
-	w = ww;
-	h = hh;
+	width = ww;
+	height = hh;
 
-	framebuffer.resize(h, nullptr);
-	zbuffer.resize(h, std::vector<float>(w, 0.0f));
+	framebuffer.resize(height, nullptr);
+	zbuffer.resize(height, std::vector<float>(width, 0.0f));
 
 	char* framebuf = (char*)fb;
-	for (int i = 0; i < h; i++) {
-		framebuffer[i] = (uint32_t*)(framebuf + w * 4 * i);
+	for (int i = 0; i < height; i++) {
+		framebuffer[i] = (uint32_t*)(framebuf + width * 4 * i);
 	}
 }
 
@@ -117,17 +117,17 @@ void GsDevice::drawScanline(GsScanline& scanline, GsStatePtr state)
 	uint32_t* framebuf = framebuffer[scanline.y];
 	std::vector<float>& zbuf = zbuffer[scanline.y];
 	int x = scanline.x;
-	int ww = scanline.w;
-	for (; w > 0; x++, ww--) {
-		if (x >= 0 && x < w) {
+	int w = scanline.w;
+	for (; w > 0; x++, w--) {
+		if (x >= 0 && x < width) {
 			float rhw = scanline.v.rhw;
 			if (rhw > zbuf[x]) {
-				float www = 1.0f / rhw;
+				float ww = 1.0f / rhw;
 				zbuf[x] = rhw;
 				if (state->drawcolor) {
-					float r = scanline.v.color.r * www;
-					float g = scanline.v.color.g * www;
-					float b = scanline.v.color.b * www;
+					float r = scanline.v.color.r * ww;
+					float g = scanline.v.color.g * ww;
+					float b = scanline.v.color.b * ww;
 					int R = int(r * 255.0f);
 					int G = int(g * 255.0f);
 					int B = int(b * 255.0f);
@@ -137,15 +137,15 @@ void GsDevice::drawScanline(GsScanline& scanline, GsStatePtr state)
 					framebuf[x] = (R << 16) | (G << 8) | B;
 				}
 				if (state->drawtexture && state->texture) {
-					float u = scanline.v.tc.u * www;
-					float v = scanline.v.tc.v * www;
+					float u = scanline.v.tc.u * ww;
+					float v = scanline.v.tc.v * ww;
 					uint32_t cc = state->texture->at(u, v);
 					framebuf[x] = cc;
 				}
 			}
 		}
 		scanline.v = scanline.v + scanline.step;
-		if (x >= w) {
+		if (x >= width) {
 			break;
 		}
 	}
@@ -234,12 +234,12 @@ void GsDevice::drawTrapezoid(GsTrapezoid& trap, GsStatePtr state)
 	top = (int)(trap.top + 0.5f);
 	bottom = (int)(trap.bottom + 0.5f);
 	for (j = top; j < bottom; j++) {
-		if (j >= 0 && j < h) {
+		if (j >= 0 && j < height) {
 			trap.scanlineInterp((float)j + 0.5f);
 			scanline.initialize(trap, j);
 			drawScanline(scanline, state);
 		}
-		if (j >= h) {
+		if (j >= height) {
 			break;
 		}
 	}
@@ -295,20 +295,20 @@ void GsDevice::drawLine(int x1, int y1, int x2, int y2, uint32_t c)
 
 void GsDevice::drawPixel(int x, int y, uint32_t c)
 {
-	if (((uint32_t)x) < (uint32_t)w && ((uint32_t)y) < (uint32_t)h) {
+	if (((uint32_t)x) < (uint32_t)width && ((uint32_t)y) < (uint32_t)height) {
 		framebuffer[y][x] = c;
 	}
 }
 
 void GsDevice::clear() {
 	int y, x;
-	for (y = 0; y < h; y++) {
+	for (y = 0; y < height; y++) {
 		uint32_t *dst = framebuffer[y];
-		uint32_t cc = (h - 1 - y) * 230 / (h - 1);
+		uint32_t cc = (height - 1 - y) * 230 / (height - 1);
 		cc = (cc << 16) | (cc << 8) | cc;
-		for (x = w; x > 0; dst++, x--) dst[0] = cc;
+		for (x = width; x > 0; dst++, x--) dst[0] = cc;
 	}
-	for (y = 0; y < h; y++) {
+	for (y = 0; y < height; y++) {
 		std::vector<float>& dst = zbuffer[y];
 		std::fill(dst.begin(), dst.end(), 0.0f);
 	}
