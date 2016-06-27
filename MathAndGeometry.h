@@ -1,10 +1,7 @@
 #pragma once
+#include "Utility.h"
 #include <array>
 #include <memory>
-
-
-#define SHAKURAS_BEGIN namespace shakuras {
-#define SHAKURAS_END }
 
 
 SHAKURAS_BEGIN;

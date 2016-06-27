@@ -24,16 +24,10 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="UtilityAndMath.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="GsTransformer.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="GsPrimitive.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GsDevice.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="GsViewer.h">
@@ -45,6 +39,15 @@
     <ClInclude Include="GsTexture.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GsRasterizer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MathAndGeometry.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -53,13 +56,19 @@
     <ClCompile Include="Shakuras.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GsDevice.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="GsViewer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GsResource.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GsTransformer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GsRasterizer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,5 +1,5 @@
 #pragma once
-#include "UtilityAndMath.h"
+#include "MathAndGeometry.h"
 #include "GsPrimitive.h"
 #include <vector>
 #include <assert.h>
@@ -48,9 +48,9 @@ public:
 };
 
 
-class GsDevice {
+class GsRasterizer {
 public:
-	GsDevice() : width(1), height(1) {}
+	GsRasterizer() : width(1), height(1) {}
 
 public:
 	void initialize(int ww, int hh, void* fb);

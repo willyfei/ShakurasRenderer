@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "GsDevice.h"
+#include "GsRasterizer.h"
 #include "GsTransformer.h"
 #include "GsResource.h"
 #include "GsViewer.h"
@@ -12,21 +12,14 @@
 using namespace shakuras;
 
 
-void CameraAtZero(GsTransformerPtr& trsf, float x, float y, float z) {
-	Vector4f eye = { x, y, z, 1 }, at = { 0, 0, 0, 1 }, up = { 0, 0, 1, 1 };
-	trsf->view = Matrix44f::LookAt(eye, at, up);
-	trsf->updateWVP();
-}
-
-
 int main()
 {
 	std::vector<GsTriangle> cube;
 	GenerateCube(cube);
-	GsTextureU32Ptr grid = GenerateGrid();
+	GsTextureU32Ptr tex = LoadTexture("1.png");
 
 	GsStatePtr states[3];
-	states[0] = std::make_shared<GsState>(false, false, true, grid, GsColor24());
+	states[0] = std::make_shared<GsState>(false, false, true, tex, GsColor24());
 	states[1] = std::make_shared<GsState>(false, true, false, nullptr, GsColor24(0.6, 0.3, 0.1));
 	states[2] = std::make_shared<GsState>(true, false, false, nullptr, GsColor24());
 
@@ -35,8 +28,8 @@ int main()
 	float alpha = 1;
 	float pos = 3.5;
 
-	const char *title = _T("Graphic3d (software render tutorial) - ")
-		_T("Left/Right: rotation, Up/Down: forward/backward, Space: switch state");
+	const char *title = "ShakurasRenderer - "
+		"Left/Right: rotation, Up/Down: forward/backward, Space: switch state";
 
 	int width = 800, height = 600;
 	GsViewerPtr viewer = CreateGsViewer("Windows");
@@ -48,7 +41,7 @@ int main()
 	trsf->initialize(width, height);
 	CameraAtZero(trsf, 3, 0, 0);
 
-	GsDevice device;
+	GsRasterizer device;
 	device.initialize(width, height, viewer->frameBuffer());
 
 	while (!viewer->testUserMessage(kUMEsc) && !viewer->testUserMessage(kUMClose)) {

@@ -1,5 +1,5 @@
 #pragma once
-#include "UtilityAndMath.h"
+#include "MathAndGeometry.h"
 #include <vector>
 
 
@@ -18,10 +18,9 @@ public:
 
 		buffer.resize(h, std::vector<uint32_t>(w));
 
-		const C* ptr = data;
-		for (int i = 0; i < h; ptr += h, i++) {
-			std::copy_n(ptr, w, buffer[i].begin());
-		}
+		for (int j = 0; j < h; ++j)
+			for (int i = 0; i < w; ++i)
+				buffer[j][i] = data[j*w + i];
 	}
 
 	C at(float u, float v) {

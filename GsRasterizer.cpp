@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "GsDevice.h"
+#include "GsRasterizer.h"
 
 
 SHAKURAS_BEGIN;
@@ -86,19 +86,7 @@ int SpliteTrapezoid(const GsTriangle& tri, std::vector<GsTrapezoid>& traps) {
 }
 
 
-inline int CheckCVV(const Vector4f& v) {
-	int check = 0;
-	if (v.z < 0.0f) check |= 1;
-	if (v.z > v.w) check |= 2;
-	if (v.x < -v.w) check |= 4;
-	if (v.x > v.w) check |= 8;
-	if (v.y < -v.w) check |= 16;
-	if (v.y > v.w) check |= 32;
-	return check;
-}
-
-
-void GsDevice::initialize(int ww, int hh, void* fb) {
+void GsRasterizer::initialize(int ww, int hh, void* fb) {
 	width = ww;
 	height = hh;
 
@@ -111,7 +99,7 @@ void GsDevice::initialize(int ww, int hh, void* fb) {
 	}
 }
 
-void GsDevice::drawScanline(GsScanline& scanline, GsStatePtr state)
+void GsRasterizer::drawScanline(GsScanline& scanline, GsStatePtr state)
 {
 	assert(state);
 	uint32_t* framebuf = framebuffer[scanline.y];
@@ -151,7 +139,7 @@ void GsDevice::drawScanline(GsScanline& scanline, GsStatePtr state)
 	}
 }
 
-void GsDevice::renderPrimitive(const GsTriangle& tri, GsTransformerPtr trsf, GsStatePtr state)
+void GsRasterizer::renderPrimitive(const GsTriangle& tri, GsTransformerPtr trsf, GsStatePtr state)
 {
 	assert(trsf);
 	assert(state);
@@ -166,7 +154,7 @@ void GsDevice::renderPrimitive(const GsTriangle& tri, GsTransformerPtr trsf, GsS
 	c2 = trsf->wvp.transform(v2.pos);
 	c3 = trsf->wvp.transform(v3.pos);
 
-	if (CheckCVV(c1) != 0 && CheckCVV(c2) != 0 && CheckCVV(c3) != 0) {
+	if (CheckCVV(c1) != 0 || CheckCVV(c2) != 0 || CheckCVV(c3) != 0) {
 		return;
 	}
 
@@ -203,7 +191,7 @@ void GsDevice::renderPrimitive(const GsTriangle& tri, GsTransformerPtr trsf, GsS
 	}
 }
 
-void GsDevice::renderPrimitive(const GsLine& line, GsTransformerPtr trsf, GsStatePtr state) {
+void GsRasterizer::renderPrimitive(const GsLine& line, GsTransformerPtr trsf, GsStatePtr state) {
 	assert(trsf);
 	assert(state);
 
@@ -215,7 +203,7 @@ void GsDevice::renderPrimitive(const GsLine& line, GsTransformerPtr trsf, GsStat
 	c1 = trsf->wvp.transform(v1.pos);
 	c2 = trsf->wvp.transform(v2.pos);
 
-	if (CheckCVV(c1) != 0 && CheckCVV(c2) != 0) {
+	if (CheckCVV(c1) != 0 || CheckCVV(c2) != 0) {
 		return;
 	}
 
@@ -227,7 +215,7 @@ void GsDevice::renderPrimitive(const GsLine& line, GsTransformerPtr trsf, GsStat
 	}
 }
 
-void GsDevice::drawTrapezoid(GsTrapezoid& trap, GsStatePtr state)
+void GsRasterizer::drawTrapezoid(GsTrapezoid& trap, GsStatePtr state)
 {
 	GsScanline scanline;
 	int j, top, bottom;
@@ -245,7 +233,7 @@ void GsDevice::drawTrapezoid(GsTrapezoid& trap, GsStatePtr state)
 	}
 }
 
-void GsDevice::drawLine(int x1, int y1, int x2, int y2, uint32_t c)
+void GsRasterizer::drawLine(int x1, int y1, int x2, int y2, uint32_t c)
 {
 	int x, y, rem = 0;
 	if (x1 == x2 && y1 == y2) {
@@ -293,14 +281,14 @@ void GsDevice::drawLine(int x1, int y1, int x2, int y2, uint32_t c)
 	}
 }
 
-void GsDevice::drawPixel(int x, int y, uint32_t c)
+void GsRasterizer::drawPixel(int x, int y, uint32_t c)
 {
 	if (((uint32_t)x) < (uint32_t)width && ((uint32_t)y) < (uint32_t)height) {
 		framebuffer[y][x] = c;
 	}
 }
 
-void GsDevice::clear() {
+void GsRasterizer::clear() {
 	int y, x;
 	for (y = 0; y < height; y++) {
 		uint32_t *dst = framebuffer[y];

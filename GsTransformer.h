@@ -1,5 +1,6 @@
 #pragma once
-#include "UtilityAndMath.h"
+#include "MathAndGeometry.h"
+#include "GsPrimitive.h"
 
 
 SHAKURAS_BEGIN;
@@ -10,29 +11,11 @@ public:
 	GsTransformer() {}
 	
 public:
-	void initialize(float w, float h) {
-		float aspect = w / h;
-		world.reset();
-		view.reset();
-		projection = Matrix44f::Perspective(kGSPI * 0.5f, aspect, 1.0f, 500.0f);
-		width = w;
-		height = h;
-		updateWVP();
-	}
+	void initialize(float w, float h);
 
-	void updateWVP() {
-		wvp = (world * view) * projection;
-	}
+	void updateWVP();
 
-	Vector4f homogenize(const Vector4f& v) const {
-		Vector4f r;
-		float rhw = 1.0f / v.w;
-		r.x = (v.x * rhw + 1.0f) * width * 0.5f;
-		r.y = (1.0f - v.y * rhw) * height * 0.5f;
-		r.z = v.z * rhw;
-		r.w = 1.0f;
-		return r;
-	}
+	Vector4f homogenize(const Vector4f& v) const;
 
 public:
 	Matrix44f world;
@@ -44,6 +27,21 @@ public:
 
 
 SHAKURAS_SHARED_PTR(GsTransformer);
+
+
+inline int CheckCVV(const Vector4f& v) {
+	int check = 0;
+	if (v.z < 0.0f) check |= 1;
+	if (v.z > v.w) check |= 2;
+	if (v.x < -v.w) check |= 4;
+	if (v.x > v.w) check |= 8;
+	if (v.y < -v.w) check |= 16;
+	if (v.y > v.w) check |= 32;
+	return check;
+}
+
+
+void CameraAtZero(GsTransformerPtr& trsf, float x, float y, float z);
 
 
 SHAKURAS_END;

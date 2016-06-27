@@ -1,5 +1,5 @@
 #pragma once
-#include "UtilityAndMath.h"
+#include "MathAndGeometry.h"
 #include "GsPrimitive.h"
 #include "GsTexture.h"
 #include <vector>
@@ -13,7 +13,8 @@ void GenerateCube(std::vector<GsTriangle>& prims);
 
 
 //texture×ÊÔ´
-GsTextureU32Ptr GenerateGrid();
+GsTextureU32Ptr GridTexture();
+GsTextureU32Ptr LoadTexture(std::string filepath);
 
 
 SHAKURAS_END;
