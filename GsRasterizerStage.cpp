@@ -149,8 +149,7 @@ void GsRasterizerStage::initialize(int ww, int hh, void* fb) {
 	}
 }
 
-void GsRasterizerStage::drawScanline(GsScanline& scanline, GsStatePtr state)
-{
+void GsRasterizerStage::drawScanline(GsScanline& scanline, GsStatePtr state) {
 	assert(state);
 	uint32_t* framebuf = framebuffer[scanline.y];
 	std::vector<float>& zbuf = zbuffer[scanline.y];
@@ -189,8 +188,7 @@ void GsRasterizerStage::drawScanline(GsScanline& scanline, GsStatePtr state)
 	}
 }
 
-void GsRasterizerStage::renderPrimitive(const GsTriangle& tri, GsStatePtr state)
-{
+void GsRasterizerStage::renderPrimitive(const GsTriangle& tri, GsStatePtr state) {
 	assert(state);
 
 	const GsVertex& v1 = tri[0];
@@ -230,8 +228,7 @@ void GsRasterizerStage::renderPrimitive(const GsLine& line, GsStatePtr state) {
 	}
 }
 
-void GsRasterizerStage::drawTrapezoid(GsTrapezoid& trap, GsStatePtr state)
-{
+void GsRasterizerStage::drawTrapezoid(GsTrapezoid& trap, GsStatePtr state) {
 	GsScanline scanline;
 	int j, top, bottom;
 	top = (int)(trap.top + 0.5f);
@@ -248,8 +245,7 @@ void GsRasterizerStage::drawTrapezoid(GsTrapezoid& trap, GsStatePtr state)
 	}
 }
 
-void GsRasterizerStage::drawLine(int x1, int y1, int x2, int y2, uint32_t c)
-{
+void GsRasterizerStage::drawLine(int x1, int y1, int x2, int y2, uint32_t c) {
 	int x, y, rem = 0;
 	if (x1 == x2 && y1 == y2) {
 		drawPixel(x1, y1, c);
@@ -296,8 +292,7 @@ void GsRasterizerStage::drawLine(int x1, int y1, int x2, int y2, uint32_t c)
 	}
 }
 
-void GsRasterizerStage::drawPixel(int x, int y, uint32_t c)
-{
+void GsRasterizerStage::drawPixel(int x, int y, uint32_t c) {
 	if (((uint32_t)x) < (uint32_t)width && ((uint32_t)y) < (uint32_t)height) {
 		framebuffer[y][x] = c;
 	}
