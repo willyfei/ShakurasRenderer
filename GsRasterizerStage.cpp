@@ -137,26 +137,26 @@ int SpliteTrapezoid(const GsTriangle& tri, std::vector<GsTrapezoid>& traps) {
 
 
 void GsRasterizerStage::initialize(int ww, int hh, void* fb) {
-	width = ww;
-	height = hh;
+	width_ = ww;
+	height_ = hh;
 
-	framebuffer.resize(height, nullptr);
-	zbuffer.resize(height, std::vector<float>(width, 0.0f));
+	framebuffer_.resize(height_, nullptr);
+	zbuffer_.resize(height_, std::vector<float>(width_, 0.0f));
 
 	char* framebuf = (char*)fb;
-	for (int i = 0; i < height; i++) {
-		framebuffer[i] = (uint32_t*)(framebuf + width * 4 * i);
+	for (int i = 0; i < height_; i++) {
+		framebuffer_[i] = (uint32_t*)(framebuf + width_ * 4 * i);
 	}
 }
 
 void GsRasterizerStage::drawScanline(GsScanline& scanline, GsStatePtr state) {
 	assert(state);
-	uint32_t* framebuf = framebuffer[scanline.y];
-	std::vector<float>& zbuf = zbuffer[scanline.y];
+	uint32_t* framebuf = framebuffer_[scanline.y];
+	std::vector<float>& zbuf = zbuffer_[scanline.y];
 	int x = scanline.x;
 	int w = scanline.w;
 	for (; w > 0; x++, w--) {
-		if (x >= 0 && x < width) {
+		if (x >= 0 && x < width_) {
 			float rhw = scanline.v.rhw;
 			if (rhw > zbuf[x]) {
 				float ww = 1.0f / rhw;
@@ -182,7 +182,7 @@ void GsRasterizerStage::drawScanline(GsScanline& scanline, GsStatePtr state) {
 			}
 		}
 		scanline.v = scanline.v + scanline.step;
-		if (x >= width) {
+		if (x >= width_) {
 			break;
 		}
 	}
@@ -191,7 +191,7 @@ void GsRasterizerStage::drawScanline(GsScanline& scanline, GsStatePtr state) {
 void GsRasterizerStage::renderPrimitive(const GsTriangle& tri, GsStatePtr state) {
 	assert(state);
 
-	const GsVertex& v1 = tri[0];
+	const GsVertex&  v1 = tri[0];
 	const GsVertex& v2 = tri[1];
 	const GsVertex& v3 = tri[2];
 
@@ -234,12 +234,12 @@ void GsRasterizerStage::drawTrapezoid(GsTrapezoid& trap, GsStatePtr state) {
 	top = (int)(trap.top + 0.5f);
 	bottom = (int)(trap.bottom + 0.5f);
 	for (j = top; j < bottom; j++) {
-		if (j >= 0 && j < height) {
+		if (j >= 0 && j < height_) {
 			trap.scanlineInterp((float)j + 0.5f);
 			scanline.initialize(trap, j);
 			drawScanline(scanline, state);
 		}
-		if (j >= height) {
+		if (j >= height_) {
 			break;
 		}
 	}
@@ -293,21 +293,21 @@ void GsRasterizerStage::drawLine(int x1, int y1, int x2, int y2, uint32_t c) {
 }
 
 void GsRasterizerStage::drawPixel(int x, int y, uint32_t c) {
-	if (((uint32_t)x) < (uint32_t)width && ((uint32_t)y) < (uint32_t)height) {
-		framebuffer[y][x] = c;
+	if (((uint32_t)x) < (uint32_t)width_ && ((uint32_t)y) < (uint32_t)height_) {
+		framebuffer_[y][x] = c;
 	}
 }
 
 void GsRasterizerStage::clear() {
 	int y, x;
-	for (y = 0; y < height; y++) {
-		uint32_t *dst = framebuffer[y];
-		uint32_t cc = (height - 1 - y) * 230 / (height - 1);
+	for (y = 0; y < height_; y++) {
+		uint32_t *dst = framebuffer_[y];
+		uint32_t cc = (height_ - 1 - y) * 230 / (height_ - 1);
 		cc = (cc << 16) | (cc << 8) | cc;
-		for (x = width; x > 0; dst++, x--) dst[0] = cc;
+		for (x = width_; x > 0; dst++, x--) dst[0] = cc;
 	}
-	for (y = 0; y < height; y++) {
-		std::vector<float>& dst = zbuffer[y];
+	for (y = 0; y < height_; y++) {
+		std::vector<float>& dst = zbuffer_[y];
 		std::fill(dst.begin(), dst.end(), 0.0f);
 	}
 }

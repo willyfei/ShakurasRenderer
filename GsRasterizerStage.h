@@ -29,9 +29,9 @@ private:
 	void drawTrapezoid(GsTrapezoid& trap, GsStatePtr state);
 
 public:
-	std::vector<uint32_t*> framebuffer;
-	std::vector<std::vector<float> > zbuffer;
-	int width, height;
+	std::vector<uint32_t*> framebuffer_;
+	std::vector<std::vector<float> > zbuffer_;
+	int width_, height_;
 };
 
 
