@@ -1,8 +1,58 @@
 #include "stdafx.h"
-#include "GsRasterizer.h"
+#include "GsRasterizerStage.h"
+#include <assert.h>
 
 
 SHAKURAS_BEGIN;
+
+
+class GsEdge {
+public:
+	GsEdge() {}
+	GsEdge(const GsVertex& vv, const GsVertex& vv1, const GsVertex& vv2) : v(vv), v1(vv1), v2(vv2) {}
+
+public:
+	void scanlineInterp(float y) {
+		float t = (y - v1.pos.y) / (v2.pos.y - v1.pos.y);
+		v = Interp(v1, v2, t);
+	}
+
+public:
+	GsVertex v, v1, v2;
+};
+
+
+class GsTrapezoid {
+public:
+	void scanlineInterp(float y) {
+		left.scanlineInterp(y);
+		right.scanlineInterp(y);
+	}
+
+public:
+	float top, bottom;
+	GsEdge left, right;
+};
+
+
+class GsScanline {
+public:
+	void initialize(const GsTrapezoid& trap, int yy) {
+		float width = trap.right.v.pos.x - trap.left.v.pos.x;
+		x = (int)(trap.left.v.pos.x + 0.5f);
+		w = (int)(trap.right.v.pos.x + 0.5f) - x;
+		y = yy;
+		v = trap.left.v;
+		if (trap.left.v.pos.x >= trap.right.v.pos.x) {
+			w = 0;
+		}
+		step = (trap.right.v - trap.left.v) / width;
+	}
+
+public:
+	GsVertex v, step;
+	int x, y, w;
+};
 
 
 int SpliteTrapezoid(const GsTriangle& tri, std::vector<GsTrapezoid>& traps) {
@@ -86,7 +136,7 @@ int SpliteTrapezoid(const GsTriangle& tri, std::vector<GsTrapezoid>& traps) {
 }
 
 
-void GsRasterizer::initialize(int ww, int hh, void* fb) {
+void GsRasterizerStage::initialize(int ww, int hh, void* fb) {
 	width = ww;
 	height = hh;
 
@@ -99,7 +149,7 @@ void GsRasterizer::initialize(int ww, int hh, void* fb) {
 	}
 }
 
-void GsRasterizer::drawScanline(GsScanline& scanline, GsStatePtr state)
+void GsRasterizerStage::drawScanline(GsScanline& scanline, GsStatePtr state)
 {
 	assert(state);
 	uint32_t* framebuf = framebuffer[scanline.y];
@@ -139,38 +189,16 @@ void GsRasterizer::drawScanline(GsScanline& scanline, GsStatePtr state)
 	}
 }
 
-void GsRasterizer::renderPrimitive(const GsTriangle& tri, GsTransformerPtr trsf, GsStatePtr state)
+void GsRasterizerStage::renderPrimitive(const GsTriangle& tri, GsStatePtr state)
 {
-	assert(trsf);
 	assert(state);
 
 	const GsVertex& v1 = tri[0];
 	const GsVertex& v2 = tri[1];
 	const GsVertex& v3 = tri[2];
 
-	Vector4f p1, p2, p3, c1, c2, c3;
-
-	c1 = trsf->wvp.transform(v1.pos);
-	c2 = trsf->wvp.transform(v2.pos);
-	c3 = trsf->wvp.transform(v3.pos);
-
-	if (CheckCVV(c1) != 0 || CheckCVV(c2) != 0 || CheckCVV(c3) != 0) {
-		return;
-	}
-
-	p1 = trsf->homogenize(c1);
-	p2 = trsf->homogenize(c2);
-	p3 = trsf->homogenize(c3);
-
 	if (state->drawcolor || state->drawtexture) {
 		GsVertex t1 = v1, t2 = v2, t3 = v3;
-
-		t1.pos = p1;
-		t2.pos = p2;
-		t3.pos = p3;
-		t1.pos.w = c1.w;
-		t2.pos.w = c2.w;
-		t3.pos.w = c3.w;
 
 		t1.rhwInitialize();
 		t2.rhwInitialize();
@@ -185,37 +213,24 @@ void GsRasterizer::renderPrimitive(const GsTriangle& tri, GsTransformerPtr trsf,
 	}
 
 	if (state->drawwireframe) {
-		drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y, state->wirecolor.u32());
-		drawLine((int)p1.x, (int)p1.y, (int)p3.x, (int)p3.y, state->wirecolor.u32());
-		drawLine((int)p3.x, (int)p3.y, (int)p2.x, (int)p2.y, state->wirecolor.u32());
+		drawLine((int)v1.pos.x, (int)v1.pos.y, (int)v2.pos.x, (int)v2.pos.y, state->wirecolor.u32());
+		drawLine((int)v1.pos.x, (int)v1.pos.y, (int)v3.pos.x, (int)v3.pos.y, state->wirecolor.u32());
+		drawLine((int)v3.pos.x, (int)v3.pos.y, (int)v2.pos.x, (int)v2.pos.y, state->wirecolor.u32());
 	}
 }
 
-void GsRasterizer::renderPrimitive(const GsLine& line, GsTransformerPtr trsf, GsStatePtr state) {
-	assert(trsf);
+void GsRasterizerStage::renderPrimitive(const GsLine& line, GsStatePtr state) {
 	assert(state);
 
 	const GsVertex& v1 = line[0];
 	const GsVertex& v2 = line[1];
 
-	Vector4f p1, p2, c1, c2;
-
-	c1 = trsf->wvp.transform(v1.pos);
-	c2 = trsf->wvp.transform(v2.pos);
-
-	if (CheckCVV(c1) != 0 || CheckCVV(c2) != 0) {
-		return;
-	}
-
-	p1 = trsf->homogenize(c1);
-	p2 = trsf->homogenize(c2);
-
 	if (state->drawcolor) {
-		drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y, v1.color.u32());
+		drawLine((int)v1.pos.x, (int)v1.pos.y, (int)v2.pos.x, (int)v2.pos.y, v1.color.u32());
 	}
 }
 
-void GsRasterizer::drawTrapezoid(GsTrapezoid& trap, GsStatePtr state)
+void GsRasterizerStage::drawTrapezoid(GsTrapezoid& trap, GsStatePtr state)
 {
 	GsScanline scanline;
 	int j, top, bottom;
@@ -233,7 +248,7 @@ void GsRasterizer::drawTrapezoid(GsTrapezoid& trap, GsStatePtr state)
 	}
 }
 
-void GsRasterizer::drawLine(int x1, int y1, int x2, int y2, uint32_t c)
+void GsRasterizerStage::drawLine(int x1, int y1, int x2, int y2, uint32_t c)
 {
 	int x, y, rem = 0;
 	if (x1 == x2 && y1 == y2) {
@@ -281,14 +296,14 @@ void GsRasterizer::drawLine(int x1, int y1, int x2, int y2, uint32_t c)
 	}
 }
 
-void GsRasterizer::drawPixel(int x, int y, uint32_t c)
+void GsRasterizerStage::drawPixel(int x, int y, uint32_t c)
 {
 	if (((uint32_t)x) < (uint32_t)width && ((uint32_t)y) < (uint32_t)height) {
 		framebuffer[y][x] = c;
 	}
 }
 
-void GsRasterizer::clear() {
+void GsRasterizerStage::clear() {
 	int y, x;
 	for (y = 0; y < height; y++) {
 		uint32_t *dst = framebuffer[y];
@@ -299,6 +314,16 @@ void GsRasterizer::clear() {
 	for (y = 0; y < height; y++) {
 		std::vector<float>& dst = zbuffer[y];
 		std::fill(dst.begin(), dst.end(), 0.0f);
+	}
+}
+
+void GsRasterizerStage::process(In& input) {
+	clear();
+	for (auto i = input.begin(); i != input.end(); i++) {
+		GsDrawable& drawable = *i;
+		for (auto ii = drawable.tris.begin(); ii != drawable.tris.end(); ii++) {
+			renderPrimitive(*ii, drawable.state);
+		}
 	}
 }
 

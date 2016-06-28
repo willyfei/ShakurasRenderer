@@ -135,6 +135,14 @@ public:
 		return screen_fb;
 	}
 
+	virtual int width() {
+		return screen_w;
+	}
+
+	virtual int height() {
+		return screen_h;
+	}
+
 	int close() {
 		if (screen_dc) {
 			if (screen_ob) {

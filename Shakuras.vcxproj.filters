@@ -24,9 +24,6 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GsTransformer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="GsPrimitive.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -39,13 +36,28 @@
     <ClInclude Include="GsTexture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GsRasterizer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Utility.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MathAndGeometry.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GsRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GsGeometryStage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GsApplicationStage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GsRasterizerStage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GsState.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GsDrawable.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,13 +74,19 @@
     <ClCompile Include="GsResource.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GsTransformer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GsRasterizer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Utility.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GsApplicationStage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GsGeometryStage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GsRasterizerStage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GsRenderer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

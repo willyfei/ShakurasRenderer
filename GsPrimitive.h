@@ -105,35 +105,6 @@ inline GsVertex operator/(const GsVertex& v1, float d) {
 }
 
 
-class GsEdge {
-public:
-	GsEdge() {}
-	GsEdge(const GsVertex& vv, const GsVertex& vv1, const GsVertex& vv2) : v(vv), v1(vv1), v2(vv2) {}
-
-public:
-	void scanlineInterp(float y) {
-		float t = (y - v1.pos.y) / (v2.pos.y - v1.pos.y);
-		v = Interp(v1, v2, t);
-	}
-
-public:
-	GsVertex v, v1, v2;
-};
-
-
-class GsTrapezoid {
-public:
-	void scanlineInterp(float y) {
-		left.scanlineInterp(y);
-		right.scanlineInterp(y);
-	}
-
-public:
-	float top, bottom;
-	GsEdge left, right;
-};
-
-
 typedef std::array<GsVertex, 3> GsTriangle;
 typedef std::array<GsVertex, 2> GsLine;
 

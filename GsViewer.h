@@ -24,6 +24,8 @@ public:
 	virtual void dispatch() = 0;
 	virtual void update(void) = 0;
 	virtual void* frameBuffer() = 0;
+	virtual int width() = 0;
+	virtual int height() = 0;
 };
 
 

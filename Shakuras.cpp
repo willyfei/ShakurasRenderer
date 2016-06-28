@@ -2,11 +2,11 @@
 //
 
 #include "stdafx.h"
-#include "GsRasterizer.h"
-#include "GsTransformer.h"
+#include "GsRasterizerStage.h"
 #include "GsResource.h"
 #include "GsViewer.h"
 #include <Windows.h>
+#include "GsRenderer.h"
 
 
 using namespace shakuras;
@@ -31,46 +31,19 @@ int main()
 	const char *title = "ShakurasRenderer - "
 		"Left/Right: rotation, Up/Down: forward/backward, Space: switch state";
 
-	int width = 800, height = 600;
+	int width = 1600, height = 900;
 	GsViewerPtr viewer = CreateGsViewer("Windows");
 	if (!viewer || viewer->initialize(width, height, title) != 0) {
 		return -1;
 	}
 
-	GsTransformerPtr trsf = std::make_shared<GsTransformer>();
-	trsf->initialize(width, height);
-	CameraAtZero(trsf, 3, 0, 0);
-
-	GsRasterizer device;
-	device.initialize(width, height, viewer->frameBuffer());
+	GsRenderer renderer;
+	renderer.initialize(viewer);
 
 	while (!viewer->testUserMessage(kUMEsc) && !viewer->testUserMessage(kUMClose)) {
 		viewer->dispatch();
 
-		device.clear();
-		CameraAtZero(trsf, pos, 0, 0);
-
-		if (viewer->testUserMessage(kUMUp)) pos -= 0.01f;
-		if (viewer->testUserMessage(kUMDown)) pos += 0.01f;
-		if (viewer->testUserMessage(kUMLeft)) alpha += 0.01f;
-		if (viewer->testUserMessage(kUMRight)) alpha -= 0.01f;
-
-		if (viewer->testUserMessage(kUMSpace)) {
-			if (kbhit == 0) {
-				kbhit = 1;
-				indicator = (indicator + 1) % 3;
-			}
-		}
-		else {
-			kbhit = 0;
-		}
-
-		trsf->world = Matrix44f::Rotate(-1, -0.5, 1, alpha);
-		trsf->updateWVP();
-
-		for (auto i = cube.begin(); i != cube.end(); i++) {
-			device.renderPrimitive(*i, trsf, states[indicator]);
-		}
+		renderer.frame();
 
 		viewer->update();
 		Sleep(1);
