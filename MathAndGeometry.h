@@ -74,7 +74,8 @@ Vector4<S> operator*(const Vector4<S>& v1, S t) {
 }
 template<class S>
 Vector4<S> operator/(const Vector4<S>& v1, S d) {
-	return Vector4<S>(v1.x / d, v1.y / d, v1.z / d);
+	S t = 1.0f / d;
+	return Vector4<S>(v1.x * t, v1.y * t, v1.z * t);
 }
 
 
