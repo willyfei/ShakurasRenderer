@@ -38,7 +38,7 @@ void GsApplicationStage::process(Out& output) {
 		kbhit_ = 0;
 	}
 
-	Vector4f eye = { 3 + pos_, 0, 0, 1 }, at = { 0, 0, 0, 1 }, up = { 0, 0, 1, 1 };
+	Vector3f eye = { 3 + pos_, 0, 0 }, at = { 0, 0, 0 }, up = { 0, 0, 1 };
 	output.viewtrsf = Matrix44f::LookAt(eye, at, up);
 	output.drawables.push_back({ Matrix44f::Rotate(-1, -0.5, 1, alpha_), states_[indicator_], cube_ });
 }

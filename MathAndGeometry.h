@@ -9,20 +9,15 @@ SHAKURAS_BEGIN;
 
 //向量
 template<class S>
-class Vector4 {
+class Vector3 {
 public:
-	S x, y, z, w;
+	S x, y, z;
 
 public:
-	Vector4() : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {}
-	Vector4(S xx, S yy, S zz) : x(xx), y(yy), z(zz), w(1.0f) {}
-	Vector4(S xx, S yy, S zz, S ww) : x(xx), y(yy), z(zz), w(ww) {}
+	Vector3() : x(0.0f), y(0.0f), z(0.0f) {}
+	Vector3(S xx, S yy, S zz) : x(xx), y(yy), z(zz) {}
 
 public:
-	S length() const {
-		return ::sqrt(x * x + y * y + z * z);
-	}
-
 	void normalize(S len = 1.0f) {
 		S cur_len = length();
 		if (cur_len != len) {
@@ -33,7 +28,38 @@ public:
 			w = 1.0f;
 		}
 	}
+};
 
+template<class S>
+Vector3<S> operator+(const Vector3<S>& v1, const Vector3<S>& v2) {
+	return Vector3<S>(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
+}
+template<class S>
+Vector3<S> operator-(const Vector3<S>& v1, const Vector3<S>& v2) {
+	return Vector3<S>(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+}
+template<class S>
+Vector3<S> operator*(const Vector3<S>& v1, S t) {
+	return Vector3<S>(v1.x * t, v1.y * t, v1.z * t);
+}
+template<class S>
+Vector3<S> operator/(const Vector3<S>& v1, S d) {
+	S t = 1.0f / d;
+	return Vector3<S>(v1.x * t, v1.y * t, v1.z * t);
+}
+
+
+//齐次向量
+template<class S>
+class Vector4 {
+public:
+	S x, y, z, w;
+
+public:
+	Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
+	Vector4(S xx, S yy, S zz, S ww) : x(xx), y(yy), z(zz), w(ww) {}
+
+public:
 	void projection() {
 		if (w != 0.0f) {
 			S inv = 1.0f / w;
@@ -42,40 +68,71 @@ public:
 			z *= inv;
 		}
 	}
+
+	static Vector4<S> Point(S xx, S yy, S zz) {
+		return Vector4<S>(xx, yy, zz, 1.0f);
+	}
+
+	static Vector4<S> Point(const Vector3<S>& v3) {
+		return Vector4<S>(v3.x, v3.y, v3.z, 1.0f);
+	}
+
+	static Vector4<S> Vector(S xx, S yy, S zz) {
+		return Vector4<S>(xx, yy, zz, 0.0f);
+	}
+
+	static Vector4<S> Vector(const Vector3<S>& v3) {
+		return Vector4<S>(v3.x, v3.y, v3.z, 0.0f);
+	}
 };
-
-
-template<class S>
-S DotProduct(const Vector4<S>& v1, const Vector4<S>& v2) {
-	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
-}
-
-template<class S>
-Vector4<S> CrossProduct(const Vector4<S>& v1, const Vector4<S>& v2) {
-	Vector4<S> v3;
-	v3.x = v1.y * v2.z - v1.z * v2.y;
-	v3.y = v1.z * v2.x - v1.x * v2.z;
-	v3.z = v1.x * v2.y - v1.y * v2.x;
-	return v3;
-}
-
 
 template<class S>
 Vector4<S> operator+(const Vector4<S>& v1, const Vector4<S>& v2) {
-	return Vector4<S>(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
+	return Vector4<S>(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, 0.0f);
 }
 template<class S>
 Vector4<S> operator-(const Vector4<S>& v1, const Vector4<S>& v2) {
-	return Vector4<S>(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+	return Vector4<S>(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, 0.0f);
 }
 template<class S>
 Vector4<S> operator*(const Vector4<S>& v1, S t) {
-	return Vector4<S>(v1.x * t, v1.y * t, v1.z * t);
+	return Vector4<S>(v1.x * t, v1.y * t, v1.z * t, 0.0f);
 }
 template<class S>
 Vector4<S> operator/(const Vector4<S>& v1, S d) {
 	S t = 1.0f / d;
-	return Vector4<S>(v1.x * t, v1.y * t, v1.z * t);
+	return Vector4<S>(v1.x * t, v1.y * t, v1.z * t, 0.0f);
+}
+
+
+template<class V3>
+float Length(const V3& v) {
+	return ::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+}
+
+template<class V3>
+void Normalize(V3& v, float len = 1.0f) {
+	float cur_len = Length(v);
+	if (cur_len != len) {
+		float scale = len / cur_len;
+		v.x *= scale;
+		v.y *= scale;
+		v.z *= scale;
+	}
+}
+
+template<class V3>
+float DotProduct(const V3& v1, const V3& v2) {
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+}
+
+template<class V3>
+V3 CrossProduct(const V3& v1, const V3& v2) {
+	V3 v3;
+	v3.x = v1.y * v2.z - v1.z * v2.y;
+	v3.y = v1.z * v2.x - v1.x * v2.z;
+	v3.z = v1.x * v2.y - v1.y * v2.x;
+	return v3;
 }
 
 
@@ -134,9 +191,9 @@ public:
 		Matrix44<S> mat;
 		S qsin = (S)sin(theta * 0.5f);
 		S qcos = (S)cos(theta * 0.5f);
-		Vector4<S> vec(x, y, z, 1.0f);
+		Vector3<S> vec(x, y, z);
 		S w = qcos;
-		vec.normalize();
+		Normalize(vec);
 		x = vec.x * qsin;
 		y = vec.y * qsin;
 		z = vec.z * qsin;
@@ -155,12 +212,12 @@ public:
 		return mat;
 	}
 
-	static Matrix44<S> LookAt(const Vector4<S>& eye, const Vector4<S>& at, const Vector4<S>& up) {
-		Vector4<S> xaxis, yaxis, zaxis;
+	static Matrix44<S> LookAt(const Vector3<S>& eye, const Vector3<S>& at, const Vector3<S>& up) {
+		Vector3<S> xaxis, yaxis, zaxis;
 		zaxis = at - eye;
-		zaxis.normalize();
+		Normalize(zaxis);
 		xaxis = CrossProduct(up, zaxis);
-		xaxis.normalize();
+		Normalize(xaxis);
 		yaxis = CrossProduct(zaxis, xaxis);
 
 		Matrix44<S> mat;
@@ -249,6 +306,7 @@ Matrix44<S> operator*(const Matrix44<S>& m1, S t) {
 }
 
 
+typedef Vector3<float> Vector3f;
 typedef Vector4<float> Vector4f;
 typedef Matrix44<float> Matrix44f;
 
@@ -258,6 +316,9 @@ typedef Matrix44<float> Matrix44f;
 
 //插值
 inline float Interp(float v1, float v2, float t) {
+	return v1 + (v2 - v1) * t;
+}
+inline double Interp(double v1, double v2, float t) {
 	return v1 + (v2 - v1) * t;
 }
 template<class T>
