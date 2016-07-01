@@ -8,7 +8,7 @@ SHAKURAS_BEGIN;
 void GsGeometryStage::initialize(float w, float h) {
 	width_ = w;
 	height_ = h;
-	Vector4f eye = { 3, 0, 0, 1 }, at = { 0, 0, 0, 1 }, up = { 0, 0, 1, 1 };
+	Vector3f eye = { 3, 0, 0 }, at = { 0, 0, 0 }, up = { 0, 0, 1 };
 	viewtrsf_ = Matrix44f::LookAt(eye, at, up);
 	projtrsf_ = Matrix44f::Perspective(kGSPI * 0.5f, w / h, 1.0f, 500.0f);
 }

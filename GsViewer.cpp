@@ -10,7 +10,7 @@ SHAKURAS_BEGIN;
 LRESULT ScreenEventProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
-class GsWindowsViewer : public GsViewer {
+class GsWindowsViewer : public GsViewer, public std::enable_shared_from_this<GsWindowsViewer> {
 public:
 	GsWindowsViewer() {
 		screen_w = screen_h = 0;

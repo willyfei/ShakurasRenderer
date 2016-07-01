@@ -16,7 +16,7 @@ enum GsUserMessage {
 };
 
 
-class GsViewer : public std::enable_shared_from_this<GsViewer> {
+class GsViewer {
 public:
 	virtual ~GsViewer() {}
 	virtual int initialize(int w, int h, const char* title) = 0;

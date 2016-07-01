@@ -23,7 +23,8 @@ void GsApplicationStage::process(Out& output) {
 	if (viewer_->testUserMessage(kUMLeft)) alpha_ += 0.01f;
 	if (viewer_->testUserMessage(kUMRight)) alpha_ -= 0.01f;
 
-	Vector4f eye = { 3 + pos_, 0, 0, 1 }, at = { 0, 0, 0, 1 }, up = { 0, 0, 1, 1 };
+	Vector3f eye = { 3 + pos_, 0, 0 }, at = { 0, 0, 0 }, up = { 0, 0, 1 };
+
 	output.viewtrsf = Matrix44f::LookAt(eye, at, up);
 	output.objects.push_back({ Matrix44f::Rotate(-1, -0.5, 1, alpha_), texture_, cube_ });
 }
