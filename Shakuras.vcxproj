@@ -158,13 +158,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GsApplicationStage.h" />
-    <ClInclude Include="GsDrawable.h" />
     <ClInclude Include="GsGeometryStage.h" />
-    <ClInclude Include="GsRenderer.h" />
+    <ClInclude Include="GsPipeline.h" />
     <ClInclude Include="GsRasterizerStage.h" />
     <ClInclude Include="GsPrimitive.h" />
     <ClInclude Include="GsResource.h" />
-    <ClInclude Include="GsState.h" />
     <ClInclude Include="GsTexture.h" />
     <ClInclude Include="GsViewer.h" />
     <ClInclude Include="Utility.h" />
@@ -176,7 +174,6 @@
     <ClCompile Include="GsApplicationStage.cpp" />
     <ClCompile Include="GsGeometryStage.cpp" />
     <ClCompile Include="GsRasterizerStage.cpp" />
-    <ClCompile Include="GsRenderer.cpp" />
     <ClCompile Include="GsResource.cpp" />
     <ClCompile Include="GsViewer.cpp" />
     <ClCompile Include="Shakuras.cpp" />

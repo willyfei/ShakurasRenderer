@@ -7,7 +7,7 @@
 SHAKURAS_BEGIN;
 
 
-void GenerateCube(std::vector<GsTriangle>& prims) {
+void GenerateCube(std::vector<GsVertex>& prims) {
 	static GsVertex mesh[8]{
 		{ { 1, -1,  1, 1 },{ 0, 0 },{ 1.0f, 0.2f, 0.2f }, 1 },
 		{ { -1, -1,  1, 1 },{ 0, 1 },{ 0.2f, 1.0f, 0.2f }, 1 },
@@ -23,8 +23,12 @@ void GenerateCube(std::vector<GsTriangle>& prims) {
 		GsVertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
 		p1.tc.u = 0, p1.tc.v = 0, p2.tc.u = 0, p2.tc.v = 1;
 		p3.tc.u = 1, p3.tc.v = 1, p4.tc.u = 1, p4.tc.v = 0;
-		prims.push_back({ p1, p2, p3 });
-		prims.push_back({ p3, p4, p1 });
+		prims.push_back(p1);
+		prims.push_back(p2);
+		prims.push_back(p3);
+		prims.push_back(p3);
+		prims.push_back(p4);
+		prims.push_back(p1);
 	};
 
 	draw_plane(0, 1, 2, 3);

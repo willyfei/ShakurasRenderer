@@ -105,8 +105,4 @@ inline GsVertex operator/(const GsVertex& v1, float d) {
 }
 
 
-typedef std::array<GsVertex, 3> GsTriangle;
-typedef std::array<GsVertex, 2> GsLine;
-
-
 SHAKURAS_END;

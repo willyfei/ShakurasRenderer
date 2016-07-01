@@ -1,8 +1,7 @@
 #pragma once
 #include "MathAndGeometry.h"
 #include "GsPrimitive.h"
-#include "GsDrawable.h"
-#include "GsGeometryStage.h"
+#include "GsPipeline.h"
 #include <vector>
 
 
@@ -13,20 +12,19 @@ class GsScanline;
 class GsTrapezoid;
 
 
-class GsRasterizerStage {
+class GsRasterizerStage : public IGsRasterizerStage {
 public:
-	void initialize(int ww, int hh, void* fb);
-	typedef GsGeometryStage::Out In;
-	void process(In& input);
+	virtual void initialize(int ww, int hh, void* fb);
+	virtual void process(In& input);
 
 private:
 	void clear();
-	void renderPrimitive(const GsTriangle& tri, GsStatePtr state);
-	void renderPrimitive(const GsLine& line, GsStatePtr state);
+	void renderPrimitive(const GsVertex* tri, GsTextureU32Ptr texture);
+	void renderPrimitive(const GsVertex* line);
 	void drawPixel(int x, int y, uint32_t c);
 	void drawLine(int x1, int y1, int x2, int y2, uint32_t c);
-	void drawScanline(GsScanline& scanline, GsStatePtr state);
-	void drawTrapezoid(GsTrapezoid& trap, GsStatePtr state);
+	void drawScanline(GsScanline& scanline, GsTextureU32Ptr texture);
+	void drawTrapezoid(GsTrapezoid& trap, GsTextureU32Ptr texture);
 
 public:
 	std::vector<uint32_t*> framebuffer_;

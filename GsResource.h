@@ -9,7 +9,7 @@ SHAKURAS_BEGIN;
 
 
 //primitive资源
-void GenerateCube(std::vector<GsTriangle>& prims);
+void GenerateCube(std::vector<GsVertex>& prims);
 
 
 //texture资源

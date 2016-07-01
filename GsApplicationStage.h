@@ -1,29 +1,21 @@
 #pragma once
 #include "Utility.h"
 #include "GsViewer.h"
-#include "GsDrawable.h"
-#include <array>
+#include "GsPipeline.h"
 
 
 SHAKURAS_BEGIN;
 
 
-class GsApplicationStage {
+class GsApplicationStage : public IGsApplicationStage {
 public:
-	void initialize(GsViewerPtr viewer);
-
-	struct Out {
-		std::vector<GsDrawable> drawables;
-		Matrix44f viewtrsf;
-	};
-	void process(Out& output);
+	virtual void initialize(GsViewerPtr viewer);
+	virtual void process(Out& output);
 
 private:
 	GsViewerPtr viewer_;
-	std::vector<GsTriangle> cube_;
-	std::array<GsStatePtr, 3> states_;
-	int indicator_;
-	int kbhit_;
+	GsTextureU32Ptr texture_;
+	std::vector<GsVertex> cube_;
 	float alpha_;
 	float pos_;
 };

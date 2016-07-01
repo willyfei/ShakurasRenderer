@@ -1,20 +1,15 @@
 #pragma once
 #include "MathAndGeometry.h"
-#include "GsDrawable.h"
-#include "GsApplicationStage.h"
-#include <vector>
+#include "GsPipeline.h"
 
 
 SHAKURAS_BEGIN;
 
 
-class GsGeometryStage {
+class GsGeometryStage : public IGsGeometryStage {
 public:
-	void initialize(float w, float h);
-
-	typedef GsApplicationStage::Out In;
-	typedef std::vector<GsDrawable> Out;
-	void process(In& input, Out& output);
+	virtual void initialize(float w, float h);
+	virtual void process(In& input, Out& output);
 
 private:
 	float width_, height_;

@@ -42,9 +42,6 @@
     <ClInclude Include="MathAndGeometry.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GsRenderer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="GsGeometryStage.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -54,10 +51,7 @@
     <ClInclude Include="GsRasterizerStage.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GsState.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GsDrawable.h">
+    <ClInclude Include="GsPipeline.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -84,9 +78,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GsRasterizerStage.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GsRenderer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

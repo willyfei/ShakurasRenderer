@@ -70,46 +70,56 @@ bool ScreenMapping(It b, It e, float width, float height) {
 void GsGeometryStage::process(GsGeometryStage::In& input, GsGeometryStage::Out& output) {
 	viewtrsf_ = input.viewtrsf;
 
-	for (auto i = input.drawables.begin(); i != input.drawables.end(); i++) {
-		GsDrawable& drawable = *i;
+	for (auto i = input.objects.begin(); i != input.objects.end(); i++) {
+		IGsApplicationStage::Object& object = *i;
 
 		//model view transform
-		Matrix44f mvtrsf = drawable.modeltrsf * viewtrsf_;
+		Matrix44f mvtrsf = object.modeltrsf * viewtrsf_;
 
-		for (auto ii = drawable.tris.begin(); ii != drawable.tris.end(); ii++) {
-			GsTriangle& tri = *ii;
-			Transform(tri.begin(), tri.end(), mvtrsf);
+		for (size_t ii = 0; ii < object.trianglelist.size(); ii += 3) {
+			GsVertex* tri = &object.trianglelist[ii];
+			Transform(tri, tri + 3, mvtrsf);
 		}
 
 		//vertex sharding, Î´ÊµÏÖ
 
 		//projection transform
-		for (auto ii = drawable.tris.begin(); ii != drawable.tris.end(); ii++) {
-			GsTriangle& tri = *ii;
-			Transform(tri.begin(), tri.end(), projtrsf_);
+		for (size_t ii = 0; ii < object.trianglelist.size(); ii += 3) {
+			GsVertex* tri = &object.trianglelist[ii];
+			Transform(tri, tri + 3, projtrsf_);
 		}
 
 		//cliping
 		size_t ii = 0;
-		while (ii < drawable.tris.size()) {
-			GsTriangle& tri = drawable.tris[ii];
-			if (!CheckCVV(tri.begin(), tri.end())) {
-				std::swap(drawable.tris[ii], drawable.tris.back());
-				drawable.tris.pop_back();
+		while (ii < object.trianglelist.size()) {
+			GsVertex* tri = &object.trianglelist[ii];
+			if (!CheckCVV(tri, tri + 3)) {
+				size_t len = object.trianglelist.size();
+				std::swap(object.trianglelist[ii], object.trianglelist[len - 2]);
+				std::swap(object.trianglelist[ii + 1], object.trianglelist[len - 1]);
+				std::swap(object.trianglelist[ii + 2], object.trianglelist[len]);
+				object.trianglelist.pop_back();
+				object.trianglelist.pop_back();
+				object.trianglelist.pop_back();
 			}
 			else {
-				ii++;
+				ii += 3;
 			}
 		}
 
 		//screen mapping
-		for (auto ii = drawable.tris.begin(); ii != drawable.tris.end(); ii++) {
-			GsTriangle& tri = *ii;
-			ScreenMapping(tri.begin(), tri.end(), width_, height_);
+		for (size_t ii = 0; ii < object.trianglelist.size(); ii += 3) {
+			GsVertex* tri = &object.trianglelist[ii];
+			ScreenMapping(tri, tri + 3, width_, height_);
 		}
-	}
 
-	std::swap(input.drawables, output);
+		//output
+		Geometric geom;
+		geom.texture = object.texture;
+		std::swap(geom.trianglelist, object.trianglelist);
+
+		output.push_back(geom);
+	}
 }
 
 
