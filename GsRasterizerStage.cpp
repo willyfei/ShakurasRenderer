@@ -161,18 +161,6 @@ void GsRasterizerStage::drawScanline(GsScanline& scanline, GsTextureU32Ptr textu
 			if (rhw > zbuf[x]) {
 				float ww = 1.0f / rhw;
 				zbuf[x] = rhw;
-				/*if (state->drawcolor) {
-					float r = scanline.v.color.r * ww;
-					float g = scanline.v.color.g * ww;
-					float b = scanline.v.color.b * ww;
-					int R = int(r * 255.0f);
-					int G = int(g * 255.0f);
-					int B = int(b * 255.0f);
-					R = Restrict(R, 0, 255);
-					G = Restrict(G, 0, 255);
-					B = Restrict(B, 0, 255);
-					framebuf[x] = (R << 16) | (G << 8) | B;
-					}*/
 				float u = scanline.v.tc.u * ww;
 				float v = scanline.v.tc.v * ww;
 				uint32_t cc = texture->at(u, v);
