@@ -45,7 +45,6 @@ void GenerateCube(std::vector<GsVertex>& verts, std::vector<std::array<int, 3> >
 }
 
 
-
 GsTextureU32Ptr GridTexture() {
 	static uint32_t pixels[256][256];
 	int i, j;

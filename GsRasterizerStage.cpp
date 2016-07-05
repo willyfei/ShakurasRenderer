@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "GsRasterizerStage.h"
-#include <assert.h>
 
 
 SHAKURAS_BEGIN;
@@ -102,7 +101,7 @@ int SpliteTrapezoid(const std::array<GsVertex, 3>& tri, std::vector<GsTrapezoid>
 		}
 	}
 
-	traps.push_back(GsTrapezoid());
+	traps.push_back(GsTrapezoid()); 
 	traps[0].top = p1->pos.y;
 	traps[0].bottom = p2->pos.y;
 	traps[1].top = p2->pos.y;
@@ -149,8 +148,8 @@ void GsRasterizerStage::initialize(int ww, int hh, void* fb) {
 	}
 }
 
+
 void GsRasterizerStage::drawScanline(GsScanline& scanline, GsTextureU32Ptr texture) {
-	assert(texture);
 	uint32_t* framebuf = framebuffer_[scanline.y];
 	std::vector<float>& zbuf = zbuffer_[scanline.y];
 	int x = scanline.x;
@@ -174,9 +173,8 @@ void GsRasterizerStage::drawScanline(GsScanline& scanline, GsTextureU32Ptr textu
 	}
 }
 
-void GsRasterizerStage::renderPrimitive(const GsVertex& v1, const GsVertex& v2, const GsVertex& v3, GsTextureU32Ptr texture) {
-	assert(texture);
 
+void GsRasterizerStage::renderPrimitive(const GsVertex& v1, const GsVertex& v2, const GsVertex& v3, GsTextureU32Ptr texture) {
 	GsVertex t1 = v1, t2 = v2, t3 = v3;
 
 	t1.rhwInitialize();
@@ -191,9 +189,11 @@ void GsRasterizerStage::renderPrimitive(const GsVertex& v1, const GsVertex& v2, 
 	}
 }
 
+
 void GsRasterizerStage::renderPrimitive(const GsVertex& v1, const GsVertex& v2) {
 	drawLine((int)v1.pos.x, (int)v1.pos.y, (int)v2.pos.x, (int)v2.pos.y, v1.color.u32());
 }
+
 
 void GsRasterizerStage::drawTrapezoid(GsTrapezoid& trap, GsTextureU32Ptr texture) {
 	GsScanline scanline;
@@ -211,6 +211,7 @@ void GsRasterizerStage::drawTrapezoid(GsTrapezoid& trap, GsTextureU32Ptr texture
 		}
 	}
 }
+
 
 void GsRasterizerStage::drawLine(int x1, int y1, int x2, int y2, uint32_t c) {
 	int x, y, rem = 0;
@@ -259,11 +260,13 @@ void GsRasterizerStage::drawLine(int x1, int y1, int x2, int y2, uint32_t c) {
 	}
 }
 
+
 void GsRasterizerStage::drawPixel(int x, int y, uint32_t c) {
 	if (((uint32_t)x) < (uint32_t)width_ && ((uint32_t)y) < (uint32_t)height_) {
 		framebuffer_[y][x] = c;
 	}
 }
+
 
 void GsRasterizerStage::clear() {
 	int y, x;
@@ -279,8 +282,21 @@ void GsRasterizerStage::clear() {
 	}
 }
 
+
+struct GsFragment {
+	float u, v;
+};
+
+
 void GsRasterizerStage::process(In& input) {
 	clear();
+
+	//triangle setup, Ê¡ÂÔ
+
+	//triangle traversal
+	std::vector<GsFragment> fraglist;
+	std::vector<int> fragmap;//xlen * y + x
+
 	for (int i = 0; i != input.itris.size(); i++) {
 		renderPrimitive(input.vertlist[input.itris[i][0]], input.vertlist[input.itris[i][1]], 
 			input.vertlist[input.itris[i][2]], input.texturelist[input.itexs[i]]);

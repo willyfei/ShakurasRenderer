@@ -22,6 +22,7 @@ void GsApplicationStage::initialize(GsViewerPtr viewer) {
 	viewer_ = viewer;
 }
 
+
 void GsApplicationStage::process(Out& output) {
 	if (viewer_->testUserMessage(kUMUp)) pos_ -= 0.02f;
 	if (viewer_->testUserMessage(kUMDown)) pos_ += 0.02f;
