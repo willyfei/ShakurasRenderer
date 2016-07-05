@@ -174,12 +174,8 @@ void GsRasterizerStage::drawScanline(GsScanline& scanline, GsTextureU32Ptr textu
 	}
 }
 
-void GsRasterizerStage::renderPrimitive(const GsVertex* tri, GsTextureU32Ptr texture) {
+void GsRasterizerStage::renderPrimitive(const GsVertex& v1, const GsVertex& v2, const GsVertex& v3, GsTextureU32Ptr texture) {
 	assert(texture);
-
-	const GsVertex& v1 = tri[0];
-	const GsVertex& v2 = tri[1];
-	const GsVertex& v3 = tri[2];
 
 	GsVertex t1 = v1, t2 = v2, t3 = v3;
 
@@ -195,10 +191,7 @@ void GsRasterizerStage::renderPrimitive(const GsVertex* tri, GsTextureU32Ptr tex
 	}
 }
 
-void GsRasterizerStage::renderPrimitive(const GsVertex* line) {
-	const GsVertex& v1 = line[0];
-	const GsVertex& v2 = line[1];
-
+void GsRasterizerStage::renderPrimitive(const GsVertex& v1, const GsVertex& v2) {
 	drawLine((int)v1.pos.x, (int)v1.pos.y, (int)v2.pos.x, (int)v2.pos.y, v1.color.u32());
 }
 
@@ -288,11 +281,9 @@ void GsRasterizerStage::clear() {
 
 void GsRasterizerStage::process(In& input) {
 	clear();
-	for (auto i = input.begin(); i != input.end(); i++) {
-		IGsGeometryStage::Geometric& geom = *i;
-		for (size_t ii = 0; ii < geom.trianglelist.size(); ii += 3) {
-			renderPrimitive(&geom.trianglelist[ii], geom.texture);
-		}
+	for (int i = 0; i != input.itris.size(); i++) {
+		renderPrimitive(input.vertlist[input.itris[i][0]], input.vertlist[input.itris[i][1]], 
+			input.vertlist[input.itris[i][2]], input.texturelist[input.itexs[i]]);
 	}
 }
 

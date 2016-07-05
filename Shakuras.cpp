@@ -25,7 +25,7 @@ int main()
 		return -1;
 	}
 
-	GsPipelineSpec<GsApplicationStage, GsGeometryStage, GsRasterizerStage> pipeline;
+	GsPipeline pipeline;
 	pipeline.initialize(viewer);
 
 	while (!viewer->testUserMessage(kUMEsc) && !viewer->testUserMessage(kUMClose)) {

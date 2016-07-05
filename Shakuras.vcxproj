@@ -161,7 +161,7 @@
     <ClInclude Include="GsGeometryStage.h" />
     <ClInclude Include="GsPipeline.h" />
     <ClInclude Include="GsRasterizerStage.h" />
-    <ClInclude Include="GsPrimitive.h" />
+    <ClInclude Include="GsVertex.h" />
     <ClInclude Include="GsResource.h" />
     <ClInclude Include="GsTexture.h" />
     <ClInclude Include="GsViewer.h" />
