@@ -2,6 +2,7 @@
 #include "MathAndGeometry.h"
 #include "GsGeometryStage.h"
 #include "GsVertexFragment.h"
+#include "GsFragmentBuffer.h"
 #include <vector>
 #include <array>
 
@@ -11,7 +12,7 @@ SHAKURAS_BEGIN;
 
 class GsScanline;
 class GsTrapezoid;
-class GsFragmentBuffer;
+
 
 class GsRasterizerStage {
 public:
