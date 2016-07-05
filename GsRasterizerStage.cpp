@@ -75,31 +75,33 @@ public:
 
 		fragvalid_.clear();
 		fragbuffer_.clear();
-		fragvalid_.resize(ylen, std::vector<bool>(xlen, false));
-		fragbuffer_.resize(ylen, std::vector<GsFragment>(xlen));
+		fragvalid_.resize(ylen * xlen, false);
+		fragbuffer_.resize(ylen * xlen);
 	}
 
 	const GsFragment& fragmentAt(int x, int y) const {
-		return fragbuffer_[y - ybegin_][x - xbegin_];
+		int yy = y - ybegin_;
+		int xx = x - xbegin_;
+		return fragbuffer_[yy * (xend_ - xbegin_) + xx];
 	}
 
 	GsFragment& fragmentAt(int x, int y) {
 		int yy = y - ybegin_;
 		int xx = x - xbegin_;
-		return fragbuffer_[yy][xx];
+		return fragbuffer_[yy * (xend_ - xbegin_) + xx];
 	}
 
 	bool fragmentValid(int x, int y) {
 		int yy = y - ybegin_;
 		int xx = x - xbegin_;
-		return fragvalid_[yy][xx];
+		return fragvalid_[yy * (xend_ - xbegin_) + xx];
 	}
 
 	void travelsal(int x, int y, const GsFragment& frag) {
 		int yy = y - ybegin_;
 		int xx = x - xbegin_;
-		fragvalid_[yy][xx] = true;
-		fragbuffer_[yy][xx] = frag;
+		fragvalid_[yy * (xend_ - xbegin_) + xx] = true;
+		fragbuffer_[yy * (xend_ - xbegin_) + xx] = frag;
 	}
 
 	template<class S>
@@ -127,11 +129,11 @@ public:
 		}
 	}
 
-public:
+private:
 	int xbegin_, ybegin_;
 	int xend_, yend_;
-	std::vector<std::vector<bool> > fragvalid_;
-	std::vector<std::vector<GsFragment> > fragbuffer_;
+	std::vector<bool> fragvalid_;
+	std::vector<GsFragment> fragbuffer_;
 };
 
 
@@ -228,31 +230,6 @@ void GsRasterizerStage::initialize(int ww, int hh, void* fb) {
 		framebuffer_[i] = (uint32_t*)(framebuf + width_ * 4 * i);
 	}
 }
-
-/*
-void GsRasterizerStage::drawScanline(GsScanline& scanline, GsTextureU32Ptr texture) {
-	uint32_t* framebuf = framebuffer_[scanline.y];
-	std::vector<float>& zbuf = zbuffer_[scanline.y];
-	int x = scanline.x;
-	int w = scanline.w;
-	for (; w > 0; x++, w--) {
-		if (x >= 0 && x < width_) {
-			float rhw = scanline.v.rhw;
-			if (rhw > zbuf[x]) {
-				float ww = 1.0f / rhw;
-				zbuf[x] = rhw;
-				float u = scanline.v.tc.u * ww;
-				float v = scanline.v.tc.v * ww;
-				uint32_t cc = texture->at(u, v);
-				framebuf[x] = cc;
-			}
-		}
-		scanline.v = scanline.v + scanline.step;
-		if (x >= width_) {
-			break;
-		}
-	}
-}*/
 
 
 void GsRasterizerStage::traversalScanline(GsScanline& scanline, GsFragmentBuffer& fragbuf) {
