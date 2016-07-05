@@ -5,7 +5,7 @@
 SHAKURAS_BEGIN;
 
 
-class GsColor24 {
+/*class GsColor24 {
 public:
 	GsColor24() : r(0.0f), g(0.0f), b(0.0f) {}
 	GsColor24(float rr, float gg, float bb) : r(rr), g(gg), b(bb) {}
@@ -38,7 +38,7 @@ inline GsColor24 operator*(const GsColor24& c1, float t) {
 inline GsColor24 operator/(const GsColor24& c1, float d) {
 	float inv = 1.0f / d;
 	return GsColor24(c1.r * inv, c1.g * inv, c1.b * inv);
-}
+}*/
 
 
 class GsTexCoord {
@@ -69,40 +69,49 @@ inline GsTexCoord operator/(const GsTexCoord& tc1, float d) {
 class GsVertex {
 public:
 	GsVertex() : rhw(1.0f) {}
-	GsVertex(const Vector4f& ppos, const GsTexCoord& ttc, const GsColor24& cc, float rrhw)
-		: pos(ppos), tc(ttc), color(cc), rhw(rrhw) {}
+	GsVertex(const Vector4f& ppos, const GsTexCoord& ttc, float rrhw)
+		: pos(ppos), tc(ttc), rhw(rrhw) {}
 
 public:
 	void rhwInitialize() {
 		rhw = 1.0f / pos.w;
 		tc.u *= rhw;
 		tc.v *= rhw;
-		color.r *= rhw;
-		color.g *= rhw;
-		color.b *= rhw;
 	}
 
 public:
 	Vector4f pos;
 	GsTexCoord tc;
-	GsColor24 color;
 	float rhw;
 };
 
 
 inline GsVertex operator+(const GsVertex& v1, const GsVertex& v2) {
-	return GsVertex(v1.pos + v2.pos, v1.tc + v2.tc, v1.color + v2.color, v1.rhw + v2.rhw);
+	return GsVertex(v1.pos + v2.pos, v1.tc + v2.tc, v1.rhw + v2.rhw);
 }
 inline GsVertex operator-(const GsVertex& v1, const GsVertex& v2) {
-	return GsVertex(v1.pos - v2.pos, v1.tc - v2.tc, v1.color - v2.color, v1.rhw - v2.rhw);
+	return GsVertex(v1.pos - v2.pos, v1.tc - v2.tc, v1.rhw - v2.rhw);
 }
 inline GsVertex operator*(const GsVertex& v1, float t) {
-	return GsVertex(v1.pos * t, v1.tc * t, v1.color * t, v1.rhw * t);
+	return GsVertex(v1.pos * t, v1.tc * t, v1.rhw * t);
 }
 inline GsVertex operator/(const GsVertex& v1, float d) {
 	float t = 1.0f / d;
-	return GsVertex(v1.pos * t, v1.tc * t, v1.color * t, v1.rhw * t);
+	return GsVertex(v1.pos * t, v1.tc * t, v1.rhw * t);
 }
+
+
+class GsFragment {
+public:
+	GsFragment() : z(1.0f), c(0) {}
+	GsFragment(const GsTexCoord& ttc, float zz)
+		: tc(ttc), z(zz) {}
+
+public:
+	GsTexCoord tc;
+	float z;
+	uint32_t c;
+};
 
 
 SHAKURAS_END;

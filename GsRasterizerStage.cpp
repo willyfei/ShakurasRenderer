@@ -54,6 +54,87 @@ public:
 };
 
 
+class GsFragmentBuffer {
+public:
+	void reset(const GsVertex& v1, const GsVertex& v2, const GsVertex& v3) {
+		float xmin = (std::min)((std::min)(v1.pos.x, v2.pos.x), v3.pos.x);
+		float xmax = (std::max)((std::max)(v1.pos.x, v2.pos.x), v3.pos.x);
+		float ymin = (std::min)((std::min)(v1.pos.y, v2.pos.y), v3.pos.y);
+		float ymax = (std::max)((std::max)(v1.pos.y, v2.pos.y), v3.pos.y);
+
+		xbegin_ = (int)floorf(xmin - 0.5f);
+		ybegin_ = (int)floorf(ymin - 0.5f);
+		xend_ = (int)roundf(xmax + 0.5f) + 1;
+		yend_ = (int)roundf(ymax + 0.5f) + 1;
+
+		xbegin_ = (std::max)(xbegin_, 0);
+		ybegin_ = (std::max)(ybegin_, 0);
+
+		int ylen = yend_ - ybegin_;
+		int xlen = xend_ - xbegin_;
+
+		fragvalid_.clear();
+		fragbuffer_.clear();
+		fragvalid_.resize(ylen, std::vector<bool>(xlen, false));
+		fragbuffer_.resize(ylen, std::vector<GsFragment>(xlen));
+	}
+
+	const GsFragment& fragmentAt(int x, int y) const {
+		return fragbuffer_[y - ybegin_][x - xbegin_];
+	}
+
+	GsFragment& fragmentAt(int x, int y) {
+		int yy = y - ybegin_;
+		int xx = x - xbegin_;
+		return fragbuffer_[yy][xx];
+	}
+
+	bool fragmentValid(int x, int y) {
+		int yy = y - ybegin_;
+		int xx = x - xbegin_;
+		return fragvalid_[yy][xx];
+	}
+
+	void travelsal(int x, int y, const GsFragment& frag) {
+		int yy = y - ybegin_;
+		int xx = x - xbegin_;
+		fragvalid_[yy][xx] = true;
+		fragbuffer_[yy][xx] = frag;
+	}
+
+	template<class S>
+	void shader(S& sampler) {
+		for (int y = ybegin_; y != yend_; y++) {
+			for (int x = xbegin_; x != xend_; x++) {
+				if (fragmentValid(x, y)) {
+					GsFragment& frag = fragmentAt(x, y);
+					frag.c = sampler.at(frag.tc.u, frag.tc.v);
+				}
+			}
+		}
+	}
+
+	template<class FB, class ZB>
+	void merge(FB& framebuffer, ZB& zbuffer) {
+		for (int y = ybegin_; y != yend_; y++) {
+			for (int x = xbegin_; x != xend_; x++) {
+				const GsFragment& frag = fragmentAt(x, y);
+				if (frag.z > zbuffer[y][x] && fragmentValid(x, y)) {
+					zbuffer[y][x] = frag.z;
+					framebuffer[y][x] = frag.c;
+				}
+			}
+		}
+	}
+
+public:
+	int xbegin_, ybegin_;
+	int xend_, yend_;
+	std::vector<std::vector<bool> > fragvalid_;
+	std::vector<std::vector<GsFragment> > fragbuffer_;
+};
+
+
 int SpliteTrapezoid(const std::array<GsVertex, 3>& tri, std::vector<GsTrapezoid>& traps) {
 	const GsVertex* p1 = &tri[0];
 	const GsVertex* p2 = &tri[1];
@@ -148,7 +229,7 @@ void GsRasterizerStage::initialize(int ww, int hh, void* fb) {
 	}
 }
 
-
+/*
 void GsRasterizerStage::drawScanline(GsScanline& scanline, GsTextureU32Ptr texture) {
 	uint32_t* framebuf = framebuffer_[scanline.y];
 	std::vector<float>& zbuf = zbuffer_[scanline.y];
@@ -171,10 +252,33 @@ void GsRasterizerStage::drawScanline(GsScanline& scanline, GsTextureU32Ptr textu
 			break;
 		}
 	}
+}*/
+
+
+void GsRasterizerStage::traversalScanline(GsScanline& scanline, GsFragmentBuffer& fragbuf) {
+	int x = scanline.x;
+	int w = scanline.w;
+	for (; w > 0; x++, w--) {
+		if (x >= 0 && x < width_) {
+			float rhw = scanline.v.rhw;
+			float ww = 1.0f / rhw;
+
+			GsFragment frag;
+			frag.tc.u = scanline.v.tc.u * ww;
+			frag.tc.v = scanline.v.tc.v * ww;
+			frag.z = rhw;
+
+			fragbuf.travelsal(x, scanline.y, frag);
+		}
+		scanline.v = scanline.v + scanline.step;
+		if (x >= width_) {
+			break;
+		}
+	}
 }
 
 
-void GsRasterizerStage::renderPrimitive(const GsVertex& v1, const GsVertex& v2, const GsVertex& v3, GsTextureU32Ptr texture) {
+void GsRasterizerStage::traversalTriangle(const GsVertex& v1, const GsVertex& v2, const GsVertex& v3, GsFragmentBuffer& fragbuf) {
 	GsVertex t1 = v1, t2 = v2, t3 = v3;
 
 	t1.rhwInitialize();
@@ -185,17 +289,12 @@ void GsRasterizerStage::renderPrimitive(const GsVertex& v1, const GsVertex& v2, 
 	SpliteTrapezoid({ t1, t2, t3 }, traps);
 
 	for (auto i = traps.begin(); i != traps.end(); i++) {
-		drawTrapezoid(*i, texture);
+		traversalTrapezoid(*i, fragbuf);
 	}
 }
 
 
-void GsRasterizerStage::renderPrimitive(const GsVertex& v1, const GsVertex& v2) {
-	drawLine((int)v1.pos.x, (int)v1.pos.y, (int)v2.pos.x, (int)v2.pos.y, v1.color.u32());
-}
-
-
-void GsRasterizerStage::drawTrapezoid(GsTrapezoid& trap, GsTextureU32Ptr texture) {
+void GsRasterizerStage::traversalTrapezoid(GsTrapezoid& trap, GsFragmentBuffer& fragbuf) {
 	GsScanline scanline;
 	int j, top, bottom;
 	top = (int)(trap.top + 0.5f);
@@ -204,66 +303,11 @@ void GsRasterizerStage::drawTrapezoid(GsTrapezoid& trap, GsTextureU32Ptr texture
 		if (j >= 0 && j < height_) {
 			trap.scanlineInterp((float)j + 0.5f);
 			scanline.initialize(trap, j);
-			drawScanline(scanline, texture);
+			traversalScanline(scanline, fragbuf);
 		}
 		if (j >= height_) {
 			break;
 		}
-	}
-}
-
-
-void GsRasterizerStage::drawLine(int x1, int y1, int x2, int y2, uint32_t c) {
-	int x, y, rem = 0;
-	if (x1 == x2 && y1 == y2) {
-		drawPixel(x1, y1, c);
-	}
-	else if (x1 == x2) {
-		int inc = (y1 <= y2) ? 1 : -1;
-		for (y = y1; y != y2; y += inc) drawPixel(x1, y, c);
-		drawPixel(x2, y2, c);
-	}
-	else if (y1 == y2) {
-		int inc = (x1 <= x2) ? 1 : -1;
-		for (x = x1; x != x2; x += inc) drawPixel(x, y1, c);
-		drawPixel(x2, y2, c);
-	}
-	else {
-		int dx = (x1 < x2) ? x2 - x1 : x1 - x2;
-		int dy = (y1 < y2) ? y2 - y1 : y1 - y2;
-		if (dx >= dy) {
-			if (x2 < x1) x = x1, y = y1, x1 = x2, y1 = y2, x2 = x, y2 = y;
-			for (x = x1, y = y1; x <= x2; x++) {
-				drawPixel(x, y, c);
-				rem += dy;
-				if (rem >= dx) {
-					rem -= dx;
-					y += (y2 >= y1) ? 1 : -1;
-					drawPixel(x, y, c);
-				}
-			}
-			drawPixel(x2, y2, c);
-		}
-		else {
-			if (y2 < y1) x = x1, y = y1, x1 = x2, y1 = y2, x2 = x, y2 = y;
-			for (x = x1, y = y1; y <= y2; y++) {
-				drawPixel(x, y, c);
-				rem += dx;
-				if (rem >= dy) {
-					rem -= dy;
-					x += (x2 >= x1) ? 1 : -1;
-					drawPixel(x, y, c);
-				}
-			}
-			drawPixel(x2, y2, c);
-		}
-	}
-}
-
-
-void GsRasterizerStage::drawPixel(int x, int y, uint32_t c) {
-	if (((uint32_t)x) < (uint32_t)width_ && ((uint32_t)y) < (uint32_t)height_) {
-		framebuffer_[y][x] = c;
 	}
 }
 
@@ -283,23 +327,27 @@ void GsRasterizerStage::clear() {
 }
 
 
-struct GsFragment {
-	float u, v;
-};
-
-
 void GsRasterizerStage::process(In& input) {
 	clear();
 
-	//triangle setup, Ê¡ÂÔ
-
-	//triangle traversal
-	std::vector<GsFragment> fraglist;
-	std::vector<int> fragmap;//xlen * y + x
-
+	GsFragmentBuffer fragbuffer;
 	for (int i = 0; i != input.itris.size(); i++) {
-		renderPrimitive(input.vertlist[input.itris[i][0]], input.vertlist[input.itris[i][1]], 
-			input.vertlist[input.itris[i][2]], input.texturelist[input.itexs[i]]);
+		const GsVertex& v1 = input.vertlist[input.itris[i][0]];
+		const GsVertex& v2 = input.vertlist[input.itris[i][1]];
+		const GsVertex& v3 = input.vertlist[input.itris[i][2]];
+		GsTextureU32Ptr texture = input.texturelist[input.itexs[i]];
+
+		//triangle setup, Ê¡ÂÔ
+
+		//triangle traversal
+		fragbuffer.reset(v1, v2, v3);
+		traversalTriangle(v1, v2, v3, fragbuffer);
+
+		//fragment shader
+		fragbuffer.shader(*texture);
+
+		//merge
+		fragbuffer.merge(framebuffer_, zbuffer_);
 	}
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "Utility.h"
 #include "GsViewer.h"
-#include "GsVertex.h"
+#include "GsVertexFragment.h"
 #include "GsTexture.h"
 #include <vector>
 #include <array>

@@ -51,7 +51,7 @@
     <ClInclude Include="GsPipeline.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GsVertex.h">
+    <ClInclude Include="GsVertexFragment.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #pragma once
 #include "MathAndGeometry.h"
-#include "GsVertex.h"
+#include "GsVertexFragment.h"
 #include "GsTexture.h"
 #include <vector>
 #include <array>
