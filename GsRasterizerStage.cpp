@@ -141,6 +141,7 @@ void GsRasterizerStage::initialize(int ww, int hh, void* fb) {
 
 	framebuffer_.resize(height_, nullptr);
 	zbuffer_.resize(height_, std::vector<float>(width_, 0.0f));
+	fragbuffer_.resize(height_, std::vector<GsFragment>(width_));
 
 	char* framebuf = (char*)fb;
 	for (int i = 0; i < height_; i++) {
@@ -149,7 +150,7 @@ void GsRasterizerStage::initialize(int ww, int hh, void* fb) {
 }
 
 
-void GsRasterizerStage::traversalScanline(GsScanline& scanline, GsFragmentBuffer& fragbuf) {
+void GsRasterizerStage::traversalScanline(GsScanline& scanline) {
 	int x = scanline.x;
 	int w = scanline.w;
 	for (; w > 0; x++, w--) {
@@ -157,12 +158,14 @@ void GsRasterizerStage::traversalScanline(GsScanline& scanline, GsFragmentBuffer
 			float rhw = scanline.v.rhw;
 			float ww = 1.0f / rhw;
 
-			GsFragment frag;
+			GsFragment& frag = fragbuffer_[scanline.y][x];
+			frag.x = x;
+			frag.y = scanline.y;
 			frag.tc.u = scanline.v.tc.u * ww;
 			frag.tc.v = scanline.v.tc.v * ww;
 			frag.z = rhw;
 
-			fragbuf.travelsal(x, scanline.y, frag);
+			fragvalid_.push_back({x, scanline.y});
 		}
 		scanline.v = scanline.v + scanline.step;
 		if (x >= width_) {
@@ -172,7 +175,7 @@ void GsRasterizerStage::traversalScanline(GsScanline& scanline, GsFragmentBuffer
 }
 
 
-void GsRasterizerStage::traversalTriangle(const GsVertex& v1, const GsVertex& v2, const GsVertex& v3, GsFragmentBuffer& fragbuf) {
+void GsRasterizerStage::traversalTriangle(const GsVertex& v1, const GsVertex& v2, const GsVertex& v3) {
 	GsVertex t1 = v1, t2 = v2, t3 = v3;
 
 	t1.rhwInitialize();
@@ -183,12 +186,12 @@ void GsRasterizerStage::traversalTriangle(const GsVertex& v1, const GsVertex& v2
 	SpliteTrapezoid({ t1, t2, t3 }, traps);
 
 	for (auto i = traps.begin(); i != traps.end(); i++) {
-		traversalTrapezoid(*i, fragbuf);
+		traversalTrapezoid(*i);
 	}
 }
 
 
-void GsRasterizerStage::traversalTrapezoid(GsTrapezoid& trap, GsFragmentBuffer& fragbuf) {
+void GsRasterizerStage::traversalTrapezoid(GsTrapezoid& trap) {
 	GsScanline scanline;
 	int j, top, bottom;
 	top = (int)(trap.top + 0.5f);
@@ -197,7 +200,7 @@ void GsRasterizerStage::traversalTrapezoid(GsTrapezoid& trap, GsFragmentBuffer& 
 		if (j >= 0 && j < height_) {
 			trap.scanlineInterp((float)j + 0.5f);
 			scanline.initialize(trap, j);
-			traversalScanline(scanline, fragbuf);
+			traversalScanline(scanline);
 		}
 		if (j >= height_) {
 			break;
@@ -224,7 +227,6 @@ void GsRasterizerStage::clear() {
 void GsRasterizerStage::process(In& input) {
 	clear();
 
-	GsFragmentBuffer fragbuffer;
 	for (int i = 0; i != input.itris.size(); i++) {
 		const GsVertex& v1 = input.vertlist[input.itris[i][0]];
 		const GsVertex& v2 = input.vertlist[input.itris[i][1]];
@@ -234,14 +236,23 @@ void GsRasterizerStage::process(In& input) {
 		//triangle setup, Ê¡ÂÔ
 
 		//triangle traversal
-		fragbuffer.reset(v1, v2, v3);
-		traversalTriangle(v1, v2, v3, fragbuffer);
+		fragvalid_.clear();
+		traversalTriangle(v1, v2, v3);
 
 		//fragment shader
-		fragbuffer.shader(*texture);
+		for (auto i = fragvalid_.begin(); i != fragvalid_.end(); i++) {
+			GsFragment& frag = fragbuffer_[i->at(1)][i->at(0)];
+			frag.c = texture->at(frag.tc.u, frag.tc.v);
+		}
 
 		//merging
-		fragbuffer.merge(framebuffer_, zbuffer_);
+		for (auto i = fragvalid_.begin(); i != fragvalid_.end(); i++) {
+			GsFragment& frag = fragbuffer_[i->at(1)][i->at(0)];
+			if (frag.z > zbuffer_[frag.y][frag.x]) {
+				zbuffer_[frag.y][frag.x] = frag.z;
+				framebuffer_[frag.y][frag.x] = frag.c;
+			}
+		}
 	}
 }
 

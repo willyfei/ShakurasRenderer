@@ -103,11 +103,12 @@ inline GsVertex operator/(const GsVertex& v1, float d) {
 
 class GsFragment {
 public:
-	GsFragment() : z(1.0f), c(0) {}
-	GsFragment(const GsTexCoord& ttc, float zz)
-		: tc(ttc), z(zz) {}
+	GsFragment() : x(0), y(0), z(1.0f), c(0) {}
+	GsFragment(int xx, int yy, const GsTexCoord& ttc, float zz)
+		: x(xx), y(yy), tc(ttc), z(zz) {}
 
 public:
+	int x, y;
 	GsTexCoord tc;
 	float z;
 	uint32_t c;

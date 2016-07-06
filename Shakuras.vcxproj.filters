@@ -57,7 +57,7 @@
     <ClInclude Include="stb_image.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GsFragmentBuffer.h">
+    <ClInclude Include="GsShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
