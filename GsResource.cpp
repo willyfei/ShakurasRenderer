@@ -7,22 +7,22 @@
 SHAKURAS_BEGIN;
 
 
-void GenerateCube(std::vector<GsVertex>& verts, std::vector<std::array<int, 3> >& itris) {
-	static GsVertex mesh[8]{
-		{ { 1, -1,  1, 1 },{ 0, 0 }, 1 },
-		{ { -1, -1,  1, 1 },{ 0, 1 }, 1 },
-		{ { -1,  1,  1, 1 },{ 1, 1 }, 1 },
-		{ { 1,  1,  1, 1 },{ 1, 0 }, 1 },
-		{ { 1, -1, -1, 1 },{ 0, 0 }, 1 },
-		{ { -1, -1, -1, 1 },{ 0, 1 }, 1 },
-		{ { -1,  1, -1, 1 },{ 1, 1 }, 1 },
-		{ { 1,  1, -1, 1 },{ 1, 0 }, 1 },
+void GenerateCube(std::vector<GsVertexA4>& verts, std::vector<std::array<int, 3> >& itris) {
+	static GsVertexA4 mesh[8]{
+		{ { 1, -1,  1, 1 } },
+		{ { -1, -1,  1, 1 } },
+		{ { -1,  1,  1, 1 } },
+		{ { 1,  1,  1, 1 } },
+		{ { 1, -1, -1, 1 } },
+		{ { -1, -1, -1, 1 } },
+		{ { -1,  1, -1, 1 } },
+		{ { 1,  1, -1, 1 } },
 	};
 
 	auto draw_plane = [&](int a, int b, int c, int d) {
-		GsVertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
-		p1.tc.u = 0, p1.tc.v = 0, p2.tc.u = 0, p2.tc.v = 1;
-		p3.tc.u = 1, p3.tc.v = 1, p4.tc.u = 1, p4.tc.v = 0;
+		GsVertexA4 p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
+		p1.attrib[0] = 0, p1.attrib[1] = 0, p2.attrib[0] = 0, p2.attrib[1] = 1;
+		p3.attrib[0] = 1, p3.attrib[1] = 1, p4.attrib[0] = 1, p4.attrib[1] = 0;
 		int index = verts.size();
 		verts.push_back(p1);
 		verts.push_back(p2);

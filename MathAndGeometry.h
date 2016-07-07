@@ -329,7 +329,7 @@ T Interp(const T& v1, const T& v2, float t) {
 
 //”Úœﬁ÷∆
 template<class T>
-T Restrict(T val, T low, T high) {
+T Clamp(T val, T low, T high) {
 	return val < low ? low : (high < val ? high : val);
 }
 

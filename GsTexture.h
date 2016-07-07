@@ -28,8 +28,8 @@ public:
 		v *= (h - 1);
 		int x = (int)(u + 0.5f);
 		int y = (int)(v + 0.5f);
-		x = Restrict(x, 0, w - 1);
-		y = Restrict(y, 0, h - 1);
+		x = Clamp(x, 0, w - 1);
+		y = Clamp(y, 0, h - 1);
 		return buffer[y][x];
 	}
 

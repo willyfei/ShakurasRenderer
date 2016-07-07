@@ -8,7 +8,7 @@ SHAKURAS_BEGIN;
 class GsEdge {
 public:
 	GsEdge() {}
-	GsEdge(const GsVertex& vv, const GsVertex& vv1, const GsVertex& vv2) : v(vv), v1(vv1), v2(vv2) {}
+	GsEdge(const GsVertexA4& vv, const GsVertexA4& vv1, const GsVertexA4& vv2) : v(vv), v1(vv1), v2(vv2) {}
 
 public:
 	void scanlineInterp(float y) {
@@ -17,7 +17,7 @@ public:
 	}
 
 public:
-	GsVertex v, v1, v2;
+	GsVertexA4 v, v1, v2;
 };
 
 
@@ -49,15 +49,15 @@ public:
 	}
 
 public:
-	GsVertex v, step;
+	GsVertexA4 v, step;
 	int x, y, w;
 };
 
 
-int SpliteTrapezoid(const std::array<GsVertex, 3>& tri, std::vector<GsTrapezoid>& traps) {
-	const GsVertex* p1 = &tri[0];
-	const GsVertex* p2 = &tri[1];
-	const GsVertex* p3 = &tri[2];
+int SpliteTrapezoid(const std::array<GsVertexA4, 3>& tri, std::vector<GsTrapezoid>& traps) {
+	const GsVertexA4* p1 = &tri[0];
+	const GsVertexA4* p2 = &tri[1];
+	const GsVertexA4* p3 = &tri[2];
 	float k, x;
 
 	if (p1->pos.y > p2->pos.y) std::swap(p1, p2);
@@ -158,7 +158,7 @@ void GsRasterizerStage::initialize(int ww, int hh, void* fb) {
 }
 
 
-void GsRasterizerStage::traversalScanline(GsScanline& scanline, int ti) {
+void GsRasterizerStage::traversalScanline(GsScanline& scanline) {
 	int x = scanline.x;
 	int w = scanline.w;
 	for (; w > 0; x++, w--) {
@@ -166,12 +166,10 @@ void GsRasterizerStage::traversalScanline(GsScanline& scanline, int ti) {
 			float rhw = scanline.v.rhw;
 			float ww = 1.0f / rhw;
 
-			GsFragment frag;
+			GsFragmentV4 frag;
 			frag.x = x;
 			frag.y = scanline.y;
-			frag.ti = ti;
-			frag.tc.u = scanline.v.tc.u * ww;
-			frag.tc.v = scanline.v.tc.v * ww;
+			frag.varying = scanline.v.attrib * ww;
 			frag.z = rhw;
 
 			fragbuffer_[scanline.y][x].push_back(frag);
@@ -184,8 +182,8 @@ void GsRasterizerStage::traversalScanline(GsScanline& scanline, int ti) {
 }
 
 
-void GsRasterizerStage::traversalTriangle(const std::array<GsVertex, 3>& tri, int ti) {
-	GsVertex t1 = tri[0], t2 = tri[1], t3 = tri[2];
+void GsRasterizerStage::traversalTriangle(const std::array<GsVertexA4, 3>& tri) {
+	GsVertexA4 t1 = tri[0], t2 = tri[1], t3 = tri[2];
 
 	t1.rhwInitialize();
 	t2.rhwInitialize();
@@ -195,12 +193,12 @@ void GsRasterizerStage::traversalTriangle(const std::array<GsVertex, 3>& tri, in
 	SpliteTrapezoid({ t1, t2, t3 }, traps);
 
 	for (auto i = traps.begin(); i != traps.end(); i++) {
-		traversalTrapezoid(*i, ti);
+		traversalTrapezoid(*i);
 	}
 }
 
 
-void GsRasterizerStage::traversalTrapezoid(GsTrapezoid& trap, int ti) {
+void GsRasterizerStage::traversalTrapezoid(GsTrapezoid& trap) {
 	GsScanline scanline;
 	int j, top, bottom;
 	top = (int)(trap.top + 0.5f);
@@ -209,7 +207,7 @@ void GsRasterizerStage::traversalTrapezoid(GsTrapezoid& trap, int ti) {
 		if (j >= 0 && j < height_) {
 			trap.scanlineInterp((float)j + 0.5f);
 			scanline.initialize(trap, j);
-			traversalScanline(scanline, ti);
+			traversalScanline(scanline);
 		}
 		if (j >= height_) {
 			break;
@@ -247,21 +245,20 @@ void GsRasterizerStage::process(In& input) {
 
 	//triangle traversal
 	for (int i = 0; i != input.itris.size(); i++) {
-		const GsVertex& v1 = input.vertlist[input.itris[i][0]];
-		const GsVertex& v2 = input.vertlist[input.itris[i][1]];
-		const GsVertex& v3 = input.vertlist[input.itris[i][2]];
-		int ti = input.itexs[i];
+		const GsVertexA4& v1 = input.vertlist[input.itris[i][0]];
+		const GsVertexA4& v2 = input.vertlist[input.itris[i][1]];
+		const GsVertexA4& v3 = input.vertlist[input.itris[i][2]];
 
-		traversalTriangle({ v1, v2, v3 }, ti);
+		traversalTriangle({ v1, v2, v3 });
 	}
 
 	//fragment shader
 	for (auto i = fragbuffer_.begin(); i != fragbuffer_.end(); i++) {
 		for (auto ii = i->begin(); ii != i->end(); ii++) {
 			for (auto iii = ii->begin(); iii != ii->end(); iii++) {
-				GsFragment& frag = *iii;
-				GsTextureU32Ptr texture = input.texturelist[frag.ti];
-				frag.c = texture->at(frag.tc.u, frag.tc.v);
+				GsFragmentV4& frag = *iii;
+				GsTextureU32Ptr texture = input.texture;
+				frag.c = texture->at(frag.varying[0], frag.varying[1]);
 			}
 		}
 	}
@@ -270,7 +267,7 @@ void GsRasterizerStage::process(In& input) {
 	for (auto i = fragbuffer_.begin(); i != fragbuffer_.end(); i++) {
 		for (auto ii = i->begin(); ii != i->end(); ii++) {
 			for (auto iii = ii->begin(); iii != ii->end(); iii++) {
-				GsFragment& frag = *iii;
+				GsFragmentV4& frag = *iii;
 				if (frag.z > zbuffer_[frag.y][frag.x]) {
 					zbuffer_[frag.y][frag.x] = frag.z;
 					framebuffer_[frag.y][frag.x] = frag.c;

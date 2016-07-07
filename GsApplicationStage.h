@@ -19,12 +19,11 @@ public:
 		Matrix44f viewtrsf;
 		Matrix44f projtrsf;
 
-		std::vector<GsVertex> vertlist;
+		std::vector<GsVertexA4> vertlist;
 		std::vector<Matrix44f> modeltrsflist;
-		std::vector<GsTextureU32Ptr> texturelist;
+		GsTextureU32Ptr texture;
 
 		std::vector<std::array<int, 3> > itris;//vertlist Ë÷Òý
-		std::vector<int> itexs;//texturelist Ë÷Òý
 		std::vector<int> itrsfs;//modeltrsflist Ë÷Òý
 	};
 

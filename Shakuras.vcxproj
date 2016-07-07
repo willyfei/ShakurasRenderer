@@ -240,6 +240,7 @@
     <ClInclude Include="GsGeometryStage.h" />
     <ClInclude Include="GsPipeline.h" />
     <ClInclude Include="GsRasterizerStage.h" />
+    <ClInclude Include="GsShader.h" />
     <ClInclude Include="GsVertexFragment.h" />
     <ClInclude Include="GsResource.h" />
     <ClInclude Include="GsTexture.h" />

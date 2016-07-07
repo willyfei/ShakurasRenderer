@@ -12,9 +12,8 @@ void GsApplicationStage::initialize(GsViewerPtr viewer) {
 	output_.height = (float)viewer->height();
 	output_.projtrsf = Matrix44f::Perspective(kGSPI * 0.5f, output_.width / output_.height, 1.0f, 500.0f);
 
-	output_.texturelist.push_back(LoadTexture("1.png"));
+	output_.texture = LoadTexture("1.png");
 	GenerateCube(output_.vertlist, output_.itris);
-	output_.itexs.resize(output_.itris.size(), 0);
 
 	alpha_ = 1;
 	pos_ = 3.5;

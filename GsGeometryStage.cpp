@@ -35,7 +35,7 @@ inline void ScreenMapping(Vector4f& v, float width, float height) {
 }
 
 
-inline void Transform(const Matrix44f& m, GsVertex& v) {
+inline void Transform(const Matrix44f& m, GsVertexA4& v) {
 	v.pos = m.transform(v.pos);
 }
 
@@ -65,10 +65,8 @@ void GsGeometryStage::process(GsGeometryStage::In& input, GsGeometryStage::Out& 
 			CheckCVV(input.vertlist[input.itris[i][1]].pos) != 0 ||
 			CheckCVV(input.vertlist[input.itris[i][2]].pos) != 0) {
 			std::swap(input.itris[i], input.itris.back());
-			std::swap(input.itexs[i], input.itexs.back());
 			std::swap(input.itrsfs[i], input.itrsfs.back());
 			input.itris.pop_back();
-			input.itexs.pop_back();
 			input.itrsfs.pop_back();
 		}
 		else {
@@ -83,9 +81,8 @@ void GsGeometryStage::process(GsGeometryStage::In& input, GsGeometryStage::Out& 
 
 	//output
 	std::swap(input.vertlist, output.vertlist);
-	std::swap(input.texturelist, output.texturelist);
+	std::swap(input.texture, output.texture);
 	std::swap(input.itris, output.itris);
-	std::swap(input.itexs, output.itexs);
 }
 
 

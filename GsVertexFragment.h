@@ -1,119 +1,111 @@
 #pragma once
 #include "MathAndGeometry.h"
-
+#include <array>
 
 SHAKURAS_BEGIN;
 
 
-/*class GsColor24 {
-public:
-	GsColor24() : r(0.0f), g(0.0f), b(0.0f) {}
-	GsColor24(float rr, float gg, float bb) : r(rr), g(gg), b(bb) {}
+template<int N> class GsInterpArray : public std::array<float, N> {};
 
-public:
-	uint32_t u32() const {
-		uint32_t u = 0;
-		unsigned char* pu = (unsigned char*)&u;
-		pu[0] = (int)(r * 255);
-		pu[1] = (int)(g * 255);
-		pu[2] = (int)(b * 255);
-		pu[3] = 255;
-		return u;
+
+template<int N>
+GsInterpArray<N> operator+(const GsInterpArray<N>& a1, const GsInterpArray<N>& a2) {
+	GsInterpArray<N> res;
+	for (int i = 0; i != N; i++) {
+		res[i] = a1[i] + a2[i];
 	}
-
-public:
-	float r, g, b;
-};
-
-
-inline GsColor24 operator+(const GsColor24& c1, const GsColor24& c2) {
-	return GsColor24(c1.r + c2.r, c1.g + c2.g, c1.b + c2.b);
+	return res;
 }
-inline GsColor24 operator-(const GsColor24& c1, const GsColor24& c2) {
-	return GsColor24(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b);
+template<int N>
+GsInterpArray<N> operator-(const GsInterpArray<N>& a1, const GsInterpArray<N>& a2) {
+	GsInterpArray<N> res;
+	for (int i = 0; i != N; i++) {
+		res[i] = a1[i] - a2[i];
+	}
+	return res;
 }
-inline GsColor24 operator*(const GsColor24& c1, float t) {
-	return GsColor24(c1.r * t, c1.g * t, c1.b * t);
+template<int N>
+GsInterpArray<N> operator*(const GsInterpArray<N>& a1, float t) {
+	GsInterpArray<N> res;
+	for (int i = 0; i != N; i++) {
+		res[i] = a1[i] * t;
+	}
+	return res;
 }
-inline GsColor24 operator/(const GsColor24& c1, float d) {
-	float inv = 1.0f / d;
-	return GsColor24(c1.r * inv, c1.g * inv, c1.b * inv);
-}*/
-
-
-class GsTexCoord {
-public:
-	GsTexCoord() : u(0.0f), v(0.0f) {}
-	GsTexCoord(float uu, float vv) : u(uu), v(vv) {}
-
-public:
-	float u, v;
-};
-
-
-inline GsTexCoord operator+(const GsTexCoord& tc1, const GsTexCoord& tc2) {
-	return GsTexCoord(tc1.u + tc2.u, tc1.v + tc2.v);
-}
-inline GsTexCoord operator-(const GsTexCoord& tc1, const GsTexCoord& tc2) {
-	return GsTexCoord(tc1.u - tc2.u, tc1.v - tc2.v);
-}
-inline GsTexCoord operator*(const GsTexCoord& tc1, float t) {
-	return GsTexCoord(tc1.u * t, tc1.v * t);
-}
-inline GsTexCoord operator/(const GsTexCoord& tc1, float d) {
+template<int N>
+GsInterpArray<N> operator/(const GsInterpArray<N>& v1, float d) {
 	float t = 1.0f / d;
-	return GsTexCoord(tc1.u * t, tc1.v * t);
+	GsInterpArray<N> res;
+	for (int i = 0; i != N; i++) {
+		res[i] = a1[i] * t;
+	}
+	return res;
 }
 
 
+template<class Attrib>
 class GsVertex {
 public:
 	GsVertex() : rhw(1.0f) {}
-	GsVertex(const Vector4f& ppos, const GsTexCoord& ttc, float rrhw)
-		: pos(ppos), tc(ttc), rhw(rrhw) {}
+	GsVertex(const Vector4f& ppos)
+		: pos(ppos) {}
+	GsVertex(const Vector4f& ppos, const Attrib& aattrib)
+		: pos(ppos), attrib(aattrib) {}
+	GsVertex(const Vector4f& ppos, const Attrib& aattrib,  float rrhw)
+		: pos(ppos), attrib(aattrib), rhw(rrhw) {}
 
 public:
 	void rhwInitialize() {
 		rhw = 1.0f / pos.w;
-		tc.u *= rhw;
-		tc.v *= rhw;
+		for (auto i = attrib.begin(); i != attrib.end(); i++) {
+			*i *= rhw;
+		}
 	}
 
 public:
 	Vector4f pos;
-	GsTexCoord tc;
+	Attrib attrib;
 	float rhw;
 };
 
 
-inline GsVertex operator+(const GsVertex& v1, const GsVertex& v2) {
-	return GsVertex(v1.pos + v2.pos, v1.tc + v2.tc, v1.rhw + v2.rhw);
+template<class Att>
+GsVertex<Att> operator+(const GsVertex<Att>& v1, const GsVertex<Att>& v2) {
+	return GsVertex<Att>(v1.pos + v2.pos, v1.attrib + v2.attrib, v1.rhw + v2.rhw);
 }
-inline GsVertex operator-(const GsVertex& v1, const GsVertex& v2) {
-	return GsVertex(v1.pos - v2.pos, v1.tc - v2.tc, v1.rhw - v2.rhw);
+template<class Att>
+GsVertex<Att> operator-(const GsVertex<Att>& v1, const GsVertex<Att>& v2) {
+	return GsVertex<Att>(v1.pos - v2.pos, v1.attrib - v2.attrib, v1.rhw - v2.rhw);
 }
-inline GsVertex operator*(const GsVertex& v1, float t) {
-	return GsVertex(v1.pos * t, v1.tc * t, v1.rhw * t);
+template<class Att>
+GsVertex<Att> operator*(const GsVertex<Att>& v1, float t) {
+	return GsVertex<Att>(v1.pos * t, v1.attrib * t, v1.rhw * t);
 }
-inline GsVertex operator/(const GsVertex& v1, float d) {
+template<class Att>
+GsVertex<Att> operator/(const GsVertex<Att>& v1, float d) {
 	float t = 1.0f / d;
-	return GsVertex(v1.pos * t, v1.tc * t, v1.rhw * t);
+	return GsVertex<Att>(v1.pos * t, v1.attrib * t, v1.rhw * t);
 }
 
 
+template<class Varying>
 class GsFragment {
 public:
-	GsFragment() : x(0), y(0), ti(0), z(1.0f), c(0) {}
-	GsFragment(int xx, int yy, int tti, const GsTexCoord& ttc, float zz)
-		: x(xx), y(yy), ti(tti), tc(ttc), z(zz) {}
+	GsFragment() : x(0), y(0), z(1.0f), c(0) {}
+	GsFragment(int xx, int yy, const Varying& vvar, float zz)
+		: x(xx), y(yy), varying(vvar), z(zz) {}
 
 public:
 	int x, y;
-	int ti;
-	GsTexCoord tc;
+	Varying varying;
 	float z;
 	uint32_t c;
 };
+
+
+
+typedef GsVertex<GsInterpArray<4> > GsVertexA4;
+typedef GsFragment<GsInterpArray<4> > GsFragmentV4;
 
 
 SHAKURAS_END;

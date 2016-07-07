@@ -23,15 +23,15 @@ public:
 
 private:
 	void clear();
-	void traversalTriangle(const std::array<GsVertex, 3>& tri, int ti);
-	void traversalScanline(GsScanline& scanline, int ti);
-	void traversalTrapezoid(GsTrapezoid& trap, int ti);
+	void traversalTriangle(const std::array<GsVertexA4, 3>& tri);
+	void traversalScanline(GsScanline& scanline);
+	void traversalTrapezoid(GsTrapezoid& trap);
 
 public:
 	std::vector<uint32_t*> framebuffer_;
 	std::vector<std::vector<float> > zbuffer_;
 	int width_, height_;
-	std::vector<std::vector<std::vector<GsFragment> > > fragbuffer_;
+	std::vector<std::vector<std::vector<GsFragmentV4> > > fragbuffer_;
 };
 
 
