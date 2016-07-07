@@ -23,7 +23,7 @@ public:
 
 private:
 	void clear();
-	void traversalTriangle(const std::array<GsVertexA4, 3>& tri);
+	void traversalTriangle(const std::array<GsVertexA8V4, 3>& tri);
 	void traversalScanline(GsScanline& scanline);
 	void traversalTrapezoid(GsTrapezoid& trap);
 

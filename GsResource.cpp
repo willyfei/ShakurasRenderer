@@ -7,8 +7,8 @@
 SHAKURAS_BEGIN;
 
 
-void GenerateCube(std::vector<GsVertexA4>& verts, std::vector<std::array<int, 3> >& itris) {
-	static GsVertexA4 mesh[8]{
+void GenerateCube(std::vector<GsVertexA8V4>& verts, std::vector<std::array<int, 3> >& itris) {
+	static GsVertexA8V4 mesh[8]{
 		{ { 1, -1,  1, 1 } },
 		{ { -1, -1,  1, 1 } },
 		{ { -1,  1,  1, 1 } },
@@ -20,9 +20,9 @@ void GenerateCube(std::vector<GsVertexA4>& verts, std::vector<std::array<int, 3>
 	};
 
 	auto draw_plane = [&](int a, int b, int c, int d) {
-		GsVertexA4 p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
-		p1.attrib[0] = 0, p1.attrib[1] = 0, p2.attrib[0] = 0, p2.attrib[1] = 1;
-		p3.attrib[0] = 1, p3.attrib[1] = 1, p4.attrib[0] = 1, p4.attrib[1] = 0;
+		GsVertexA8V4 p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
+		p1.varying[0] = 0, p1.varying[1] = 0, p2.varying[0] = 0, p2.varying[1] = 1;
+		p3.varying[0] = 1, p3.varying[1] = 1, p4.varying[0] = 1, p4.varying[1] = 0;
 		int index = verts.size();
 		verts.push_back(p1);
 		verts.push_back(p2);

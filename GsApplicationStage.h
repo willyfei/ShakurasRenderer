@@ -19,7 +19,7 @@ public:
 		Matrix44f viewtrsf;
 		Matrix44f projtrsf;
 
-		std::vector<GsVertexA4> vertlist;
+		std::vector<GsVertexA8V4> vertlist;
 		std::vector<Matrix44f> modeltrsflist;
 		GsTextureU32Ptr texture;
 

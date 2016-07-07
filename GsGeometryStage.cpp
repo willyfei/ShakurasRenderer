@@ -35,7 +35,7 @@ inline void ScreenMapping(Vector4f& v, float width, float height) {
 }
 
 
-inline void Transform(const Matrix44f& m, GsVertexA4& v) {
+inline void Transform(const Matrix44f& m, GsVertexA8V4& v) {
 	v.pos = m.transform(v.pos);
 }
 

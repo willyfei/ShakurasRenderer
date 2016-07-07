@@ -8,7 +8,7 @@ SHAKURAS_BEGIN;
 class GsEdge {
 public:
 	GsEdge() {}
-	GsEdge(const GsVertexA4& vv, const GsVertexA4& vv1, const GsVertexA4& vv2) : v(vv), v1(vv1), v2(vv2) {}
+	GsEdge(const GsVertexA8V4& vv, const GsVertexA8V4& vv1, const GsVertexA8V4& vv2) : v(vv), v1(vv1), v2(vv2) {}
 
 public:
 	void scanlineInterp(float y) {
@@ -17,7 +17,7 @@ public:
 	}
 
 public:
-	GsVertexA4 v, v1, v2;
+	GsVertexA8V4 v, v1, v2;
 };
 
 
@@ -49,15 +49,15 @@ public:
 	}
 
 public:
-	GsVertexA4 v, step;
+	GsVertexA8V4 v, step;
 	int x, y, w;
 };
 
 
-int SpliteTrapezoid(const std::array<GsVertexA4, 3>& tri, std::vector<GsTrapezoid>& traps) {
-	const GsVertexA4* p1 = &tri[0];
-	const GsVertexA4* p2 = &tri[1];
-	const GsVertexA4* p3 = &tri[2];
+int SpliteTrapezoid(const std::array<GsVertexA8V4, 3>& tri, std::vector<GsTrapezoid>& traps) {
+	const GsVertexA8V4* p1 = &tri[0];
+	const GsVertexA8V4* p2 = &tri[1];
+	const GsVertexA8V4* p3 = &tri[2];
 	float k, x;
 
 	if (p1->pos.y > p2->pos.y) std::swap(p1, p2);
@@ -169,7 +169,7 @@ void GsRasterizerStage::traversalScanline(GsScanline& scanline) {
 			GsFragmentV4 frag;
 			frag.x = x;
 			frag.y = scanline.y;
-			frag.varying = scanline.v.attrib * ww;
+			frag.varying = scanline.v.varying * ww;
 			frag.z = rhw;
 
 			fragbuffer_[scanline.y][x].push_back(frag);
@@ -182,8 +182,8 @@ void GsRasterizerStage::traversalScanline(GsScanline& scanline) {
 }
 
 
-void GsRasterizerStage::traversalTriangle(const std::array<GsVertexA4, 3>& tri) {
-	GsVertexA4 t1 = tri[0], t2 = tri[1], t3 = tri[2];
+void GsRasterizerStage::traversalTriangle(const std::array<GsVertexA8V4, 3>& tri) {
+	GsVertexA8V4 t1 = tri[0], t2 = tri[1], t3 = tri[2];
 
 	t1.rhwInitialize();
 	t2.rhwInitialize();
@@ -245,9 +245,9 @@ void GsRasterizerStage::process(In& input) {
 
 	//triangle traversal
 	for (int i = 0; i != input.itris.size(); i++) {
-		const GsVertexA4& v1 = input.vertlist[input.itris[i][0]];
-		const GsVertexA4& v2 = input.vertlist[input.itris[i][1]];
-		const GsVertexA4& v3 = input.vertlist[input.itris[i][2]];
+		const GsVertexA8V4& v1 = input.vertlist[input.itris[i][0]];
+		const GsVertexA8V4& v2 = input.vertlist[input.itris[i][1]];
+		const GsVertexA8V4& v3 = input.vertlist[input.itris[i][2]];
 
 		traversalTriangle({ v1, v2, v3 });
 	}

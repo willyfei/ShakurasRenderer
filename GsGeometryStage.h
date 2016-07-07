@@ -10,7 +10,7 @@ class GsGeometryStage {
 public:
 	typedef GsApplicationStage::Out In;
 	struct Out {
-		std::vector<GsVertexA4> vertlist;
+		std::vector<GsVertexA8V4> vertlist;
 		GsTextureU32Ptr texture;
 
 		std::vector<std::array<int, 3> > itris;//vertlist Ë÷Òý

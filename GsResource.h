@@ -10,7 +10,7 @@ SHAKURAS_BEGIN;
 
 
 //primitive资源
-void GenerateCube(std::vector<GsVertexA4>& verts, std::vector<std::array<int, 3> >& itris);
+void GenerateCube(std::vector<GsVertexA8V4>& verts, std::vector<std::array<int, 3> >& itris);
 
 
 //texture资源
