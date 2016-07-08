@@ -9,6 +9,41 @@ SHAKURAS_BEGIN;
 
 //œÚ¡ø
 template<class S>
+class Vector2 {
+public:
+	S x, y;
+
+public:
+	Vector2() : x(0.0f), y(0.0f) {}
+	Vector2(S xx, S yy) : x(xx), y(yy) {}
+
+public:
+	void set(S xx, S yy) {
+		x = xx;
+		y = yy;
+	}
+};
+
+template<class S>
+Vector2<S> operator+(const Vector2<S>& v1, const Vector2<S>& v2) {
+	return Vector2<S>(v1.x + v2.x, v1.y + v2.y);
+}
+template<class S>
+Vector2<S> operator-(const Vector2<S>& v1, const Vector2<S>& v2) {
+	return Vector2<S>(v1.x - v2.x, v1.y - v2.y);
+}
+template<class S>
+Vector2<S> operator*(const Vector2<S>& v1, S t) {
+	return Vector2<S>(v1.x * t, v1.y * t);
+}
+template<class S>
+Vector2<S> operator/(const Vector2<S>& v1, S d) {
+	S t = 1.0f / d;
+	return Vector2<S>(v1.x * t, v1.y * t);
+}
+
+
+template<class S>
 class Vector3 {
 public:
 	S x, y, z;
@@ -16,17 +51,12 @@ public:
 public:
 	Vector3() : x(0.0f), y(0.0f), z(0.0f) {}
 	Vector3(S xx, S yy, S zz) : x(xx), y(yy), z(zz) {}
-
+	
 public:
-	void normalize(S len = 1.0f) {
-		S cur_len = length();
-		if (cur_len != len) {
-			S scale = len / cur_len;
-			x *= scale;
-			y *= scale;
-			z *= scale;
-			w = 1.0f;
-		}
+	void set(S xx, S yy, S zz) {
+		x = xx;
+		y = yy;
+		z = zz;
 	}
 };
 
@@ -60,6 +90,13 @@ public:
 	Vector4(S xx, S yy, S zz, S ww) : x(xx), y(yy), z(zz), w(ww) {}
 
 public:
+	void set(S xx, S yy, S zz, S ww = 0.0f) {
+		x = xx;
+		y = yy;
+		z = zz;
+		w = ww;
+	}
+
 	void projection() {
 		if (w != 0.0f) {
 			S inv = 1.0f / w;
@@ -67,22 +104,6 @@ public:
 			y *= inv;
 			z *= inv;
 		}
-	}
-
-	static Vector4<S> Point(S xx, S yy, S zz) {
-		return Vector4<S>(xx, yy, zz, 1.0f);
-	}
-
-	static Vector4<S> Point(const Vector3<S>& v3) {
-		return Vector4<S>(v3.x, v3.y, v3.z, 1.0f);
-	}
-
-	static Vector4<S> Vector(S xx, S yy, S zz) {
-		return Vector4<S>(xx, yy, zz, 0.0f);
-	}
-
-	static Vector4<S> Vector(const Vector3<S>& v3) {
-		return Vector4<S>(v3.x, v3.y, v3.z, 0.0f);
 	}
 };
 
@@ -306,6 +327,7 @@ Matrix44<S> operator*(const Matrix44<S>& m1, S t) {
 }
 
 
+typedef Vector2<float> Vector2f;
 typedef Vector3<float> Vector3f;
 typedef Vector4<float> Vector4f;
 typedef Matrix44<float> Matrix44f;

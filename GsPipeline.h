@@ -1,16 +1,19 @@
 #pragma once
-#include "MathAndGeometry.h"
 #include "GsViewer.h"
-#include "GsApplicationStage.h"
-#include "GsGeometryStage.h"
-#include "GsRasterizerStage.h"
-#include <vector>
-#include <array>
 
 
 SHAKURAS_BEGIN;
 
 
+template<class Uniform, class Vert>
+struct GsStageBuffer {
+	Uniform uniform;
+	std::vector<Vert> vertlist;
+	std::vector<std::array<int, 3> > itris;
+};
+
+
+template<class StageBuffer, class AppStage, class GeomStage, class RasStage>
 class GsPipeline {
 public:
 	void initialize(GsViewerPtr viewer) {
@@ -20,20 +23,19 @@ public:
 	}
 
 	void process() {
-		GsApplicationStage::Out appopt;
-		appstage_.process(appopt);
+		StageBuffer buffer;
+		appstage_.process(buffer);
 
-		GsGeometryStage::Out geomopt;
-		geomstage_.process(appopt, geomopt);
+		geomstage_.process(buffer);
 
-		rasstage_.process(geomopt);
+		rasstage_.process(buffer);
 	}
 
 
 protected:
-	GsApplicationStage appstage_;
-	GsGeometryStage geomstage_;
-	GsRasterizerStage rasstage_;
+	AppStage appstage_;
+	GeomStage geomstage_;
+	RasStage rasstage_;
 };
 
 

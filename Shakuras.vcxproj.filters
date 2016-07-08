@@ -42,9 +42,6 @@
     <ClInclude Include="GsGeometryStage.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GsApplicationStage.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="GsRasterizerStage.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -55,6 +52,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GsStageBuffer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -72,15 +72,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Utility.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GsApplicationStage.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GsGeometryStage.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GsRasterizerStage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

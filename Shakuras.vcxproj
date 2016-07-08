@@ -236,7 +236,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GsApplicationStage.h" />
+    <ClInclude Include="GsStageBuffer.h" />
     <ClInclude Include="GsGeometryStage.h" />
     <ClInclude Include="GsPipeline.h" />
     <ClInclude Include="GsRasterizerStage.h" />
@@ -251,9 +251,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GsApplicationStage.cpp" />
-    <ClCompile Include="GsGeometryStage.cpp" />
-    <ClCompile Include="GsRasterizerStage.cpp" />
     <ClCompile Include="GsResource.cpp" />
     <ClCompile Include="GsViewer.cpp" />
     <ClCompile Include="Shakuras.cpp" />
