@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <tchar.h>
 #include <map>
+#include <string>
 
 
 SHAKURAS_BEGIN;

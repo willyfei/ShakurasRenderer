@@ -2,6 +2,7 @@
 #include "Utility.h"
 #include <array>
 #include <memory>
+#include <stdint.h>
 
 
 SHAKURAS_BEGIN;

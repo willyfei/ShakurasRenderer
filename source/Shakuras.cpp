@@ -49,15 +49,15 @@ namespace skexample {
 	typedef GsStageBuffer<Uniform, Vertex> StageBuffer;
 
 	void GenerateCube(std::vector<Vertex>& verts, std::vector<int>& itris) {
-		static Vertex mesh[8]{
-			{ { -1, -1, -1, 1 } },
-			{ { 1, -1, -1, 1 } },
-			{ { 1, 1, -1, 1 } },
-			{ { -1, 1, -1, 1 } },
-			{ { -1, -1, 1, 1 } },
-			{ { 1, -1, 1, 1 } },
-			{ { 1, 1, 1, 1 } },
-			{ { -1, 1, 1, 1 } },
+		static Vertex mesh[8] = {
+			Vertex(Vector4f(-1, -1, -1, 1)),
+			Vertex(Vector4f(1, -1, -1, 1)),
+			Vertex(Vector4f(1, 1, -1, 1)),
+			Vertex(Vector4f(-1, 1, -1, 1)),
+			Vertex(Vector4f(-1, -1, 1, 1)),
+			Vertex(Vector4f(1, -1, 1, 1)),
+			Vertex(Vector4f(1, 1, 1, 1)),
+			Vertex(Vector4f(-1, 1, 1, 1)),
 		};
 
 		auto draw_plane = [&](int a, int b, int c, int d) {
@@ -129,7 +129,7 @@ namespace skexample {
 
 			buffer = output_;
 
-			Vector3f eye = { 3 + pos_, 0, 0 }, at = { 0, 0, 0 }, up = { 0, 0, 1 };
+			Vector3f eye(3 + pos_, 0, 0), at(0, 0, 0), up(0, 0, 1);
 			std::get<2>(output_.uniform) = Matrix44f::Rotate(-1, -0.5, 1, alpha_) * Matrix44f::LookAt(eye, at, up);//模型*视图变换
 			std::get<7>(output_.uniform) = eye;//相机位置
 		}

@@ -183,7 +183,12 @@ public:
 			const Vert& v2 = buffer.vertlist[buffer.itris[i + 1]];
 			const Vert& v3 = buffer.vertlist[buffer.itris[i + 2]];
 
-			traversalTriangle({ v1, v2, v3 });
+			std::array<Vert, 3> tri;
+			tri[0] = v1;
+			tri[1] = v2;
+			tri[2] = v3;
+
+			traversalTriangle(tri);
 		}
 
 		//fragment shader
@@ -232,7 +237,11 @@ private:
 		t3.rhwInitialize();
 
 		std::vector<GsTrapezoid<Vert> > traps;
-		SpliteTrapezoid({ t1, t2, t3 }, traps);
+		std::array<Vert, 3> trirhw;
+		trirhw[0] = t1;
+		trirhw[1] = t2;
+		trirhw[2] = t3;
+		SpliteTrapezoid(trirhw, traps);
 
 		for (auto i = traps.begin(); i != traps.end(); i++) {
 			traversalTrapezoid(*i);
