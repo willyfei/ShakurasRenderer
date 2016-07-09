@@ -123,8 +123,8 @@ namespace skexample {
 
 
 		void process(StageBuffer& buffer) {
-			if (viewer_->testUserMessage(kUMUp)) pos_ -= 0.02f;
-			if (viewer_->testUserMessage(kUMDown)) pos_ += 0.02f;
+			if (viewer_->testUserMessage(kUMUp)) pos_ -= 0.04f;
+			if (viewer_->testUserMessage(kUMDown)) pos_ += 0.04f;
 			if (viewer_->testUserMessage(kUMLeft)) alpha_ += 0.02f;
 			if (viewer_->testUserMessage(kUMRight)) alpha_ -= 0.02f;
 
