@@ -57,6 +57,9 @@
     <ClInclude Include="GsStageBuffer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GsColor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

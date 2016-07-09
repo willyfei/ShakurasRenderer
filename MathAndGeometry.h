@@ -156,6 +156,12 @@ V3 CrossProduct(const V3& v1, const V3& v2) {
 	return v3;
 }
 
+template<class V3>
+V3 Reflect(const V3& i, const V3& n) {
+	return i - n * (2.0f * DotProduct(i, n));
+}
+
+
 
 //æÿ’Û
 template<class S>

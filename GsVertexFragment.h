@@ -91,7 +91,7 @@ GsVertex<Attrib, V> operator/(const GsVertex<Attrib, V>& v1, float d) {
 template<int V>
 class GsFragment {
 public:
-	GsFragment() : x(0), y(0), z(1.0f), c(0) {}
+	GsFragment() : x(0), y(0), z(1.0f) {}
 	GsFragment(int xx, int yy, const GsInterpArray<V>& vvar, float zz)
 		: x(xx), y(yy), varying(vvar), z(zz) {}
 
@@ -99,7 +99,7 @@ public:
 	int x, y;
 	float z;
 	GsInterpArray<V> varying;
-	uint32_t c;
+	Vector4f c;
 };
 
 

@@ -14,7 +14,7 @@ template<class Uniform, class Vert>
 struct GsStageBuffer {
 	Uniform uniform;
 	std::vector<Vert> vertlist;
-	std::vector<std::array<int, 3> > itris;
+	std::vector<int> itris;
 };
 
 

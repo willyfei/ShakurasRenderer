@@ -236,6 +236,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GsColor.h" />
     <ClInclude Include="GsStageBuffer.h" />
     <ClInclude Include="GsGeometryStage.h" />
     <ClInclude Include="GsPipeline.h" />

@@ -5,14 +5,6 @@
 SHAKURAS_BEGIN;
 
 
-template<class Uniform, class Vert>
-struct GsStageBuffer {
-	Uniform uniform;
-	std::vector<Vert> vertlist;
-	std::vector<std::array<int, 3> > itris;
-};
-
-
 template<class StageBuffer, class AppStage, class GeomStage, class RasStage>
 class GsPipeline {
 public:

@@ -2,6 +2,7 @@
 #include "MathAndGeometry.h"
 #include "GsGeometryStage.h"
 #include "GsVertexFragment.h"
+#include "GsColor.h"
 #include <vector>
 #include <array>
 
@@ -150,6 +151,7 @@ public:
 		width_ = ww;
 		height_ = hh;
 
+		fraglist_.clear();
 		framebuffer_.resize(height_, nullptr);
 		zbuffer_.resize(height_);
 		fragbuffer_.resize(height_);
@@ -176,33 +178,25 @@ public:
 		//triangle setup, Ê¡ÂÔ
 
 		//triangle traversal
-		for (int i = 0; i != buffer.itris.size(); i++) {
-			const Vert& v1 = buffer.vertlist[buffer.itris[i][0]];
-			const Vert& v2 = buffer.vertlist[buffer.itris[i][1]];
-			const Vert& v3 = buffer.vertlist[buffer.itris[i][2]];
+		for (size_t i = 0; i < buffer.itris.size(); i += 3) {
+			const Vert& v1 = buffer.vertlist[buffer.itris[i]];
+			const Vert& v2 = buffer.vertlist[buffer.itris[i + 1]];
+			const Vert& v3 = buffer.vertlist[buffer.itris[i + 2]];
 
 			traversalTriangle({ v1, v2, v3 });
 		}
 
 		//fragment shader
-		for (auto i = fragbuffer_.begin(); i != fragbuffer_.end(); i++) {
-			for (auto ii = i->begin(); ii != i->end(); ii++) {
-				for (auto iii = ii->begin(); iii != ii->end(); iii++) {
-					fragshader_->process(buffer.uniform, *iii);
-				}
-			}
+		for (auto i = fraglist_.begin(); i != fraglist_.end(); i++) {
+			fragshader_->process(buffer.uniform, *i);
 		}
 
 		//merging
-		for (auto i = fragbuffer_.begin(); i != fragbuffer_.end(); i++) {
-			for (auto ii = i->begin(); ii != i->end(); ii++) {
-				for (auto iii = ii->begin(); iii != ii->end(); iii++) {
-					Frag& frag = *iii;
-					if (frag.z > zbuffer_[frag.y][frag.x]) {
-						zbuffer_[frag.y][frag.x] = frag.z;
-						framebuffer_[frag.y][frag.x] = frag.c;
-					}
-				}
+		for (auto i = fraglist_.begin(); i != fraglist_.end(); i++) {
+			Frag& frag = *i;
+			if (frag.z > zbuffer_[frag.y][frag.x]) {
+				zbuffer_[frag.y][frag.x] = frag.z;
+				framebuffer_[frag.y][frag.x] = IRgba(frag.c);
 			}
 		}
 	}
@@ -212,8 +206,7 @@ private:
 		int y, x;
 		for (y = 0; y < height_; y++) {
 			uint32_t *dst = framebuffer_[y];
-			uint32_t cc = (height_ - 1 - y) * 230 / (height_ - 1);
-			cc = (cc << 16) | (cc << 8) | cc;
+			uint32_t cc = IBgr(Vector3f(0.2f, 0.2f, 0.6f));
 			for (x = width_; x > 0; dst++, x--) dst[0] = cc;
 		}
 
@@ -222,6 +215,8 @@ private:
 			std::fill(dst.begin(), dst.end(), 0.0f);
 		}
 
+		fraglist_.clear();
+		fraglist_.reserve(width_ * height_);
 		for (int y = 0; y != height_; y++) {
 			for (int x = 0; x != width_; x++) {
 				fragbuffer_[y][x].clear();
@@ -258,7 +253,8 @@ private:
 				frag.varying = scanline.v.varying * ww;
 				frag.z = rhw;
 
-				fragbuffer_[scanline.y][x].push_back(frag);
+				fragbuffer_[scanline.y][x].push_back(fraglist_.size());
+				fraglist_.push_back(frag);
 			}
 			scanline.v = scanline.v + scanline.step;
 			if (x >= width_) {
@@ -288,7 +284,8 @@ private:
 	std::vector<uint32_t*> framebuffer_;
 	std::vector<std::vector<float> > zbuffer_;
 	int width_, height_;
-	std::vector<std::vector<std::vector<Frag> > > fragbuffer_;
+	std::vector<Frag> fraglist_;
+	std::vector<std::vector<std::vector<int> > > fragbuffer_;
 	std::shared_ptr<FragShader> fragshader_;
 };
 

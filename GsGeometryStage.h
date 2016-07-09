@@ -56,15 +56,20 @@ public:
 
 		//cliping, ºÚªØ µœ÷
 		size_t i = 0;
-		while (i < buffer.itris.size()) {
-			if (CheckCVV(buffer.vertlist[buffer.itris[i][0]].pos) != 0 ||
-				CheckCVV(buffer.vertlist[buffer.itris[i][1]].pos) != 0 ||
-				CheckCVV(buffer.vertlist[buffer.itris[i][2]].pos) != 0) {
-				std::swap(buffer.itris[i], buffer.itris.back());
+		while (i + 2 < buffer.itris.size()) {
+			if (CheckCVV(buffer.vertlist[buffer.itris[i]].pos) != 0 ||
+				CheckCVV(buffer.vertlist[buffer.itris[i + 1]].pos) != 0 ||
+				CheckCVV(buffer.vertlist[buffer.itris[i + 2]].pos) != 0) {
+				int len = buffer.itris.size();
+				std::swap(buffer.itris[i], buffer.itris[len - 3]);
+				std::swap(buffer.itris[i + 1], buffer.itris[len - 2]);
+				std::swap(buffer.itris[i + 2], buffer.itris[len - 1]);
+				buffer.itris.pop_back();
+				buffer.itris.pop_back();
 				buffer.itris.pop_back();
 			}
 			else {
-				i++;
+				i += 3;
 			}
 		}
 
