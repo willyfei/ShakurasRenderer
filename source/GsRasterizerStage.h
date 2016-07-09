@@ -19,7 +19,7 @@ public:
 public:
 	void scanlineInterp(float y) {
 		float t = (y - v1.pos.y) / (v2.pos.y - v1.pos.y);
-		v = Interp(v1, v2, t);
+		v = v1 + (v2 - v1) * t;
 	}
 
 public:

@@ -9,6 +9,7 @@
 #include "GsGeometryStage.h"
 #include "GsRasterizerStage.h"
 #include <tuple>
+#include "TupleInterp.h"
 
 
 using namespace shakuras;
@@ -32,19 +33,16 @@ namespace skexample {
 		Vector4f//法向
 	> Attrib;
 
-	typedef GsVertex<Attrib, 
-		2 + //纹理坐标
-		3 + //法向
-		3 + //光源方向(light_pos - pos)
-		3 //相机方向(eye_pos - pos)
-	> Vertex;
+	typedef std::tuple<
+		Vector2f,//纹理坐标
+		Vector3f,//法向
+		Vector3f,//光源方向(light_pos - pos)
+		Vector3f//相机方向(eye_pos - pos)
+	> Varying;
 
-	typedef GsFragment<
-		2 + //纹理坐标
-		3 + //法向
-		3 + //光源方向
-		3 //相机方向
-	> Fragment;
+	typedef GsVertex<Attrib, Varying> Vertex;
+
+	typedef GsFragment<Varying> Fragment;
 
 	typedef GsStageBuffer<Uniform, Vertex> StageBuffer;
 
@@ -146,23 +144,16 @@ namespace skexample {
 		void process(const Uniform& u, Vertex& v) {
 			const Matrix44f& mvtrsf = std::get<2>(u);
 
-			v.varying[0] = std::get<0>(v.attrib).x;
-			v.varying[1] = std::get<0>(v.attrib).y;
+			std::get<0>(v.varying) = std::get<0>(v.attrib);
 
 			Vector4f norm = mvtrsf.transform(std::get<1>(v.attrib));
-			v.varying[2] = norm.x;
-			v.varying[3] = norm.y;
-			v.varying[4] = norm.z;
+			std::get<1>(v.varying).set(norm.x, norm.y, norm.z);
 
 			Vector3f light_pos = std::get<6>(u);
-			v.varying[5] = light_pos.x - v.pos.x;
-			v.varying[6] = light_pos.y - v.pos.y;
-			v.varying[7] = light_pos.z - v.pos.z;
+			std::get<2>(v.varying).set(light_pos.x - v.pos.x, light_pos.y - v.pos.y, light_pos.z - v.pos.z);
 
 			Vector3f eye_pos = std::get<7>(u);
-			v.varying[8] = eye_pos.x - v.pos.x;
-			v.varying[9] = eye_pos.y - v.pos.y;
-			v.varying[10] = eye_pos.z - v.pos.z;
+			std::get<3>(v.varying).set(eye_pos.x - v.pos.x, eye_pos.y - v.pos.y, eye_pos.z - v.pos.z);
 
 			v.pos = mvtrsf.transform(v.pos);
 		}
@@ -171,9 +162,9 @@ namespace skexample {
 	class FragmentShader {
 	public:
 		void process(const Uniform& u, Fragment& f) {
-			Vector3f norm(f.varying[2], f.varying[3], f.varying[4]);
-			Vector3f light_dir(f.varying[5], f.varying[6], f.varying[7]);
-			Vector3f eye_dir(f.varying[8], f.varying[9], f.varying[10]);
+			Vector3f norm = std::get<1>(f.varying);
+			Vector3f light_dir = std::get<2>(f.varying);
+			Vector3f eye_dir = std::get<3>(f.varying);
 			Normalize(norm);
 			Normalize(light_dir);
 			Normalize(eye_dir);
@@ -186,7 +177,8 @@ namespace skexample {
 			float illum_specular = Clamp(DotProduct(Reflect(light_dir, norm), eye_dir), 0.0f, 1.0f);
 			Vector3f illum = ambient + diffuse * illum_diffuse + specular * illum_specular;
 
-			Vector3f tc = VRgb<Vector3f>(std::get<0>(u)->at(f.varying[0], f.varying[1]));
+			Vector2f uv = std::get<0>(f.varying);;
+			Vector3f tc = VRgb<Vector3f>(std::get<0>(u)->at(uv.x, uv.y));
 			Vector3f c(tc.x * illum.x, tc.y * illum.y, tc.z * illum.z);
 
 			Clamp(c.x, 0.0f, 1.0f);

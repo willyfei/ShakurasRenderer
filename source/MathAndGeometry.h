@@ -26,19 +26,19 @@ public:
 };
 
 template<class S>
-Vector2<S> operator+(const Vector2<S>& v1, const Vector2<S>& v2) {
+inline Vector2<S> operator+(const Vector2<S>& v1, const Vector2<S>& v2) {
 	return Vector2<S>(v1.x + v2.x, v1.y + v2.y);
 }
 template<class S>
-Vector2<S> operator-(const Vector2<S>& v1, const Vector2<S>& v2) {
+inline Vector2<S> operator-(const Vector2<S>& v1, const Vector2<S>& v2) {
 	return Vector2<S>(v1.x - v2.x, v1.y - v2.y);
 }
 template<class S>
-Vector2<S> operator*(const Vector2<S>& v1, S t) {
+inline Vector2<S> operator*(const Vector2<S>& v1, S t) {
 	return Vector2<S>(v1.x * t, v1.y * t);
 }
 template<class S>
-Vector2<S> operator/(const Vector2<S>& v1, S d) {
+inline Vector2<S> operator/(const Vector2<S>& v1, S d) {
 	S t = 1.0f / d;
 	return Vector2<S>(v1.x * t, v1.y * t);
 }
@@ -62,19 +62,19 @@ public:
 };
 
 template<class S>
-Vector3<S> operator+(const Vector3<S>& v1, const Vector3<S>& v2) {
+inline Vector3<S> operator+(const Vector3<S>& v1, const Vector3<S>& v2) {
 	return Vector3<S>(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
 }
 template<class S>
-Vector3<S> operator-(const Vector3<S>& v1, const Vector3<S>& v2) {
+inline Vector3<S> operator-(const Vector3<S>& v1, const Vector3<S>& v2) {
 	return Vector3<S>(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
 }
 template<class S>
-Vector3<S> operator*(const Vector3<S>& v1, S t) {
+inline Vector3<S> operator*(const Vector3<S>& v1, S t) {
 	return Vector3<S>(v1.x * t, v1.y * t, v1.z * t);
 }
 template<class S>
-Vector3<S> operator/(const Vector3<S>& v1, S d) {
+inline Vector3<S> operator/(const Vector3<S>& v1, S d) {
 	S t = 1.0f / d;
 	return Vector3<S>(v1.x * t, v1.y * t, v1.z * t);
 }
@@ -109,19 +109,19 @@ public:
 };
 
 template<class S>
-Vector4<S> operator+(const Vector4<S>& v1, const Vector4<S>& v2) {
+inline Vector4<S> operator+(const Vector4<S>& v1, const Vector4<S>& v2) {
 	return Vector4<S>(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, 0.0f);
 }
 template<class S>
-Vector4<S> operator-(const Vector4<S>& v1, const Vector4<S>& v2) {
+inline Vector4<S> operator-(const Vector4<S>& v1, const Vector4<S>& v2) {
 	return Vector4<S>(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, 0.0f);
 }
 template<class S>
-Vector4<S> operator*(const Vector4<S>& v1, S t) {
+inline Vector4<S> operator*(const Vector4<S>& v1, S t) {
 	return Vector4<S>(v1.x * t, v1.y * t, v1.z * t, 0.0f);
 }
 template<class S>
-Vector4<S> operator/(const Vector4<S>& v1, S d) {
+inline Vector4<S> operator/(const Vector4<S>& v1, S d) {
 	S t = 1.0f / d;
 	return Vector4<S>(v1.x * t, v1.y * t, v1.z * t, 0.0f);
 }
@@ -341,19 +341,6 @@ typedef Matrix44<float> Matrix44f;
 
 
 #define kGSPI 3.1415926f
-
-
-//≤Â÷µ
-inline float Interp(float v1, float v2, float t) {
-	return v1 + (v2 - v1) * t;
-}
-inline double Interp(double v1, double v2, float t) {
-	return v1 + (v2 - v1) * t;
-}
-template<class T>
-T Interp(const T& v1, const T& v2, float t) {
-	return v1 + (v2 - v1) * t;
-}
 
 
 //”Úœﬁ÷∆
