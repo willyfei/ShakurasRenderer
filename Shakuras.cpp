@@ -179,9 +179,9 @@ namespace skexample {
 			Normalize(light_dir);
 			Normalize(eye_dir);
 
-			Vector3f ambient = std::get<3>(u);//环境光
-			Vector3f diffuse = std::get<4>(u);//漫反射
-			Vector3f specular = std::get<5>(u);//镜面反射
+			Vector3f ambient = std::get<3>(u);
+			Vector3f diffuse = std::get<4>(u);
+			Vector3f specular = std::get<5>(u);
 
 			float illum_diffuse = Clamp(DotProduct(light_dir, norm), 0.0f, 1.0f);
 			float illum_specular = Clamp(DotProduct(Reflect(light_dir, norm), eye_dir), 0.0f, 1.0f);
