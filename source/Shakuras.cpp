@@ -104,8 +104,14 @@ namespace skexample {
 			float w = (float)viewer->width();
 			float h = (float)viewer->height();
 
+			texlist_.push_back(LoadTexture("1.png"));
+			texlist_.push_back(LoadTexture("2.png"));
+			texlist_.push_back(LoadTexture("1.jpg"));
+			itex_ = 0;
+			nspace_ = 0;
+
 			GenerateCube(output_.vertlist, output_.itris);
-			std::get<0>(output_.uniform) = LoadTexture("2.png");//纹理
+			std::get<0>(output_.uniform) = texlist_[itex_];//纹理
 			std::get<1>(output_.uniform) = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
 			std::get<3>(output_.uniform).set(0.4f, 0.4f, 0.4f);//环境光
 			std::get<4>(output_.uniform).set(0.587609f, 0.587609f, 0.587609f);//漫反射
@@ -120,6 +126,14 @@ namespace skexample {
 
 
 		void process(StageBuffer& buffer) {
+			if (viewer_->testUserMessage(kUMSpace)) {
+				if (++nspace_ == 1) {
+					itex_ = (itex_ + 1) % texlist_.size();
+				}
+			}
+			else {
+				nspace_ = 0;
+			}
 			if (viewer_->testUserMessage(kUMUp)) pos_ -= 0.04f;
 			if (viewer_->testUserMessage(kUMDown)) pos_ += 0.04f;
 			if (viewer_->testUserMessage(kUMLeft)) alpha_ += 0.02f;
@@ -128,6 +142,7 @@ namespace skexample {
 			buffer = output_;
 
 			Vector3f eye(3 + pos_, 0, 0), at(0, 0, 0), up(0, 0, 1);
+			std::get<0>(output_.uniform) = texlist_[itex_];//纹理
 			std::get<2>(output_.uniform) = Matrix44f::Rotate(-1, -0.5, 1, alpha_) * Matrix44f::LookAt(eye, at, up);//模型*视图变换
 			std::get<7>(output_.uniform) = eye;//相机位置
 		}
@@ -135,6 +150,9 @@ namespace skexample {
 	private:
 		GsViewerPtr viewer_;
 		StageBuffer output_;
+		std::vector<GsTextureU32Ptr> texlist_;
+		int itex_;
+		int nspace_;
 		float alpha_;
 		float pos_;
 	};
@@ -198,7 +216,7 @@ namespace skexample {
 int main()
 {
 	const char *title = "ShakurasRenderer - "
-		"Left/Right: rotation, Up/Down: forward/backward";
+		"Left/Right: rotation, Up/Down: forward/backward, Space: switch texture";
 
 	int width = 1600, height = 900;
 	GsViewerPtr viewer = CreateGsViewer("Windows");
