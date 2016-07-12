@@ -262,7 +262,7 @@ private:
 				frag.varying = scanline.v.varying * ww;
 				frag.z = rhw;
 
-				fragbuffer_[scanline.y][x].push_back(fraglist_.size());
+				fragbuffer_[scanline.y][x].push_back((int)fraglist_.size());
 				fraglist_.push_back(frag);
 			}
 			scanline.v = scanline.v + scanline.step;

@@ -48,14 +48,14 @@ namespace skexample {
 
 	void GenerateCube(std::vector<Vertex>& verts, std::vector<int>& itris) {
 		static Vertex mesh[8] = {
-			Vertex(Vector4f(-1, -1, -1, 1)),
-			Vertex(Vector4f(1, -1, -1, 1)),
-			Vertex(Vector4f(1, 1, -1, 1)),
-			Vertex(Vector4f(-1, 1, -1, 1)),
-			Vertex(Vector4f(-1, -1, 1, 1)),
-			Vertex(Vector4f(1, -1, 1, 1)),
-			Vertex(Vector4f(1, 1, 1, 1)),
-			Vertex(Vector4f(-1, 1, 1, 1)),
+			{ { -1, -1, -1, 1 } },
+			{ { 1, -1, -1, 1 } },
+			{ { 1, 1, -1, 1 } },
+			{ { -1, 1, -1, 1 } },
+			{ { -1, -1, 1, 1 } },
+			{ { 1, -1, 1, 1 } },
+			{ { 1, 1, 1, 1 } },
+			{ { -1, 1, 1, 1 } },
 		};
 
 		auto draw_plane = [&](int a, int b, int c, int d) {
@@ -73,7 +73,7 @@ namespace skexample {
 			std::get<1>(p3.attrib) = norm;
 			std::get<1>(p4.attrib) = norm;
 
-			int index = verts.size();
+			int index = (int)verts.size();
 			verts.push_back(p1);
 			verts.push_back(p2);
 			verts.push_back(p3);
@@ -81,7 +81,7 @@ namespace skexample {
 			itris.push_back(index + 1);
 			itris.push_back(index + 2);
 
-			index = verts.size();
+			index = (int)verts.size();
 			verts.push_back(p3);
 			verts.push_back(p4);
 			verts.push_back(p1);

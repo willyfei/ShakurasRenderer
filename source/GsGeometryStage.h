@@ -60,7 +60,7 @@ public:
 			if (CheckCVV(buffer.vertlist[buffer.itris[i]].pos) != 0 ||
 				CheckCVV(buffer.vertlist[buffer.itris[i + 1]].pos) != 0 ||
 				CheckCVV(buffer.vertlist[buffer.itris[i + 2]].pos) != 0) {
-				int len = buffer.itris.size();
+				int len = (int)buffer.itris.size();
 				std::swap(buffer.itris[i], buffer.itris[len - 3]);
 				std::swap(buffer.itris[i + 1], buffer.itris[len - 2]);
 				std::swap(buffer.itris[i + 2], buffer.itris[len - 1]);

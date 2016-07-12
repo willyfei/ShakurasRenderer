@@ -13,29 +13,29 @@ public:
 
 public:
 	void reset(const C* data, int ww, int hh) {
-		w = ww;
-		h = hh;
+		width_ = ww;
+		height_ = hh;
 
-		buffer.resize(h, std::vector<uint32_t>(w));
+		buffer.resize(height_, std::vector<uint32_t>(width_));
 
-		for (int j = 0; j < h; ++j)
-			for (int i = 0; i < w; ++i)
-				buffer[j][i] = data[j*w + i];
+		for (int j = 0; j < height_; ++j)
+			for (int i = 0; i < width_; ++i)
+				buffer[j][i] = data[j*width_ + i];
 	}
 
 	C at(float u, float v) {
-		u *= (w - 1);
-		v *= (h - 1);
+		u *= (width_ - 1);
+		v *= (height_ - 1);
 		int x = (int)(u + 0.5f);
 		int y = (int)(v + 0.5f);
-		x = Clamp(x, 0, w - 1);
-		y = Clamp(y, 0, h - 1);
+		x = Clamp(x, 0, width_ - 1);
+		y = Clamp(y, 0, height_ - 1);
 		return buffer[y][x];
 	}
 
 public:
 	std::vector<std::vector<C> > buffer;
-	int w, h;
+	int width_, height_;
 };
 
 
