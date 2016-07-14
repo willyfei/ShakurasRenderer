@@ -195,7 +195,7 @@ namespace skexample {
 			float illum_specular = Clamp(DotProduct(Reflect(light_dir, norm), eye_dir), 0.0f, 1.0f);
 			Vector3f illum = ambient + diffuse * illum_diffuse + specular * illum_specular;
 
-			Vector2f uv = std::get<0>(f.varying);;
+			Vector2f uv = std::get<0>(f.varying);
 			Vector3f tc = VRgb<Vector3f>(std::get<0>(u)->at(uv.x, uv.y));
 			Vector3f c(tc.x * illum.x, tc.y * illum.y, tc.z * illum.z);
 
