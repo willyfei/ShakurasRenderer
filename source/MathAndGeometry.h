@@ -128,12 +128,12 @@ inline Vector4<S> operator/(const Vector4<S>& v1, S d) {
 
 
 template<class V3>
-float Length(const V3& v) {
+inline float Length(const V3& v) {
 	return ::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
 template<class V3>
-void Normalize(V3& v, float len = 1.0f) {
+inline void Normalize(V3& v, float len = 1.0f) {
 	float cur_len = Length(v);
 	if (cur_len != len) {
 		float scale = len / cur_len;
@@ -144,12 +144,12 @@ void Normalize(V3& v, float len = 1.0f) {
 }
 
 template<class V3>
-float DotProduct(const V3& v1, const V3& v2) {
+inline float DotProduct(const V3& v1, const V3& v2) {
 	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
 template<class V3>
-V3 CrossProduct(const V3& v1, const V3& v2) {
+inline V3 CrossProduct(const V3& v1, const V3& v2) {
 	V3 v3;
 	v3.x = v1.y * v2.z - v1.z * v2.y;
 	v3.y = v1.z * v2.x - v1.x * v2.z;
@@ -158,7 +158,7 @@ V3 CrossProduct(const V3& v1, const V3& v2) {
 }
 
 template<class V3>
-V3 Reflect(const V3& i, const V3& n) {
+inline V3 Reflect(const V3& i, const V3& n) {
 	return i - n * (2.0f * DotProduct(i, n));
 }
 
@@ -290,7 +290,7 @@ public:
 
 
 template<class S>
-Matrix44<S> operator+(const Matrix44<S>& m1, const Matrix44<S>& m2) {
+inline Matrix44<S> operator+(const Matrix44<S>& m1, const Matrix44<S>& m2) {
 	Matrix44<S> m3;
 	for (size_t i = 0; i != 4; i++) {
 		for (size_t ii = 0; ii != 4; ii++) {
@@ -300,7 +300,7 @@ Matrix44<S> operator+(const Matrix44<S>& m1, const Matrix44<S>& m2) {
 	return m3;
 }
 template<class S>
-Matrix44<S> operator-(const Matrix44<S>& m1, const Matrix44<S>& m2) {
+inline Matrix44<S> operator-(const Matrix44<S>& m1, const Matrix44<S>& m2) {
 	Matrix44<S> m3;
 	for (int i = 0; i != 4; i++) {
 		for (int ii = 0; ii != 4; ii++) {
@@ -310,7 +310,7 @@ Matrix44<S> operator-(const Matrix44<S>& m1, const Matrix44<S>& m2) {
 	return m3;
 }
 template<class S>
-Matrix44<S> operator*(const Matrix44<S>& m1, const Matrix44<S>& m2) {
+inline Matrix44<S> operator*(const Matrix44<S>& m1, const Matrix44<S>& m2) {
 	Matrix44<S> m3;
 	for (size_t i = 0; i != 4; i++) {
 		for (size_t ii = 0; ii != 4; ii++) {
@@ -323,7 +323,7 @@ Matrix44<S> operator*(const Matrix44<S>& m1, const Matrix44<S>& m2) {
 	return m3;
 }
 template<class S>
-Matrix44<S> operator*(const Matrix44<S>& m1, S t) {
+inline Matrix44<S> operator*(const Matrix44<S>& m1, S t) {
 	Matrix44<S> m2;
 	for (int i = 0; i != 4; i++) {
 		for (int ii = 0; ii != 4; ii++) {
@@ -345,7 +345,7 @@ typedef Matrix44<float> Matrix44f;
 
 //”Úœﬁ÷∆
 template<class T>
-T Clamp(T val, T low, T high) {
+inline T Clamp(T val, T low, T high) {
 	return val < low ? low : (high < val ? high : val);
 }
 

@@ -202,14 +202,13 @@ public:
 
 private:
 	void clear() {
-		int y, x;
-		for (y = 0; y < height_; y++) {
+		for (int y = 0; y < height_; y++) {
 			uint32_t *dst = framebuffer_[y];
 			uint32_t cc = IBgr(Vector3f(0.2f, 0.2f, 0.6f));
-			for (x = width_; x > 0; dst++, x--) dst[0] = cc;
+			for (int x = width_; x > 0; dst++, x--) dst[0] = cc;
 		}
 
-		for (y = 0; y < height_; y++) {
+		for (int y = 0; y < height_; y++) {
 			std::vector<float>& dst = zbuffer_[y];
 			std::fill(dst.begin(), dst.end(), 0.0f);
 		}
