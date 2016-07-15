@@ -18,7 +18,7 @@ using namespace shakuras;
 namespace skexample {
 
 	typedef std::tuple<
-		GsTextureU32Ptr,//纹理
+		GsTextureSurfacePtr,//纹理
 		Matrix44f,//投影变换
 		Matrix44f,//模型*视图变换
 		Vector3f,//环境光颜色
@@ -150,7 +150,7 @@ namespace skexample {
 	private:
 		GsViewerPtr viewer_;
 		StageBuffer output_;
-		std::vector<GsTextureU32Ptr> texlist_;
+		std::vector<GsTextureSurfacePtr> texlist_;
 		int itex_;
 		int nspace_;
 		float alpha_;
@@ -196,7 +196,7 @@ namespace skexample {
 			Vector3f illum = ambient + diffuse * illum_diffuse + specular * illum_specular;
 
 			Vector2f uv = std::get<0>(f.varying);
-			Vector3f tc = VRgb<Vector3f>(std::get<0>(u)->at(uv.x, uv.y));
+			Vector3f tc = BilinearSample(uv.x, uv.y, std::get<0>(u));
 			Vector3f c(tc.x * illum.x, tc.y * illum.y, tc.z * illum.z);
 
 			Clamp(c.x, 0.0f, 1.0f);

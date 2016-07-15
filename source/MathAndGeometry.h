@@ -350,7 +350,4 @@ T Clamp(T val, T low, T high) {
 }
 
 
-#define SHAKURAS_SHARED_PTR(C) typedef std::shared_ptr<C> C##Ptr
-
-
 SHAKURAS_END;
