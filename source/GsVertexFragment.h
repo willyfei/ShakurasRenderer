@@ -1,5 +1,6 @@
 #pragma once
 #include "MathAndGeometry.h"
+#include "GsVarying.h"
 #include <array>
 
 
