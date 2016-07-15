@@ -196,7 +196,7 @@ namespace skexample {
 			Vector3f illum = ambient + diffuse * illum_diffuse + specular * illum_specular;
 
 			Vector2f uv = std::get<0>(f.varying);
-			Vector3f tc = BilinearSample(uv.x, uv.y, std::get<0>(u));
+			Vector3f tc = BilinearSample(uv.x, uv.y, *std::get<0>(u));
 			Vector3f c(tc.x * illum.x, tc.y * illum.y, tc.z * illum.z);
 
 			Clamp(c.x, 0.0f, 1.0f);
