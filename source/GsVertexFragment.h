@@ -19,7 +19,7 @@ public:
 public:
 	void rhwInitialize() {
 		rhw = 1.0f / pos.w;
-		varying = varying * rhw;
+		PerspectMul(varying, rhw);
 	}
 
 public: 
@@ -31,21 +31,31 @@ public:
 
 
 template<class A, class V>
-GsVertex<A, V> operator+(const GsVertex<A, V>& v1, const GsVertex<A, V>& v2) {
-	return GsVertex<A, V>(v1.pos + v2.pos, v1.varying + v2.varying, v1.rhw + v2.rhw);
+void PerspectMul(GsVertex<A, V>& v1, float t) {
+	v1.pos = v1.pos * t;
+	PerspectMul(v1.varying, t);
+	v1.rhw = v1.rhw * t
 }
+
 template<class A, class V>
-GsVertex<A, V> operator-(const GsVertex<A, V>& v1, const GsVertex<A, V>& v2) {
-	return GsVertex<A, V>(v1.pos - v2.pos, v1.varying - v2.varying, v1.rhw - v2.rhw);
+void LerpMul(GsVertex<A, V>& v1, float t) {
+	v1.pos = v1.pos * t;
+	LerpMul(v1.varying, t);
+	v1.rhw = v1.rhw * t;
 }
+
 template<class A, class V>
-GsVertex<A, V> operator*(const GsVertex<A, V>& v1, float t) {
-	return GsVertex<A, V>(v1.pos * t, v1.varying * t, v1.rhw * t);
+void LerpPlus(GsVertex<A, V>& v1, const GsVertex<A, V>& v2) {
+	v1.pos = v1.pos + v2.pos;
+	LerpPlus(v1.varying, v2.varying);
+	v1.rhw = v1.rhw + v2.rhw;
 }
+
 template<class A, class V>
-GsVertex<A, V> operator/(const GsVertex<A, V>& v1, float d) {
-	float t = 1.0f / d;
-	return GsVertex<A, V>(v1.pos * t, v1.varying * t, v1.rhw * t);
+void LerpSub(GsVertex<A, V>& v1, const GsVertex<A, V>& v2) {
+	v1.pos = v1.pos - v2.pos;
+	LerpSub(v1.varying, v2.varying);
+	v1.rhw = v1.rhw - v2.rhw;
 }
 
 

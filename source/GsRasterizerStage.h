@@ -19,7 +19,10 @@ public:
 public:
 	void scanlineInterp(float y) {
 		float t = (y - v1.pos.y) / (v2.pos.y - v1.pos.y);
-		v = v1 + (v2 - v1) * t;
+		v = v2;
+		LerpSub(v, v1);//v = v2 - v1
+		LerpMul(v, t);//v = (v2 - v1) * t
+		LerpPlus(v, v1);//v = v1 + (v2 - v1) * t;
 	}
 
 public:
@@ -53,7 +56,9 @@ public:
 		if (trap.left.v.pos.x >= trap.right.v.pos.x) {
 			w = 0;
 		}
-		step = (trap.right.v - trap.left.v) / width;
+		step = trap.right.v;
+		LerpSub(step, trap.left.v);//step = trap.right.v - trap.left.v
+		LerpMul(step, 1.0f / width);//step = (trap.right.v - trap.left.v) / width
 	}
 
 public:
@@ -248,13 +253,14 @@ private:
 				Frag frag;
 				frag.x = x;
 				frag.y = scanline.y;
-				frag.varying = scanline.v.varying * ww;
+				frag.varying = scanline.v.varying;
+				PerspectMul(frag.varying, ww);
 				frag.z = rhw;
 
 				fragbuffer_[scanline.y][x].push_back((int)fraglist_.size());
 				fraglist_.push_back(frag);
 			}
-			scanline.v = scanline.v + scanline.step;
+			LerpPlus(scanline.v, scanline.step);
 			if (x >= width_) {
 				break;
 			}
