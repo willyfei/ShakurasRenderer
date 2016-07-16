@@ -30,18 +30,18 @@ namespace skexample {
 	typedef std::tuple<
 		Vector2f,//纹理坐标
 		Vector4f//法向
-	> Attrib;
+	> AttribList;
 
 	typedef std::tuple<
 		GsVarying<Vector2f, kTBAll>,//纹理坐标
 		GsVarying<Vector3f, kTBAll>,//法向
 		GsVarying<Vector3f, kTBAll>,//光源方向(light_pos - pos)
 		GsVarying<Vector3f, kTBAll>//相机方向(eye_pos - pos)
-	> Varying;
+	> VaryingList;
 
-	typedef GsVertex<Attrib, Varying> Vertex;
+	typedef GsVertex<AttribList, VaryingList> Vertex;
 
-	typedef GsFragment<Varying> Fragment;
+	typedef GsFragment<VaryingList> Fragment;
 
 	typedef GsStageBuffer<Uniform, Vertex> StageBuffer;
 

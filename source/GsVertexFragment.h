@@ -7,13 +7,13 @@
 SHAKURAS_BEGIN;
 
 
-template<class Attrib, class Varying>
+template<class AttribList, class VaryingList>
 class GsVertex {
 public:
 	GsVertex() : rhw(1.0f) {}
 	GsVertex(const Vector4f& ppos)
 		: pos(ppos) {}
-	GsVertex(const Vector4f& ppos, const Varying& vvar, float rrhw)
+	GsVertex(const Vector4f& ppos, const VaryingList& vvar, float rrhw)
 		: pos(ppos), varying(vvar), rhw(rrhw) {}
 
 public:
@@ -25,8 +25,8 @@ public:
 public: 
 	Vector4f pos;
 	float rhw;
-	Attrib attrib;
-	Varying varying;
+	AttribList attrib;
+	VaryingList varying;
 };
 
 
@@ -59,17 +59,17 @@ void LerpSub(GsVertex<A, V>& v1, const GsVertex<A, V>& v2) {
 }
 
 
-template<class Varying>
+template<class VaryingList>
 class GsFragment {
 public:
 	GsFragment() : x(0), y(0), z(1.0f) {}
-	GsFragment(int xx, int yy, const Varying& vvar, float zz)
+	GsFragment(int xx, int yy, const VaryingList& vvar, float zz)
 		: x(xx), y(yy), varying(vvar), z(zz) {}
 
 public:
 	int x, y;
 	float z;
-	Varying varying;
+	VaryingList varying;
 	Vector4f c;
 };
 
