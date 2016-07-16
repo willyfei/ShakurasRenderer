@@ -60,9 +60,6 @@
     <ClInclude Include="..\..\source\Utility.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\TupleInterp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\GsVarying.h">
       <Filter>头文件</Filter>
     </ClInclude>

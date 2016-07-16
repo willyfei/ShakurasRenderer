@@ -32,11 +32,11 @@ namespace skexample {
 		Vector4f//法向
 	> Attrib;
 
-	typedef GsVarying<
-		Vector2f, kTBAll,//纹理坐标
-		Vector3f, kTBAll,//法向
-		Vector3f, kTBAll,//光源方向(light_pos - pos)
-		Vector3f, kTBAll//相机方向(eye_pos - pos)
+	typedef std::tuple<
+		GsVarying<Vector2f, kTBAll>,//纹理坐标
+		GsVarying<Vector3f, kTBAll>,//法向
+		GsVarying<Vector3f, kTBAll>,//光源方向(light_pos - pos)
+		GsVarying<Vector3f, kTBAll>//相机方向(eye_pos - pos)
 	> Varying;
 
 	typedef GsVertex<Attrib, Varying> Vertex;
@@ -161,16 +161,16 @@ namespace skexample {
 		void process(const Uniform& u, Vertex& v) {
 			const Matrix44f& mvtrsf = std::get<2>(u);
 
-			v.varying.value0 = std::get<0>(v.attrib);
+			std::get<0>(v.varying).value = std::get<0>(v.attrib);
 
 			Vector4f norm = mvtrsf.transform(std::get<1>(v.attrib));
-			v.varying.value1.set(norm.x, norm.y, norm.z);
+			std::get<1>(v.varying).value.set(norm.x, norm.y, norm.z);
 
 			Vector3f light_pos = std::get<6>(u);
-			v.varying.value2.set(light_pos.x - v.pos.x, light_pos.y - v.pos.y, light_pos.z - v.pos.z);
+			std::get<2>(v.varying).value.set(light_pos.x - v.pos.x, light_pos.y - v.pos.y, light_pos.z - v.pos.z);
 
 			Vector3f eye_pos = std::get<7>(u);
-			v.varying.value3.set(eye_pos.x - v.pos.x, eye_pos.y - v.pos.y, eye_pos.z - v.pos.z);
+			std::get<3>(v.varying).value.set(eye_pos.x - v.pos.x, eye_pos.y - v.pos.y, eye_pos.z - v.pos.z);
 
 			v.pos = mvtrsf.transform(v.pos);
 		}
@@ -179,9 +179,9 @@ namespace skexample {
 	class FragmentShader {
 	public:
 		void process(const Uniform& u, Fragment& f) {
-			Vector3f norm = f.varying.value1;
-			Vector3f light_dir = f.varying.value2;
-			Vector3f eye_dir = f.varying.value3;
+			Vector3f norm = std::get<1>(f.varying).value;
+			Vector3f light_dir = std::get<2>(f.varying).value;
+			Vector3f eye_dir = std::get<3>(f.varying).value;
 			Normalize(norm);
 			Normalize(light_dir);
 			Normalize(eye_dir);
@@ -194,7 +194,7 @@ namespace skexample {
 			float illum_specular = Clamp(DotProduct(Reflect(light_dir, norm), eye_dir), 0.0f, 1.0f);
 			Vector3f illum = ambient + diffuse * illum_diffuse + specular * illum_specular;
 
-			Vector2f uv = f.varying.value0;
+			Vector2f uv = std::get<0>(f.varying).value;
 			Vector3f tc = BilinearSample(uv.x, uv.y, *std::get<0>(u));
 			Vector3f c(tc.x * illum.x, tc.y * illum.y, tc.z * illum.z);
 
