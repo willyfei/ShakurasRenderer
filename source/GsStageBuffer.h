@@ -1,18 +1,16 @@
 #pragma once
 #include "Utility.h"
-#include "GsViewer.h"
-#include "GsVertexFragment.h"
-#include "GsTexture.h"
+#include "MathAndGeometry.h"
 #include <vector>
-#include <array>
 
 
 SHAKURAS_BEGIN;
 
 
-template<class Uniform, class Vert>
+template<class UniformList, class Vert>
 struct GsStageBuffer {
-	Uniform uniform;
+	UniformList uniforms;
+	Matrix44f projtrsf;
 	std::vector<Vert> vertlist;
 	std::vector<int> itris;
 };

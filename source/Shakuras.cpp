@@ -18,14 +18,13 @@ namespace skexample {
 
 	typedef std::tuple<
 		GsTextureSurfacePtr,//纹理
-		Matrix44f,//投影变换
 		Matrix44f,//模型*视图变换
 		Vector3f,//环境光颜色
 		Vector3f,//漫反射颜色
 		Vector3f,//镜面反射颜色
 		Vector3f,//光源位置
 		Vector3f//相机位置
-	> Uniform;
+	> UniformList;
 
 	typedef std::tuple<
 		Vector2f,//纹理坐标
@@ -43,7 +42,7 @@ namespace skexample {
 
 	typedef GsFragment<VaryingList> Fragment;
 
-	typedef GsStageBuffer<Uniform, Vertex> StageBuffer;
+	typedef GsStageBuffer<UniformList, Vertex> StageBuffer;
 
 	void GenerateCube(std::vector<Vertex>& verts, std::vector<int>& itris) {
 		static Vertex mesh[8] = {
@@ -110,12 +109,12 @@ namespace skexample {
 			nspace_ = 0;
 
 			GenerateCube(output_.vertlist, output_.itris);
-			std::get<0>(output_.uniform) = texlist_[itex_];//纹理
-			std::get<1>(output_.uniform) = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
-			std::get<3>(output_.uniform).set(0.4f, 0.4f, 0.4f);//环境光
-			std::get<4>(output_.uniform).set(0.587609f, 0.587609f, 0.587609f);//漫反射
-			std::get<5>(output_.uniform).set(0.071744f, 0.071744f, 0.071744f);//镜面反射
-			std::get<6>(output_.uniform).set(100.0f, 0.0f, 0.0f);//光源位置
+			output_.projtrsf = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
+			std::get<0>(output_.uniforms) = texlist_[itex_];//纹理
+			std::get<2>(output_.uniforms).set(0.4f, 0.4f, 0.4f);//环境光
+			std::get<3>(output_.uniforms).set(0.587609f, 0.587609f, 0.587609f);//漫反射
+			std::get<4>(output_.uniforms).set(0.071744f, 0.071744f, 0.071744f);//镜面反射
+			std::get<5>(output_.uniforms).set(100.0f, 0.0f, 0.0f);//光源位置
 
 			alpha_ = 1.0f;
 			pos_ = 3.5f;
@@ -141,9 +140,9 @@ namespace skexample {
 			buffer = output_;
 
 			Vector3f eye(3 + pos_, 0, 0), at(0, 0, 0), up(0, 0, 1);
-			std::get<0>(output_.uniform) = texlist_[itex_];//纹理
-			std::get<2>(output_.uniform) = Matrix44f::Rotate(-1, -0.5, 1, alpha_) * Matrix44f::LookAt(eye, at, up);//模型*视图变换
-			std::get<7>(output_.uniform) = eye;//相机位置
+			std::get<0>(output_.uniforms) = texlist_[itex_];//纹理
+			std::get<1>(output_.uniforms) = Matrix44f::Rotate(-1, -0.5, 1, alpha_) * Matrix44f::LookAt(eye, at, up);//模型*视图变换
+			std::get<6>(output_.uniforms) = eye;//相机位置
 		}
 
 	private:
@@ -158,18 +157,18 @@ namespace skexample {
 
 	class VertexShader {
 	public:
-		void process(const Uniform& u, Vertex& v) {
-			const Matrix44f& mvtrsf = std::get<2>(u);
+		void process(const UniformList& u, Vertex& v) {
+			const Matrix44f& mvtrsf = std::get<1>(u);
 
 			std::get<0>(v.varyings).value = std::get<0>(v.attribs);
 
 			Vector4f norm = mvtrsf.transform(std::get<1>(v.attribs));
 			std::get<1>(v.varyings).value.set(norm.x, norm.y, norm.z);
 
-			Vector3f light_pos = std::get<6>(u);
+			Vector3f light_pos = std::get<5>(u);
 			std::get<2>(v.varyings).value.set(light_pos.x - v.pos.x, light_pos.y - v.pos.y, light_pos.z - v.pos.z);
 
-			Vector3f eye_pos = std::get<7>(u);
+			Vector3f eye_pos = std::get<6>(u);
 			std::get<3>(v.varyings).value.set(eye_pos.x - v.pos.x, eye_pos.y - v.pos.y, eye_pos.z - v.pos.z);
 
 			v.pos = mvtrsf.transform(v.pos);
@@ -178,7 +177,7 @@ namespace skexample {
 
 	class FragmentShader {
 	public:
-		void process(const Uniform& u, Fragment& f) {
+		void process(const UniformList& u, Fragment& f) {
 			Vector3f norm = std::get<1>(f.varyings).value;
 			Vector3f light_dir = std::get<2>(f.varyings).value;
 			Vector3f eye_dir = std::get<3>(f.varyings).value;
@@ -186,9 +185,9 @@ namespace skexample {
 			Normalize(light_dir);
 			Normalize(eye_dir);
 
-			Vector3f ambient = std::get<3>(u);
-			Vector3f diffuse = std::get<4>(u);
-			Vector3f specular = std::get<5>(u);
+			Vector3f ambient = std::get<2>(u);
+			Vector3f diffuse = std::get<3>(u);
+			Vector3f specular = std::get<4>(u);
 
 			float illum_diffuse = Clamp(DotProduct(light_dir, norm), 0.0f, 1.0f);
 			float illum_specular = Clamp(DotProduct(Reflect(light_dir, norm), eye_dir), 0.0f, 1.0f);
@@ -206,8 +205,8 @@ namespace skexample {
 		}
 	};
 
-	typedef GsGeometryStage<Uniform, Vertex, VertexShader> GeomStage;
-	typedef GsRasterizerStage<Uniform, Vertex, Fragment, FragmentShader> RasStage;
+	typedef GsGeometryStage<UniformList, Vertex, VertexShader> GeomStage;
+	typedef GsRasterizerStage<UniformList, Vertex, Fragment, FragmentShader> RasStage;
 	typedef GsPipeline<StageBuffer, AppStage, GeomStage, RasStage> Pipeline;
 }
 

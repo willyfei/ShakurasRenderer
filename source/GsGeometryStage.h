@@ -29,7 +29,7 @@ inline void ScreenMapping(Vector4f& v, float width, float height) {
 }
 
 
-template<class Uniform, class Vert, class VertShader>
+template<class UniformList, class Vert, class VertShader>
 class GsGeometryStage {
 public:
 	void initialize(float w, float h) {
@@ -42,16 +42,15 @@ public:
 		vertshader_ = vs;
 	}
 
-	void process(GsStageBuffer<Uniform, Vert>& buffer) {
+	void process(GsStageBuffer<UniformList, Vert>& buffer) {
 		//vertex sharding, 内部含有model view transform
 		for (auto i = buffer.vertlist.begin(); i != buffer.vertlist.end(); i++) {
-			vertshader_->process(buffer.uniform, *i);
+			vertshader_->process(buffer.uniforms, *i);
 		}
 
 		//projection transform
-		Matrix44f projtrsf = std::get<1>(buffer.uniform);
 		for (auto i = buffer.vertlist.begin(); i != buffer.vertlist.end(); i++) {
-			i->pos = projtrsf.transform(i->pos);
+			i->pos = buffer.projtrsf.transform(i->pos);
 		}
 
 		//cliping, 简化实现

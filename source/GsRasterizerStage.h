@@ -149,7 +149,7 @@ int SpliteTrapezoid(const std::array<Vert, 3>& tri, std::vector<GsTrapezoid<Vert
 }
 
 
-template<class Uniform, class Vert, class Frag, class FragShader>
+template<class UniformList, class Vert, class Frag, class FragShader>
 class GsRasterizerStage {
 public:
 	void initialize(int ww, int hh, void* fb) {
@@ -177,7 +177,7 @@ public:
 		fragshader_ = std::make_shared<FragShader>();
 	}
 
-	void process(GsStageBuffer<Uniform, Vert>& buffer) {
+	void process(GsStageBuffer<UniformList, Vert>& buffer) {
 		clear();
 
 		//triangle setup, Ê¡ÂÔ
@@ -192,7 +192,7 @@ public:
 
 		//fragment shader
 		for (auto i = fraglist_.begin(); i != fraglist_.end(); i++) {
-			fragshader_->process(buffer.uniform, *i);
+			fragshader_->process(buffer.uniforms, *i);
 		}
 
 		//merging
