@@ -50,9 +50,11 @@ namespace preset_std {
 			Vector4f norm = u.mvtrsf.transform(v.attribs.normal);
 			std::get<1>(v.varyings).value.set(norm.x, norm.y, norm.z);
 
-			std::get<2>(v.varyings).value.set(u.light_pos.x - v.pos.x, u.light_pos.y - v.pos.y, u.light_pos.z - v.pos.z);
+			Vector3f light_pos = u.light_pos;
+			std::get<2>(v.varyings).value.set(light_pos.x - v.pos.x, light_pos.y - v.pos.y, light_pos.z - v.pos.z);
 
-			std::get<3>(v.varyings).value.set(u.eye_pos.x - v.pos.x, u.eye_pos.y - v.pos.y, u.eye_pos.z - v.pos.z);
+			Vector3f eye_pos = u.eye_pos;
+			std::get<3>(v.varyings).value.set(eye_pos.x - v.pos.x, eye_pos.y - v.pos.y, eye_pos.z - v.pos.z);
 
 			v.pos = u.mvtrsf.transform(v.pos);
 		}
