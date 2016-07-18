@@ -60,7 +60,10 @@
     <ClInclude Include="..\..\source\Utility.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\GsVarying.h">
+    <ClInclude Include="..\..\source\GsVaryingList.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\GsPreset.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -14,7 +14,7 @@ using namespace shakuras;
 
 namespace skexample {
 
-	void GenerateCube(std::vector<preset_std::Vertex>& verts, std::vector<short>& vcats) {
+	void GenerateCube(std::vector<preset_std::Vertex>& verts) {
 		static preset_std::Vertex mesh[8] = {
 			{ { -1, -1, -1, 1 } },
 			{ { 1, -1, -1, 1 } },
@@ -43,19 +43,15 @@ namespace skexample {
 
 			int index = (int)verts.size();
 			verts.push_back(p1);
+			verts.back().cat = kVCTriangle;
 			verts.push_back(p2);
 			verts.push_back(p3);
-			vcats.push_back(kVCTriangleBegin);
-			vcats.push_back(kVCVertex);
-			vcats.push_back(kVCVertex);
 
 			index = (int)verts.size();
 			verts.push_back(p3);
+			verts.back().cat = kVCTriangle;
 			verts.push_back(p4);
 			verts.push_back(p1);
-			vcats.push_back(kVCTriangleBegin);
-			vcats.push_back(kVCVertex);
-			vcats.push_back(kVCVertex);
 		};
 
 		draw_plane(0, 3, 2, 1);
@@ -78,7 +74,7 @@ namespace skexample {
 			itex_ = 0;
 			nspace_ = 0;
 
-			GenerateCube(output_.vertlist, output_.vclist);
+			GenerateCube(output_.vertlist);
 			output_.projtrsf = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
 			output_.uniforms.texture = texlist_[itex_];//纹理
 			output_.uniforms.ambient.set(0.4f, 0.4f, 0.4f);//环境光

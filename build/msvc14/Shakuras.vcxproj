@@ -248,11 +248,12 @@
     <ClInclude Include="..\..\source\GsColor.h" />
     <ClInclude Include="..\..\source\GsGeometryStage.h" />
     <ClInclude Include="..\..\source\GsPipeline.h" />
+    <ClInclude Include="..\..\source\GsPreset.h" />
     <ClInclude Include="..\..\source\GsRasterizerStage.h" />
     <ClInclude Include="..\..\source\GsResource.h" />
     <ClInclude Include="..\..\source\GsStageBuffer.h" />
     <ClInclude Include="..\..\source\GsTexture.h" />
-    <ClInclude Include="..\..\source\GsVarying.h" />
+    <ClInclude Include="..\..\source\GsVaryingList.h" />
     <ClInclude Include="..\..\source\GsVertexFragment.h" />
     <ClInclude Include="..\..\source\GsViewer.h" />
     <ClInclude Include="..\..\source\MathAndGeometry.h" />

@@ -58,12 +58,11 @@ public:
 		//cliping, ºÚªØ µœ÷
 		size_t i = 0;
 		while (i < buffer.vertlist.size()) {
-			if (buffer.vclist[i] == kVCTriangleBegin) {
+			if (buffer.vertlist[i].cat == kVCTriangle) {
 				if (CheckCVV(buffer.vertlist[i].pos) != 0 ||
 					CheckCVV(buffer.vertlist[i + 1].pos) != 0 ||
 					CheckCVV(buffer.vertlist[i + 2].pos) != 0) {
 					UnstableErase(buffer.vertlist, i, 3);
-					UnstableErase(buffer.vclist, i, 3);
 				}
 				else {
 					i += 3;

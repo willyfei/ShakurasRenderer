@@ -7,14 +7,20 @@
 SHAKURAS_BEGIN;
 
 
+enum GsVertexCategory {
+	kVCVertex = 0,
+	kVCTriangle = 1
+};
+
+
 template<class AttribList, class VaryingList>
 class GsVertex {
 public:
-	GsVertex() : rhw(1.0f) {}
+	GsVertex() : rhw(1.0f), cat(kVCVertex) {}
 	GsVertex(const Vector4f& ppos)
-		: pos(ppos) {}
-	GsVertex(const Vector4f& ppos, const VaryingList& vvar, float rrhw)
-		: pos(ppos), varyings(vvar), rhw(rrhw) {}
+		: pos(ppos), cat(kVCVertex) {}
+	GsVertex(const Vector4f& ppos, const VaryingList& vvar, float rrhw, short ccat)
+		: pos(ppos), varyings(vvar), rhw(rrhw), cat(ccat) {}
 
 public:
 	void rhwInitialize() {
@@ -22,11 +28,12 @@ public:
 		PerspectMul(varyings, rhw);
 	}
 
-public: 
-	Vector4f pos;
-	float rhw;
+public:
 	AttribList attribs;
 	VaryingList varyings;
+	Vector4f pos;
+	float rhw;
+	short cat;
 };
 
 
