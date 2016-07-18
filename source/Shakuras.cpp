@@ -60,17 +60,17 @@ namespace skexample {
 		auto draw_plane = [&](int a, int b, int c, int d) {
 			Vertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
 
-			std::get<0>(p1.attrib).set(0, 0);
-			std::get<0>(p2.attrib).set(0, 1);
-			std::get<0>(p3.attrib).set(1, 1);
-			std::get<0>(p4.attrib).set(1, 0);
+			std::get<0>(p1.attribs).set(0, 0);
+			std::get<0>(p2.attribs).set(0, 1);
+			std::get<0>(p3.attribs).set(1, 1);
+			std::get<0>(p4.attribs).set(1, 0);
 
 			Vector4f norm = CrossProduct(p3.pos - p2.pos, p1.pos - p2.pos);
 			norm.w = 0.0f;
-			std::get<1>(p1.attrib) = norm;
-			std::get<1>(p2.attrib) = norm;
-			std::get<1>(p3.attrib) = norm;
-			std::get<1>(p4.attrib) = norm;
+			std::get<1>(p1.attribs) = norm;
+			std::get<1>(p2.attribs) = norm;
+			std::get<1>(p3.attribs) = norm;
+			std::get<1>(p4.attribs) = norm;
 
 			int index = (int)verts.size();
 			verts.push_back(p1);
@@ -161,16 +161,16 @@ namespace skexample {
 		void process(const Uniform& u, Vertex& v) {
 			const Matrix44f& mvtrsf = std::get<2>(u);
 
-			std::get<0>(v.varying).value = std::get<0>(v.attrib);
+			std::get<0>(v.varyings).value = std::get<0>(v.attribs);
 
-			Vector4f norm = mvtrsf.transform(std::get<1>(v.attrib));
-			std::get<1>(v.varying).value.set(norm.x, norm.y, norm.z);
+			Vector4f norm = mvtrsf.transform(std::get<1>(v.attribs));
+			std::get<1>(v.varyings).value.set(norm.x, norm.y, norm.z);
 
 			Vector3f light_pos = std::get<6>(u);
-			std::get<2>(v.varying).value.set(light_pos.x - v.pos.x, light_pos.y - v.pos.y, light_pos.z - v.pos.z);
+			std::get<2>(v.varyings).value.set(light_pos.x - v.pos.x, light_pos.y - v.pos.y, light_pos.z - v.pos.z);
 
 			Vector3f eye_pos = std::get<7>(u);
-			std::get<3>(v.varying).value.set(eye_pos.x - v.pos.x, eye_pos.y - v.pos.y, eye_pos.z - v.pos.z);
+			std::get<3>(v.varyings).value.set(eye_pos.x - v.pos.x, eye_pos.y - v.pos.y, eye_pos.z - v.pos.z);
 
 			v.pos = mvtrsf.transform(v.pos);
 		}
@@ -179,9 +179,9 @@ namespace skexample {
 	class FragmentShader {
 	public:
 		void process(const Uniform& u, Fragment& f) {
-			Vector3f norm = std::get<1>(f.varying).value;
-			Vector3f light_dir = std::get<2>(f.varying).value;
-			Vector3f eye_dir = std::get<3>(f.varying).value;
+			Vector3f norm = std::get<1>(f.varyings).value;
+			Vector3f light_dir = std::get<2>(f.varyings).value;
+			Vector3f eye_dir = std::get<3>(f.varyings).value;
 			Normalize(norm);
 			Normalize(light_dir);
 			Normalize(eye_dir);
@@ -194,7 +194,7 @@ namespace skexample {
 			float illum_specular = Clamp(DotProduct(Reflect(light_dir, norm), eye_dir), 0.0f, 1.0f);
 			Vector3f illum = ambient + diffuse * illum_diffuse + specular * illum_specular;
 
-			Vector2f uv = std::get<0>(f.varying).value;
+			Vector2f uv = std::get<0>(f.varyings).value;
 			Vector3f tc = BilinearSample(uv.x, uv.y, *std::get<0>(u));
 			Vector3f c(tc.x * illum.x, tc.y * illum.y, tc.z * illum.z);
 

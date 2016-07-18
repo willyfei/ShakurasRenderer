@@ -253,8 +253,8 @@ private:
 				Frag frag;
 				frag.x = x;
 				frag.y = scanline.y;
-				frag.varying = scanline.v.varying;
-				PerspectMul(frag.varying, ww);
+				frag.varyings = scanline.v.varyings;
+				PerspectMul(frag.varyings, ww);
 				frag.z = rhw;
 
 				fragbuffer_[scanline.y][x].push_back((int)fraglist_.size());
