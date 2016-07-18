@@ -14,19 +14,8 @@ using namespace shakuras;
 
 namespace skexample {
 
-	using preset_std::UniformList;
-	using preset_std::AttribList;
-	using preset_std::VaryingList;
-	using preset_std::Vertex;
-	using preset_std::Fragment;
-	using preset_std::StageBuffer;
-	using preset_std::VertexShader;
-	using preset_std::FragmentShader;
-	using preset_std::GeomStage;
-	using preset_std::RasStage;
-
-	void GenerateCube(std::vector<Vertex>& verts, std::vector<short>& vcats) {
-		static Vertex mesh[8] = {
+	void GenerateCube(std::vector<preset_std::Vertex>& verts, std::vector<short>& vcats) {
+		static preset_std::Vertex mesh[8] = {
 			{ { -1, -1, -1, 1 } },
 			{ { 1, -1, -1, 1 } },
 			{ { 1, 1, -1, 1 } },
@@ -38,7 +27,7 @@ namespace skexample {
 		};
 
 		auto draw_plane = [&](int a, int b, int c, int d) {
-			Vertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
+			preset_std::Vertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
 
 			p1.attribs.texcoord.set(0, 0);
 			p2.attribs.texcoord.set(0, 1);
@@ -104,7 +93,7 @@ namespace skexample {
 		}
 
 
-		void process(StageBuffer& buffer) {
+		void process(preset_std::StageBuffer& buffer) {
 			if (viewer_->testUserMessage(kUMSpace)) {
 				if (++nspace_ == 1) {
 					itex_ = (itex_ + 1) % texlist_.size();
@@ -128,7 +117,7 @@ namespace skexample {
 
 	private:
 		GsViewerPtr viewer_;
-		StageBuffer output_;
+		preset_std::StageBuffer output_;
 		std::vector<GsTextureSurfacePtr> texlist_;
 		int itex_;
 		int nspace_;
@@ -136,7 +125,7 @@ namespace skexample {
 		float pos_;
 	};
 
-	typedef GsPipeline<StageBuffer, AppStage, GeomStage, RasStage> Pipeline;
+	typedef GsPipeline<preset_std::StageBuffer, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
 }
 
 
