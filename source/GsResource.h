@@ -10,8 +10,8 @@ SHAKURAS_BEGIN;
 
 
 //texture×ÊÔ´
-GsTextureSurfacePtr GridTexture();
-GsTextureSurfacePtr LoadTexture(std::string filepath);
+GsSurfacePtr GridTexture();
+GsSurfacePtr LoadTexture(std::string filepath);
 
 
 SHAKURAS_END;

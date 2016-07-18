@@ -6,7 +6,7 @@
 SHAKURAS_BEGIN;
 
 
-GsTextureSurfacePtr GridTexture() {
+GsSurfacePtr GridTexture() {
 	static uint32_t pixels[256][256];
 	int i, j;
 	for (j = 0; j < 256; j++) {
@@ -16,14 +16,14 @@ GsTextureSurfacePtr GridTexture() {
 		}
 	}
 
-	GsTextureSurfacePtr tex = std::make_shared<GsTextureSurface>();
+	GsSurfacePtr tex = std::make_shared<GsSurface>();
 	tex->reset(256, 256, &(pixels[0][0]));
 
 	return tex;
 }
 
 
-GsTextureSurfacePtr LoadTexture(std::string filepath) {
+GsSurfacePtr LoadTexture(std::string filepath) {
 	int x, y;
 	stbi_uc* data = stbi_load(filepath.c_str(), &x, &y, 0, 4);
 	if (!data) {
@@ -37,7 +37,7 @@ GsTextureSurfacePtr LoadTexture(std::string filepath) {
 		}
 	}
 
-	GsTextureSurfacePtr tex = std::make_shared<GsTextureSurface>();
+	GsSurfacePtr tex = std::make_shared<GsSurface>();
 	tex->reset(x, y, (uint32_t*)data);
 
 	STBI_FREE(data);

@@ -15,7 +15,7 @@ SHAKURAS_BEGIN;
 namespace preset_std {
 
 	struct UniformList {
-		GsTextureSurfacePtr texture;
+		GsSurfacePtr texture;
 		Matrix44f mvtrsf;
 		Vector3f ambient;
 		Vector3f diffuse;

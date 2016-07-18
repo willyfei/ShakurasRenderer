@@ -7,9 +7,9 @@
 SHAKURAS_BEGIN;
 
 
-class GsTextureSurface {
+class GsSurface {
 public:
-	GsTextureSurface() {}
+	GsSurface() {}
 
 public:
 	void reset(int ww, int hh, const uint32_t* data) {
@@ -39,7 +39,7 @@ private:
 };
 
 
-SHAKURAS_SHARED_PTR(GsTextureSurface);
+SHAKURAS_SHARED_PTR(GsSurface);
 
 
 template<class Surface>
@@ -88,22 +88,22 @@ Vector3f BilinearSample(float u, float v, Surface& surface) {
 }
 
 
-class GsTextureMipmap {
+class GsMipmap {
 public:
-	GsTextureMipmap() {}
+	GsMipmap() {}
 
 public:
 	void reset(int ww, int hh, const uint32_t* data) {
 		surfaces_.clear();
 
-		GsTextureSurfacePtr surface = std::make_shared<GsTextureSurface>();
+		GsSurfacePtr surface = std::make_shared<GsSurface>();
 		surface->reset(ww, hh, data);
 		surfaces_.push_back(surface);
 
 		ww = (std::max)(1, (surface->width() + 1) / 2);
 		hh = (std::max)(1, (surface->height() + 1) / 2);
 		while (ww > 1 || hh > 1) {
-			GsTextureSurfacePtr next_surface = std::make_shared<GsTextureSurface>();
+			GsSurfacePtr next_surface = std::make_shared<GsSurface>();
 			next_surface->reset(ww, hh, nullptr);
 
 			for (int x = 0; x != next_surface->width(); x++) {
@@ -128,11 +128,11 @@ public:
 	inline void set(int x, int y, int l, const Vector3f& c) { surfaces_[l]->set(x, y, c); }
 
 private:
-	std::vector<GsTextureSurfacePtr> surfaces_;
+	std::vector<GsSurfacePtr> surfaces_;
 };
 
 
-SHAKURAS_SHARED_PTR(GsTextureMipmap);
+SHAKURAS_SHARED_PTR(GsMipmap);
 
 
 

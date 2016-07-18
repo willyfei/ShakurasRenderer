@@ -118,7 +118,7 @@ namespace skexample {
 	private:
 		GsViewerPtr viewer_;
 		preset_std::StageBuffer output_;
-		std::vector<GsTextureSurfacePtr> texlist_;
+		std::vector<GsSurfacePtr> texlist_;
 		int itex_;
 		int nspace_;
 		float alpha_;
