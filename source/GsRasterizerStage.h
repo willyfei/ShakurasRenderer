@@ -183,11 +183,15 @@ public:
 		//triangle setup, Ê¡ÂÔ
 
 		//triangle traversal
-		for (size_t i = 0; i < buffer.itris.size(); i += 3) {
-			const Vert& v1 = buffer.vertlist[buffer.itris[i]];
-			const Vert& v2 = buffer.vertlist[buffer.itris[i + 1]];
-			const Vert& v3 = buffer.vertlist[buffer.itris[i + 2]];
-			traversalTriangle({ v1, v2, v3 });
+		size_t i = 0;
+		while (i < buffer.vertlist.size()) {
+			if (buffer.vclist[i] == kVCTriangleBegin) {
+				const Vert& v1 = buffer.vertlist[i];
+				const Vert& v2 = buffer.vertlist[i + 1];
+				const Vert& v3 = buffer.vertlist[i + 2];
+				traversalTriangle({ v1, v2, v3 });
+				i += 3;
+			}
 		}
 
 		//fragment shader

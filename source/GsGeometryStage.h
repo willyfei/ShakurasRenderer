@@ -43,10 +43,12 @@ public:
 	}
 
 	void process(GsStageBuffer<UniformList, Vert>& buffer) {
-		//vertex sharding, 内部含有model view transform
+		//vertex sharding
 		for (auto i = buffer.vertlist.begin(); i != buffer.vertlist.end(); i++) {
 			vertshader_->process(buffer.uniforms, *i);
 		}
+
+		//geometry sharding
 
 		//projection transform
 		for (auto i = buffer.vertlist.begin(); i != buffer.vertlist.end(); i++) {
@@ -55,20 +57,17 @@ public:
 
 		//cliping, 简化实现
 		size_t i = 0;
-		while (i + 2 < buffer.itris.size()) {
-			if (CheckCVV(buffer.vertlist[buffer.itris[i]].pos) != 0 ||
-				CheckCVV(buffer.vertlist[buffer.itris[i + 1]].pos) != 0 ||
-				CheckCVV(buffer.vertlist[buffer.itris[i + 2]].pos) != 0) {
-				int len = (int)buffer.itris.size();
-				std::swap(buffer.itris[i], buffer.itris[len - 3]);
-				std::swap(buffer.itris[i + 1], buffer.itris[len - 2]);
-				std::swap(buffer.itris[i + 2], buffer.itris[len - 1]);
-				buffer.itris.pop_back();
-				buffer.itris.pop_back();
-				buffer.itris.pop_back();
-			}
-			else {
-				i += 3;
+		while (i < buffer.vertlist.size()) {
+			if (buffer.vclist[i] == kVCTriangleBegin) {
+				if (CheckCVV(buffer.vertlist[i].pos) != 0 ||
+					CheckCVV(buffer.vertlist[i + 1].pos) != 0 ||
+					CheckCVV(buffer.vertlist[i + 2].pos) != 0) {
+					UnstableErase(buffer.vertlist, i, 3);
+					UnstableErase(buffer.vclist, i, 3);
+				}
+				else {
+					i += 3;
+				}
 			}
 		}
 

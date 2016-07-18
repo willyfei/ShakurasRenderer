@@ -25,7 +25,7 @@ namespace skexample {
 	using preset_std::GeomStage;
 	using preset_std::RasStage;
 
-	void GenerateCube(std::vector<Vertex>& verts, std::vector<int>& itris) {
+	void GenerateCube(std::vector<Vertex>& verts, std::vector<short>& vcats) {
 		static Vertex mesh[8] = {
 			{ { -1, -1, -1, 1 } },
 			{ { 1, -1, -1, 1 } },
@@ -56,17 +56,17 @@ namespace skexample {
 			verts.push_back(p1);
 			verts.push_back(p2);
 			verts.push_back(p3);
-			itris.push_back(index);
-			itris.push_back(index + 1);
-			itris.push_back(index + 2);
+			vcats.push_back(kVCTriangleBegin);
+			vcats.push_back(kVCVertex);
+			vcats.push_back(kVCVertex);
 
 			index = (int)verts.size();
 			verts.push_back(p3);
 			verts.push_back(p4);
 			verts.push_back(p1);
-			itris.push_back(index);
-			itris.push_back(index + 1);
-			itris.push_back(index + 2);
+			vcats.push_back(kVCTriangleBegin);
+			vcats.push_back(kVCVertex);
+			vcats.push_back(kVCVertex);
 		};
 
 		draw_plane(0, 3, 2, 1);
@@ -89,7 +89,7 @@ namespace skexample {
 			itex_ = 0;
 			nspace_ = 0;
 
-			GenerateCube(output_.vertlist, output_.itris);
+			GenerateCube(output_.vertlist, output_.vclist);
 			output_.projtrsf = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
 			output_.uniforms.texture = texlist_[itex_];//纹理
 			output_.uniforms.ambient.set(0.4f, 0.4f, 0.4f);//环境光
