@@ -16,20 +16,20 @@ using namespace shakuras;
 
 namespace skexample {
 
-	typedef std::tuple<
-		GsTextureSurfacePtr,//纹理
-		Matrix44f,//模型*视图变换
-		Vector3f,//环境光颜色
-		Vector3f,//漫反射颜色
-		Vector3f,//镜面反射颜色
-		Vector3f,//光源位置
-		Vector3f//相机位置
-	> UniformList;
+	struct UniformList {
+		GsTextureSurfacePtr texture;
+		Matrix44f mvtrsf;
+		Vector3f ambient;
+		Vector3f diffuse;
+		Vector3f specular;
+		Vector3f light_pos;
+		Vector3f eye_pos;
+	};
 
-	typedef std::tuple<
-		Vector2f,//纹理坐标
-		Vector4f//法向
-	> AttribList;
+	struct AttribList {
+		Vector2f texcoord;
+		Vector4f normal;
+	};
 
 	typedef std::tuple<
 		GsVarying<Vector2f, kTBAll>,//纹理坐标
@@ -59,17 +59,17 @@ namespace skexample {
 		auto draw_plane = [&](int a, int b, int c, int d) {
 			Vertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
 
-			std::get<0>(p1.attribs).set(0, 0);
-			std::get<0>(p2.attribs).set(0, 1);
-			std::get<0>(p3.attribs).set(1, 1);
-			std::get<0>(p4.attribs).set(1, 0);
+			p1.attribs.texcoord.set(0, 0);
+			p2.attribs.texcoord.set(0, 1);
+			p3.attribs.texcoord.set(1, 1);
+			p4.attribs.texcoord.set(1, 0);
 
 			Vector4f norm = CrossProduct(p3.pos - p2.pos, p1.pos - p2.pos);
 			norm.w = 0.0f;
-			std::get<1>(p1.attribs) = norm;
-			std::get<1>(p2.attribs) = norm;
-			std::get<1>(p3.attribs) = norm;
-			std::get<1>(p4.attribs) = norm;
+			p1.attribs.normal = norm;
+			p2.attribs.normal = norm;
+			p3.attribs.normal = norm;
+			p4.attribs.normal = norm;
 
 			int index = (int)verts.size();
 			verts.push_back(p1);
@@ -110,11 +110,11 @@ namespace skexample {
 
 			GenerateCube(output_.vertlist, output_.itris);
 			output_.projtrsf = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
-			std::get<0>(output_.uniforms) = texlist_[itex_];//纹理
-			std::get<2>(output_.uniforms).set(0.4f, 0.4f, 0.4f);//环境光
-			std::get<3>(output_.uniforms).set(0.587609f, 0.587609f, 0.587609f);//漫反射
-			std::get<4>(output_.uniforms).set(0.071744f, 0.071744f, 0.071744f);//镜面反射
-			std::get<5>(output_.uniforms).set(100.0f, 0.0f, 0.0f);//光源位置
+			output_.uniforms.texture = texlist_[itex_];//纹理
+			output_.uniforms.ambient.set(0.4f, 0.4f, 0.4f);//环境光
+			output_.uniforms.diffuse.set(0.587609f, 0.587609f, 0.587609f);//漫反射
+			output_.uniforms.specular.set(0.071744f, 0.071744f, 0.071744f);//镜面反射
+			output_.uniforms.light_pos.set(100.0f, 0.0f, 0.0f);//光源位置
 
 			alpha_ = 1.0f;
 			pos_ = 3.5f;
@@ -140,9 +140,9 @@ namespace skexample {
 			buffer = output_;
 
 			Vector3f eye(3 + pos_, 0, 0), at(0, 0, 0), up(0, 0, 1);
-			std::get<0>(output_.uniforms) = texlist_[itex_];//纹理
-			std::get<1>(output_.uniforms) = Matrix44f::Rotate(-1, -0.5, 1, alpha_) * Matrix44f::LookAt(eye, at, up);//模型*视图变换
-			std::get<6>(output_.uniforms) = eye;//相机位置
+			output_.uniforms.texture = texlist_[itex_];//纹理
+			output_.uniforms.mvtrsf = Matrix44f::Rotate(-1, -0.5, 1, alpha_) * Matrix44f::LookAt(eye, at, up);//模型*视图变换
+			output_.uniforms.eye_pos = eye;//相机位置
 		}
 
 	private:
@@ -158,20 +158,18 @@ namespace skexample {
 	class VertexShader {
 	public:
 		void process(const UniformList& u, Vertex& v) {
-			const Matrix44f& mvtrsf = std::get<1>(u);
+			std::get<0>(v.varyings).value = v.attribs.texcoord;
 
-			std::get<0>(v.varyings).value = std::get<0>(v.attribs);
-
-			Vector4f norm = mvtrsf.transform(std::get<1>(v.attribs));
+			Vector4f norm = u.mvtrsf.transform(v.attribs.normal);
 			std::get<1>(v.varyings).value.set(norm.x, norm.y, norm.z);
 
-			Vector3f light_pos = std::get<5>(u);
+			Vector3f light_pos = u.light_pos;
 			std::get<2>(v.varyings).value.set(light_pos.x - v.pos.x, light_pos.y - v.pos.y, light_pos.z - v.pos.z);
 
-			Vector3f eye_pos = std::get<6>(u);
+			Vector3f eye_pos = u.eye_pos;
 			std::get<3>(v.varyings).value.set(eye_pos.x - v.pos.x, eye_pos.y - v.pos.y, eye_pos.z - v.pos.z);
 
-			v.pos = mvtrsf.transform(v.pos);
+			v.pos = u.mvtrsf.transform(v.pos);
 		}
 	};
 
@@ -185,16 +183,12 @@ namespace skexample {
 			Normalize(light_dir);
 			Normalize(eye_dir);
 
-			Vector3f ambient = std::get<2>(u);
-			Vector3f diffuse = std::get<3>(u);
-			Vector3f specular = std::get<4>(u);
-
 			float illum_diffuse = Clamp(DotProduct(light_dir, norm), 0.0f, 1.0f);
 			float illum_specular = Clamp(DotProduct(Reflect(light_dir, norm), eye_dir), 0.0f, 1.0f);
-			Vector3f illum = ambient + diffuse * illum_diffuse + specular * illum_specular;
+			Vector3f illum = u.ambient + u.diffuse * illum_diffuse + u.specular * illum_specular;
 
 			Vector2f uv = std::get<0>(f.varyings).value;
-			Vector3f tc = BilinearSample(uv.x, uv.y, *std::get<0>(u));
+			Vector3f tc = BilinearSample(uv.x, uv.y, *u.texture);
 			Vector3f c(tc.x * illum.x, tc.y * illum.y, tc.z * illum.z);
 
 			Clamp(c.x, 0.0f, 1.0f);
