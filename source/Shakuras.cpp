@@ -84,7 +84,7 @@ namespace skexample {
 			output_.uniforms.ambient.set(0.4f, 0.4f, 0.4f);//环境光
 			output_.uniforms.diffuse.set(0.587609f, 0.587609f, 0.587609f);//漫反射
 			output_.uniforms.specular.set(0.071744f, 0.071744f, 0.071744f);//镜面反射
-			output_.uniforms.light_pos.set(100.0f, 0.0f, 0.0f);//光源位置
+			output_.uniforms.light_pos.set(100.0f, 100.0f, -100.0f);//光源位置
 
 			alpha_ = 1.0f;
 			pos_ = 3.5f;
