@@ -32,7 +32,7 @@ public:
 	virtual int initialize(int w, int h, const char* title) {
 		WNDCLASS wc = { CS_BYTEALIGNCLIENT, (WNDPROC)ScreenEventProc, 0, 0, 0,
 			NULL, NULL, NULL, NULL, _T("SCREEN_GRPC3D") };
-		BITMAPINFO bi = { { sizeof(BITMAPINFOHEADER), w, -h, 1, 32, BI_RGB, w * h * 4,
+		BITMAPINFO bi = { { sizeof(BITMAPINFOHEADER), w, -h, 1, 32, BI_RGB, w * h * 4UL,
 			0, 0, 0, 0, } };
 		RECT rect = { 0, 0, w, h };
 		int wx, wy, sx, sy;
