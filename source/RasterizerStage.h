@@ -159,14 +159,9 @@ public:
 		fraglist_.clear();
 		framebuffer_.resize(height_, nullptr);
 		zbuffer_.resize(height_);
-		fragbuffer_.resize(height_);
 
 		for (int y = 0; y != height_; y++) {
 			zbuffer_[y].resize(width_, 0.0f);
-			fragbuffer_[y].resize(width_);
-			for (int x = 0; x != width_; x++) {
-				fragbuffer_[y][x].clear();
-			}
 		}
 
 		char* framebuf = (char*)fb;
@@ -182,9 +177,8 @@ public:
 
 		//triangle setup, Ê¡ÂÔ
 
-		//triangle traversal
-		size_t i = 0;
-		while (i < buffer.vertlist.size()) {
+		for (size_t i = 0; i < buffer.vertlist.size();) {
+			//triangle traversal
 			if (buffer.vertlist[i].primf == kPFTriangle) {
 				const Vert& v1 = buffer.vertlist[i];
 				const Vert& v2 = buffer.vertlist[i + 1];
@@ -192,20 +186,22 @@ public:
 				traversalTriangle({ v1, v2, v3 });
 				i += 3;
 			}
-		}
 
-		//fragment shader
-		for (auto i = fraglist_.begin(); i != fraglist_.end(); i++) {
-			fragshader_->process(buffer.uniforms, *i);
-		}
-
-		//merging
-		for (auto i = fraglist_.begin(); i != fraglist_.end(); i++) {
-			Frag& frag = *i;
-			if (frag.z > zbuffer_[frag.y][frag.x]) {
-				zbuffer_[frag.y][frag.x] = frag.z;
-				framebuffer_[frag.y][frag.x] = IRgba(frag.c);
+			//fragment shader
+			for (auto ii = fraglist_.begin(); ii != fraglist_.end(); ii++) {
+				fragshader_->process(buffer.uniforms, *ii);
 			}
+
+			//merging
+			for (auto ii = fraglist_.begin(); ii != fraglist_.end(); ii++) {
+				Frag& frag = *ii;
+				if (frag.z > zbuffer_[frag.y][frag.x]) {
+					zbuffer_[frag.y][frag.x] = frag.z;
+					framebuffer_[frag.y][frag.x] = IRgba(frag.c);
+				}
+			}
+
+			fraglist_.clear();
 		}
 	}
 
@@ -224,11 +220,6 @@ private:
 
 		fraglist_.clear();
 		fraglist_.reserve(width_ * height_);
-		for (int y = 0; y != height_; y++) {
-			for (int x = 0; x != width_; x++) {
-				fragbuffer_[y][x].clear();
-			}
-		}
 	}
 
 	void traversalTriangle(const std::array<Vert, 3>& tri) {
@@ -261,7 +252,6 @@ private:
 				TravMul(frag.varyings, ww, kTBPerspect);
 				frag.z = rhw;
 
-				fragbuffer_[scanline.y][x].push_back((int)fraglist_.size());
 				fraglist_.push_back(frag);
 			}
 			TravPlus(scanline.v, scanline.step, kTBLerp);
@@ -293,7 +283,6 @@ private:
 	std::vector<std::vector<float> > zbuffer_;
 	int width_, height_;
 	std::vector<Frag> fraglist_;
-	std::vector<std::vector<std::vector<int> > > fragbuffer_;
 	std::shared_ptr<FragShader> fragshader_;
 };
 
