@@ -19,6 +19,19 @@ enum TraversalBehavior {
 	kTBAll = kTBLerp | kTBPerspect
 };
 
+//VaryList要重载这几个函数
+template<class T>
+void TravPlus(T& v1, const T& v2, int oper) {}
+
+template<class T>
+void TravSub(T& v1, const T& v2, int oper) {}
+
+template<class T>
+void TravMul(T& v1, float t, int oper) {}
+
+template<class T>
+void TravDiv(T& v1, float d, int oper) {}
+
 
 template<class AttribList, class VaryingList>
 class Vertex {
@@ -32,7 +45,7 @@ public:
 public:
 	void rhwInitialize() {
 		rhw = 1.0f / pos.w;
-		PerspectMul(varyings, rhw);
+		TravMul(varyings, rhw, kTBPerspect);
 	}
 
 public:
@@ -45,31 +58,31 @@ public:
 
 
 template<class A, class V>
-void PerspectMul(Vertex<A, V>& v1, float t) {
-	v1.pos = v1.pos * t;
-	PerspectMul(v1.varyings, t);
-	v1.rhw = v1.rhw * t
-}
-
-template<class A, class V>
-void LerpMul(Vertex<A, V>& v1, float t) {
-	v1.pos = v1.pos * t;
-	LerpMul(v1.varyings, t);
-	v1.rhw = v1.rhw * t;
-}
-
-template<class A, class V>
-void LerpPlus(Vertex<A, V>& v1, const Vertex<A, V>& v2) {
+void TravPlus(Vertex<A, V>& v1, const Vertex<A, V>& v2, int oper) {
 	v1.pos = v1.pos + v2.pos;
-	LerpPlus(v1.varyings, v2.varyings);
+	TravPlus(v1.varyings, v2.varyings, oper);
 	v1.rhw = v1.rhw + v2.rhw;
 }
 
 template<class A, class V>
-void LerpSub(Vertex<A, V>& v1, const Vertex<A, V>& v2) {
+void TravSub(Vertex<A, V>& v1, const Vertex<A, V>& v2, int oper) {
 	v1.pos = v1.pos - v2.pos;
-	LerpSub(v1.varyings, v2.varyings);
+	TravSub(v1.varyings, v2.varyings, oper);
 	v1.rhw = v1.rhw - v2.rhw;
+}
+
+template<class A, class V>
+void TravMul(Vertex<A, V>& v1, float t, int oper) {
+	v1.pos = v1.pos * t;
+	TravMul(v1.varyings, t, oper);
+	v1.rhw = v1.rhw * t;
+}
+
+template<class A, class V>
+void TravDiv(Vertex<A, V>& v1, float d, int oper) {
+	v1.pos = v1.pos / d;
+	TravDiv(v1.varyings, d, oper);
+	v1.rhw = v1.rhw / d;
 }
 
 

@@ -1,7 +1,6 @@
 #pragma once
 #include "MathAndGeometry.h"
 #include "Texture.h"
-#include "VaryingList.h"
 #include "Vertex.h"
 #include "Fragment.h"
 #include "StageBuffer.h"
@@ -26,16 +25,16 @@ namespace preset_std {
 	};
 
 	struct AttribList {
-		Vector2f texcoord;
+		Vector2f uv;
 		Vector4f normal;
 	};
 
-	typedef std::tuple<
-		Varying<Vector2f, kTBAll>,//纹理坐标
-		Varying<Vector3f, kTBAll>,//法向
-		Varying<Vector3f, kTBAll>,//光源方向(light_pos - pos)
-		Varying<Vector3f, kTBAll>//相机方向(eye_pos - pos)
-	> VaryingList;
+	struct VaryingList {
+		Vector2f uv;
+		Vector3f normal;
+		Vector3f light_dir;
+		Vector3f eye_dir;
+	};
 
 	typedef shakuras::Vertex<AttribList, VaryingList> Vertex;
 
@@ -46,16 +45,16 @@ namespace preset_std {
 	class VertexShader {
 	public:
 		void process(const UniformList& u, Vertex& v) {
-			std::get<0>(v.varyings).value = v.attribs.texcoord;
+			v.varyings.uv = v.attribs.uv;
 
 			Vector4f norm = u.mvtrsf.transform(v.attribs.normal);
-			std::get<1>(v.varyings).value.set(norm.x, norm.y, norm.z);
+			v.varyings.normal.set(norm.x, norm.y, norm.z);
 
 			Vector3f light_pos = u.light_pos;
-			std::get<2>(v.varyings).value.set(light_pos.x - v.pos.x, light_pos.y - v.pos.y, light_pos.z - v.pos.z);
+			v.varyings.light_dir.set(light_pos.x - v.pos.x, light_pos.y - v.pos.y, light_pos.z - v.pos.z);
 
 			Vector3f eye_pos = u.eye_pos;
-			std::get<3>(v.varyings).value.set(eye_pos.x - v.pos.x, eye_pos.y - v.pos.y, eye_pos.z - v.pos.z);
+			v.varyings.eye_dir.set(eye_pos.x - v.pos.x, eye_pos.y - v.pos.y, eye_pos.z - v.pos.z);
 
 			v.pos = u.mvtrsf.transform(v.pos);
 		}
@@ -64,9 +63,9 @@ namespace preset_std {
 	class FragmentShader {
 	public:
 		void process(const UniformList& u, Fragment& f) {
-			Vector3f norm = std::get<1>(f.varyings).value;
-			Vector3f light_dir = std::get<2>(f.varyings).value;
-			Vector3f eye_dir = std::get<3>(f.varyings).value;
+			Vector3f norm = f.varyings.normal;
+			Vector3f light_dir = f.varyings.light_dir;
+			Vector3f eye_dir = f.varyings.eye_dir;
 			Normalize(norm);
 			Normalize(light_dir);
 			Normalize(eye_dir);
@@ -75,7 +74,7 @@ namespace preset_std {
 			float illum_specular = Clamp(DotProduct(Reflect(light_dir, norm), eye_dir), 0.0f, 1.0f);
 			Vector3f illum = u.ambient + u.diffuse * illum_diffuse + u.specular * illum_specular;
 
-			Vector2f uv = std::get<0>(f.varyings).value;
+			Vector2f uv = f.varyings.uv;
 			Vector3f tc = BilinearSample(uv.x, uv.y, *u.texture);
 			Vector3f c(tc.x * illum.x, tc.y * illum.y, tc.z * illum.z);
 
@@ -90,6 +89,40 @@ namespace preset_std {
 	typedef GeometryStage<UniformList, Vertex, VertexShader> GeomStage;
 
 	typedef RasterizerStage<UniformList, Vertex, Fragment, FragmentShader> RasStage;
+}
+
+
+template<>
+void TravPlus<preset_std::VaryingList>(preset_std::VaryingList& v1, const preset_std::VaryingList& v2, int oper) {
+	v1.uv = v1.uv + v2.uv;
+	v1.normal = v1.normal + v2.normal;
+	v1.light_dir = v1.light_dir + v2.light_dir;
+	v1.eye_dir = v1.eye_dir + v2.eye_dir;
+}
+
+template<>
+void TravSub<preset_std::VaryingList>(preset_std::VaryingList& v1, const preset_std::VaryingList& v2, int oper) {
+	v1.uv = v1.uv - v2.uv;
+	v1.normal = v1.normal - v2.normal;
+	v1.light_dir = v1.light_dir - v2.light_dir;
+	v1.eye_dir = v1.eye_dir - v2.eye_dir;
+}
+
+template<>
+void TravMul<preset_std::VaryingList>(preset_std::VaryingList& v1, float t, int oper) {
+	v1.uv = v1.uv * t;
+	v1.normal = v1.normal * t;
+	v1.light_dir = v1.light_dir * t;
+	v1.eye_dir = v1.eye_dir * t;
+}
+
+template<>
+void TravDiv<preset_std::VaryingList>(preset_std::VaryingList& v1, float d, int oper) {
+	float t = 1.0f / d;
+	v1.uv = v1.uv * t;
+	v1.normal = v1.normal * t;
+	v1.light_dir = v1.light_dir * t;
+	v1.eye_dir = v1.eye_dir * t;
 }
 
 

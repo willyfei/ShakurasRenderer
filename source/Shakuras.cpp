@@ -29,10 +29,10 @@ namespace skexample {
 		auto draw_plane = [&](int a, int b, int c, int d) {
 			preset_std::Vertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
 
-			p1.attribs.texcoord.set(0, 0);
-			p2.attribs.texcoord.set(0, 1);
-			p3.attribs.texcoord.set(1, 1);
-			p4.attribs.texcoord.set(1, 0);
+			p1.attribs.uv.set(0, 0);
+			p2.attribs.uv.set(0, 1);
+			p3.attribs.uv.set(1, 1);
+			p4.attribs.uv.set(1, 0);
 
 			Vector4f norm = CrossProduct(p3.pos - p2.pos, p1.pos - p2.pos);
 			norm.w = 0.0f;

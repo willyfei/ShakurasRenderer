@@ -20,9 +20,9 @@ public:
 	void scanlineInterp(float y) {
 		float t = (y - v1.pos.y) / (v2.pos.y - v1.pos.y);
 		v = v2;
-		LerpSub(v, v1);//v = v2 - v1
-		LerpMul(v, t);//v = (v2 - v1) * t
-		LerpPlus(v, v1);//v = v1 + (v2 - v1) * t;
+		TravSub(v, v1, kTBLerp);//v = v2 - v1
+		TravMul(v, t, kTBLerp);//v = (v2 - v1) * t
+		TravPlus(v, v1, kTBLerp);//v = v1 + (v2 - v1) * t;
 	}
 
 public:
@@ -57,8 +57,8 @@ public:
 			w = 0;
 		}
 		step = trap.right.v;
-		LerpSub(step, trap.left.v);//step = trap.right.v - trap.left.v
-		LerpMul(step, 1.0f / width);//step = (trap.right.v - trap.left.v) / width
+		TravSub(step, trap.left.v, kTBLerp);//step = trap.right.v - trap.left.v
+		TravMul(step, 1.0f / width, kTBLerp);//step = (trap.right.v - trap.left.v) / width
 	}
 
 public:
@@ -258,13 +258,13 @@ private:
 				frag.x = x;
 				frag.y = scanline.y;
 				frag.varyings = scanline.v.varyings;
-				PerspectMul(frag.varyings, ww);
+				TravMul(frag.varyings, ww, kTBPerspect);
 				frag.z = rhw;
 
 				fragbuffer_[scanline.y][x].push_back((int)fraglist_.size());
 				fraglist_.push_back(frag);
 			}
-			LerpPlus(scanline.v, scanline.step);
+			TravPlus(scanline.v, scanline.step, kTBLerp);
 			if (x >= width_) {
 				break;
 			}
