@@ -7,20 +7,20 @@
 SHAKURAS_BEGIN;
 
 
-enum VertexCategory {
-	kVCVertex = 0,
-	kVCTriangle = 1
+enum PrimitiveFlag {
+	kPFNil = 0,
+	kPFTriangle = 1
 };
 
 
 template<class AttribList, class VaryingList>
 class Vertex {
 public:
-	Vertex() : rhw(1.0f), cat(kVCVertex) {}
+	Vertex() : rhw(1.0f), primf(kPFNil) {}
 	Vertex(const Vector4f& ppos)
-		: pos(ppos), cat(kVCVertex) {}
-	Vertex(const Vector4f& ppos, const VaryingList& vvar, float rrhw, short ccat)
-		: pos(ppos), varyings(vvar), rhw(rrhw), cat(ccat) {}
+		: pos(ppos), primf(kPFNil) {}
+	Vertex(const Vector4f& ppos, const VaryingList& vvar, float rrhw, short pprimf)
+		: pos(ppos), varyings(vvar), rhw(rrhw), primf(pprimf) {}
 
 public:
 	void rhwInitialize() {
@@ -33,7 +33,7 @@ public:
 	VaryingList varyings;
 	Vector4f pos;
 	float rhw;
-	short cat;
+	short primf;
 };
 
 

@@ -50,8 +50,8 @@ public:
 
 		//geometry sharding
 		for (size_t i = 0; i < buffer.vertlist.size();) {
-			if (buffer.vertlist[i].cat == kVCTriangle) {
-
+			if (buffer.vertlist[i].primf == kPFTriangle) {
+				i += 3;
 			}
 		}
 
@@ -63,7 +63,7 @@ public:
 
 		//cliping, ¼ò»¯ÊµÏÖ
 		for (size_t i = 0; i < buffer.vertlist.size();) {
-			if (buffer.vertlist[i].cat == kVCTriangle) {
+			if (buffer.vertlist[i].primf == kPFTriangle) {
 				if (CheckCVV(buffer.vertlist[i].pos) != 0 ||
 					CheckCVV(buffer.vertlist[i + 1].pos) != 0 ||
 					CheckCVV(buffer.vertlist[i + 2].pos) != 0) {

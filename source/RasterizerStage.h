@@ -185,7 +185,7 @@ public:
 		//triangle traversal
 		size_t i = 0;
 		while (i < buffer.vertlist.size()) {
-			if (buffer.vertlist[i].cat == kVCTriangle) {
+			if (buffer.vertlist[i].primf == kPFTriangle) {
 				const Vert& v1 = buffer.vertlist[i];
 				const Vert& v2 = buffer.vertlist[i + 1];
 				const Vert& v3 = buffer.vertlist[i + 2];

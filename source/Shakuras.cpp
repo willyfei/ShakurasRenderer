@@ -43,13 +43,13 @@ namespace skexample {
 
 			int index = (int)verts.size();
 			verts.push_back(p1);
-			verts.back().cat = kVCTriangle;
+			verts.back().primf = kPFTriangle;
 			verts.push_back(p2);
 			verts.push_back(p3);
 
 			index = (int)verts.size();
 			verts.push_back(p3);
-			verts.back().cat = kVCTriangle;
+			verts.back().primf = kPFTriangle;
 			verts.push_back(p4);
 			verts.push_back(p1);
 		};
