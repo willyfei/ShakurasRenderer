@@ -37,11 +37,11 @@ namespace preset_std {
 		Varying<Vector3f, kTBAll>//相机方向(eye_pos - pos)
 	> VaryingList;
 
-	typedef Vertex<AttribList, VaryingList> Vertex;
+	typedef shakuras::Vertex<AttribList, VaryingList> Vertex;
 
-	typedef GsFragment<VaryingList> Fragment;
+	typedef shakuras::Fragment<VaryingList> Fragment;
 
-	typedef StageBuffer<UniformList, Vertex> StageBuffer;
+	typedef shakuras::StageBuffer<UniformList, Vertex> StageBuffer;
 
 	class VertexShader {
 	public:

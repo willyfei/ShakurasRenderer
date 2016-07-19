@@ -6,10 +6,10 @@ SHAKURAS_BEGIN;
 
 
 template<class VaryingList>
-class GsFragment {
+class Fragment {
 public:
-	GsFragment() : x(0), y(0), z(1.0f) {}
-	GsFragment(int xx, int yy, const VaryingList& vvar, float zz)
+	Fragment() : x(0), y(0), z(1.0f) {}
+	Fragment(int xx, int yy, const VaryingList& vvar, float zz)
 		: x(xx), y(yy), varyings(vvar), z(zz) {}
 
 public:

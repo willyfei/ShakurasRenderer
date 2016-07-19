@@ -11,9 +11,9 @@ SHAKURAS_BEGIN;
 LRESULT ScreenEventProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
-class GsWindowsViewer : public Viewer, public std::enable_shared_from_this<GsWindowsViewer> {
+class WindowsViewer : public Viewer, public std::enable_shared_from_this<WindowsViewer> {
 public:
-	GsWindowsViewer() {
+	WindowsViewer() {
 		screen_w = screen_h = 0;
 		screen_mx = screen_my = screen_mb = 0;
 		screen_keys.assign(0);
@@ -26,7 +26,7 @@ public:
 		screen_pitch = 0;
 	}
 
-	virtual ~GsWindowsViewer() {}
+	virtual ~WindowsViewer() {}
 
 public:
 	virtual int initialize(int w, int h, const char* title) {
@@ -86,7 +86,7 @@ public:
 		screen_close = false;
 		memset(screen_fb, 0, w * h * 4);
 
-		objects[screen_handle] = std::dynamic_pointer_cast<GsWindowsViewer>(shared_from_this());
+		objects[screen_handle] = std::dynamic_pointer_cast<WindowsViewer>(shared_from_this());
 
 		return 0;
 	}
@@ -188,15 +188,15 @@ public:
 	long screen_pitch;
 
 public:
-	static std::map<HWND, std::weak_ptr<GsWindowsViewer> > objects;
+	static std::map<HWND, std::weak_ptr<WindowsViewer> > objects;
 };
 
 
-std::map<HWND, std::weak_ptr<GsWindowsViewer> > GsWindowsViewer::objects;
+std::map<HWND, std::weak_ptr<WindowsViewer> > WindowsViewer::objects;
 
 
 LRESULT ScreenEventProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	std::shared_ptr<GsWindowsViewer> winviewer = GsWindowsViewer::objects[hWnd].lock();
+	std::shared_ptr<WindowsViewer> winviewer = WindowsViewer::objects[hWnd].lock();
 	if (winviewer) {
 		LRESULT res = winviewer->onEvent(hWnd, msg, wParam, lParam);
 		if (res != 0) {
@@ -209,7 +209,7 @@ LRESULT ScreenEventProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 ViewerPtr CreateGsViewer(std::string platform) {
 	if (platform == "Windows") {
-		return std::make_shared<GsWindowsViewer>();
+		return std::make_shared<WindowsViewer>();
 	}
 	return nullptr;
 }
