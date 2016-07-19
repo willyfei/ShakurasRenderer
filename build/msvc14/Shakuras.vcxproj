@@ -245,17 +245,18 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\GsColor.h" />
-    <ClInclude Include="..\..\source\GsGeometryStage.h" />
-    <ClInclude Include="..\..\source\GsPipeline.h" />
-    <ClInclude Include="..\..\source\GsPreset.h" />
-    <ClInclude Include="..\..\source\GsRasterizerStage.h" />
-    <ClInclude Include="..\..\source\GsResource.h" />
-    <ClInclude Include="..\..\source\GsStageBuffer.h" />
-    <ClInclude Include="..\..\source\GsTexture.h" />
-    <ClInclude Include="..\..\source\GsVaryingList.h" />
-    <ClInclude Include="..\..\source\GsVertexFragment.h" />
-    <ClInclude Include="..\..\source\GsViewer.h" />
+    <ClInclude Include="..\..\source\Color.h" />
+    <ClInclude Include="..\..\source\Fragment.h" />
+    <ClInclude Include="..\..\source\GeometryStage.h" />
+    <ClInclude Include="..\..\source\GraphicPipeline.h" />
+    <ClInclude Include="..\..\source\Preset.h" />
+    <ClInclude Include="..\..\source\RasterizerStage.h" />
+    <ClInclude Include="..\..\source\Resource.h" />
+    <ClInclude Include="..\..\source\StageBuffer.h" />
+    <ClInclude Include="..\..\source\Texture.h" />
+    <ClInclude Include="..\..\source\VaryingList.h" />
+    <ClInclude Include="..\..\source\Vertex.h" />
+    <ClInclude Include="..\..\source\Viewer.h" />
     <ClInclude Include="..\..\source\MathAndGeometry.h" />
     <ClInclude Include="..\..\source\stb_image.h" />
     <ClInclude Include="..\..\source\Utility.h" />
@@ -263,8 +264,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\GsResource.cpp" />
-    <ClCompile Include="..\..\source\GsViewer.cpp" />
+    <ClCompile Include="..\..\source\Resource.cpp" />
+    <ClCompile Include="..\..\source\Viewer.cpp" />
     <ClCompile Include="..\..\source\Shakuras.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
