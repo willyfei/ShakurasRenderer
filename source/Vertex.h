@@ -12,27 +12,6 @@ enum PrimitiveFlag {
 };
 
 
-enum TraversalBehavior {
-	kTBNone = 0,
-	kTBLerp = 1U << 0,//线性插值
-	kTBPerspect = 1U << 1,//透视
-	kTBAll = kTBLerp | kTBPerspect
-};
-
-//VaryList要重载这几个函数
-template<class T>
-void TravPlus(T& v1, const T& v2, int oper) {}
-
-template<class T>
-void TravSub(T& v1, const T& v2, int oper) {}
-
-template<class T>
-void TravMul(T& v1, float t, int oper) {}
-
-template<class T>
-void TravDiv(T& v1, float d, int oper) {}
-
-
 template<class AttribList, class VaryingList>
 class Vertex {
 public:
@@ -45,7 +24,7 @@ public:
 public:
 	void rhwInitialize() {
 		rhw = 1.0f / pos.w;
-		TravMul(varyings, rhw, kTBPerspect);
+		varyings = varyings * rhw;
 	}
 
 public:
@@ -58,31 +37,40 @@ public:
 
 
 template<class A, class V>
-void TravPlus(Vertex<A, V>& v1, const Vertex<A, V>& v2, int oper) {
-	v1.pos = v1.pos + v2.pos;
-	TravPlus(v1.varyings, v2.varyings, oper);
-	v1.rhw = v1.rhw + v2.rhw;
+inline Vertex<A, V> operator+(const Vertex<A, V>& v1, const Vertex<A, V>& v2) {
+	Vertex<A, V> v3;
+	v3.pos = v1.pos + v2.pos;
+	v3.varyings = v1.varyings + v2.varyings;
+	v3.rhw = v1.rhw + v2.rhw;
+	return v3;
 }
 
 template<class A, class V>
-void TravSub(Vertex<A, V>& v1, const Vertex<A, V>& v2, int oper) {
-	v1.pos = v1.pos - v2.pos;
-	TravSub(v1.varyings, v2.varyings, oper);
-	v1.rhw = v1.rhw - v2.rhw;
+inline Vertex<A, V> operator-(const Vertex<A, V>& v1, const Vertex<A, V>& v2) {
+	Vertex<A, V> v3;
+	v3.pos = v1.pos - v2.pos;
+	v3.varyings = v1.varyings - v2.varyings;
+	v3.rhw = v1.rhw - v2.rhw;
+	return v3;
 }
 
 template<class A, class V>
-void TravMul(Vertex<A, V>& v1, float t, int oper) {
-	v1.pos = v1.pos * t;
-	TravMul(v1.varyings, t, oper);
-	v1.rhw = v1.rhw * t;
+inline Vertex<A, V> operator*(const Vertex<A, V>& v1, float t) {
+	Vertex<A, V> v3;
+	v3.pos = v1.pos * t;
+	v3.varyings = v1.varyings * t;
+	v3.rhw = v1.rhw * t;
+	return v3;
 }
 
 template<class A, class V>
-void TravDiv(Vertex<A, V>& v1, float d, int oper) {
-	v1.pos = v1.pos / d;
-	TravDiv(v1.varyings, d, oper);
-	v1.rhw = v1.rhw / d;
+inline Vertex<A, V> operator/(const Vertex<A, V>& v1, float d) {
+	Vertex<A, V> v3;
+	float t = 1.0f / d;
+	v3.pos = v1.pos * t;
+	v3.varyings = v1.varyings * t;
+	v3.rhw = v1.rhw * t;
+	return v3;
 }
 
 

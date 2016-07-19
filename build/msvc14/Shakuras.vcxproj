@@ -254,7 +254,6 @@
     <ClInclude Include="..\..\source\Resource.h" />
     <ClInclude Include="..\..\source\StageBuffer.h" />
     <ClInclude Include="..\..\source\Texture.h" />
-    <ClInclude Include="..\..\source\VaryingList.h" />
     <ClInclude Include="..\..\source\Vertex.h" />
     <ClInclude Include="..\..\source\Viewer.h" />
     <ClInclude Include="..\..\source\MathAndGeometry.h" />

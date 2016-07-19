@@ -36,6 +36,43 @@ namespace preset_std {
 		Vector3f eye_dir;
 	};
 
+	inline VaryingList operator+(const VaryingList& v1, const VaryingList& v2) {
+		VaryingList v3;
+		v3.uv = v1.uv + v2.uv;
+		v3.normal = v1.normal + v2.normal;
+		v3.light_dir = v1.light_dir + v2.light_dir;
+		v3.eye_dir = v1.eye_dir + v2.eye_dir;
+		return v3;
+	}
+
+	inline VaryingList operator-(const VaryingList& v1, const VaryingList& v2) {
+		VaryingList v3;
+		v3.uv = v1.uv - v2.uv;
+		v3.normal = v1.normal - v2.normal;
+		v3.light_dir = v1.light_dir - v2.light_dir;
+		v3.eye_dir = v1.eye_dir - v2.eye_dir;
+		return v3;
+	}
+
+	inline VaryingList operator*(const VaryingList& v1, float t) {
+		VaryingList v3;
+		v3.uv = v1.uv * t;
+		v3.normal = v1.normal * t;
+		v3.light_dir = v1.light_dir * t;
+		v3.eye_dir = v1.eye_dir * t;
+		return v3;
+	}
+
+	inline VaryingList operator/(const VaryingList& v1, float d) {
+		VaryingList v3;
+		float t = 1.0f / d;
+		v3.uv = v1.uv * t;
+		v3.normal = v1.normal * t;
+		v3.light_dir = v1.light_dir * t;
+		v3.eye_dir = v1.eye_dir * t;
+		return v3;
+	}
+
 	typedef shakuras::Vertex<AttribList, VaryingList> Vertex;
 
 	typedef shakuras::Fragment<VaryingList> Fragment;
@@ -89,40 +126,6 @@ namespace preset_std {
 	typedef GeometryStage<UniformList, Vertex, VertexShader> GeomStage;
 
 	typedef RasterizerStage<UniformList, Vertex, Fragment, FragmentShader> RasStage;
-}
-
-
-template<>
-void TravPlus<preset_std::VaryingList>(preset_std::VaryingList& v1, const preset_std::VaryingList& v2, int oper) {
-	v1.uv = v1.uv + v2.uv;
-	v1.normal = v1.normal + v2.normal;
-	v1.light_dir = v1.light_dir + v2.light_dir;
-	v1.eye_dir = v1.eye_dir + v2.eye_dir;
-}
-
-template<>
-void TravSub<preset_std::VaryingList>(preset_std::VaryingList& v1, const preset_std::VaryingList& v2, int oper) {
-	v1.uv = v1.uv - v2.uv;
-	v1.normal = v1.normal - v2.normal;
-	v1.light_dir = v1.light_dir - v2.light_dir;
-	v1.eye_dir = v1.eye_dir - v2.eye_dir;
-}
-
-template<>
-void TravMul<preset_std::VaryingList>(preset_std::VaryingList& v1, float t, int oper) {
-	v1.uv = v1.uv * t;
-	v1.normal = v1.normal * t;
-	v1.light_dir = v1.light_dir * t;
-	v1.eye_dir = v1.eye_dir * t;
-}
-
-template<>
-void TravDiv<preset_std::VaryingList>(preset_std::VaryingList& v1, float d, int oper) {
-	float t = 1.0f / d;
-	v1.uv = v1.uv * t;
-	v1.normal = v1.normal * t;
-	v1.light_dir = v1.light_dir * t;
-	v1.eye_dir = v1.eye_dir * t;
 }
 
 

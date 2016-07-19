@@ -10,27 +10,22 @@
 SHAKURAS_BEGIN;
 
 
-template<class Vert>
 class Edge {
 public:
 	Edge() {}
-	Edge(const Vert& vv, const Vert& vv1, const Vert& vv2) : v(vv), v1(vv1), v2(vv2) {}
+	Edge(const Vector3f& vv, const Vector3f& vv1, const Vector3f& vv2) : v(vv), v1(vv1), v2(vv2) {}
 
 public:
 	void scanlineInterp(float y) {
-		float t = (y - v1.pos.y) / (v2.pos.y - v1.pos.y);
-		v = v2;
-		TravSub(v, v1, kTBLerp);//v = v2 - v1
-		TravMul(v, t, kTBLerp);//v = (v2 - v1) * t
-		TravPlus(v, v1, kTBLerp);//v = v1 + (v2 - v1) * t;
+		float t = (y - v1.y) / (v2.y - v1.y);
+		v = v1 + (v2 - v1) * t;
 	}
 
 public:
-	Vert v, v1, v2;
+	Vector3f v, v1, v2;
 };
 
 
-template<class Vert>
 class Trapezoid {
 public:
 	void scanlineInterp(float y) {
@@ -40,38 +35,41 @@ public:
 
 public:
 	float top, bottom;
-	Edge<Vert> left, right;
+	Edge left, right;
 };
 
 
-template<class Vert>
 class Scanline {
 public:
-	void initialize(const Trapezoid<Vert>& trap, int yy) {
-		float width = trap.right.v.pos.x - trap.left.v.pos.x;
-		x = (int)(trap.left.v.pos.x + 0.5f);
-		w = (int)(trap.right.v.pos.x + 0.5f) - x;
+	void initialize(const Trapezoid& trap, int yy) {
+		float width = trap.right.v.x - trap.left.v.x;
+		x = (int)(trap.left.v.x + 0.5f);
+		w = (int)(trap.right.v.x + 0.5f) - x;
 		y = yy;
 		v = trap.left.v;
-		if (trap.left.v.pos.x >= trap.right.v.pos.x) {
+		if (trap.left.v.x >= trap.right.v.x) {
 			w = 0;
 		}
 		step = trap.right.v;
-		TravSub(step, trap.left.v, kTBLerp);//step = trap.right.v - trap.left.v
-		TravMul(step, 1.0f / width, kTBLerp);//step = (trap.right.v - trap.left.v) / width
+		step = (trap.right.v - trap.left.v) / width;
 	}
 
 public:
-	Vert v, step;
+	Vector3f v, step;
 	int x, y, w;
 };
 
 
 template<class Vert>
-int SpliteTrapezoid(const std::array<Vert, 3>& tri, std::vector<Trapezoid<Vert> >& traps) {
-	const Vert* p1 = &tri[0];
-	const Vert* p2 = &tri[1];
-	const Vert* p3 = &tri[2];
+inline Vector3f XYRhw(const Vert& v) {
+	return Vector3f(v.pos.x, v.pos.y, v.rhw);
+}
+
+template<class Vert>
+int SpliteTrapezoid(const Vert& v0, const Vert& v1, const Vert& v2, std::vector<Trapezoid>& traps) {
+	const Vert* p1 = &v0;
+	const Vert* p2 = &v1;
+	const Vert* p3 = &v2;
 	float k, x;
 
 	if (p1->pos.y > p2->pos.y) std::swap(p1, p2);
@@ -80,15 +78,15 @@ int SpliteTrapezoid(const std::array<Vert, 3>& tri, std::vector<Trapezoid<Vert> 
 	if (p1->pos.y == p2->pos.y && p1->pos.y == p3->pos.y) return 0;
 	if (p1->pos.x == p2->pos.x && p1->pos.x == p3->pos.x) return 0;
 
-	traps.push_back(Trapezoid<Vert>());
+	traps.push_back(Trapezoid());
 	if (p1->pos.y == p2->pos.y) {	// triangle down
 		if (p1->pos.x > p2->pos.x) std::swap(p1, p2);
 		traps[0].top = p1->pos.y;
 		traps[0].bottom = p3->pos.y;
-		traps[0].left.v1 = *p1;
-		traps[0].left.v2 = *p3;
-		traps[0].right.v1 = *p2;
-		traps[0].right.v2 = *p3;
+		traps[0].left.v1 = XYRhw(*p1);
+		traps[0].left.v2 = XYRhw(*p3);
+		traps[0].right.v1 = XYRhw(*p2);
+		traps[0].right.v2 = XYRhw(*p3);
 		if (traps[0].top < traps[0].bottom) {
 			return 1;
 		}
@@ -102,10 +100,10 @@ int SpliteTrapezoid(const std::array<Vert, 3>& tri, std::vector<Trapezoid<Vert> 
 		if (p2->pos.x > p3->pos.x) std::swap(p2, p3);
 		traps[0].top = p1->pos.y;
 		traps[0].bottom = p3->pos.y;
-		traps[0].left.v1 = *p1;
-		traps[0].left.v2 = *p2;
-		traps[0].right.v1 = *p1;
-		traps[0].right.v2 = *p3;
+		traps[0].left.v1 = XYRhw(*p1);
+		traps[0].left.v2 = XYRhw(*p2);
+		traps[0].right.v1 = XYRhw(*p1);
+		traps[0].right.v2 = XYRhw(*p3);
 		if (traps[0].top < traps[0].bottom) {
 			return 1;
 		}
@@ -115,7 +113,7 @@ int SpliteTrapezoid(const std::array<Vert, 3>& tri, std::vector<Trapezoid<Vert> 
 		}
 	}
 
-	traps.push_back(Trapezoid<Vert>());
+	traps.push_back(Trapezoid());
 	traps[0].top = p1->pos.y;
 	traps[0].bottom = p2->pos.y;
 	traps[1].top = p2->pos.y;
@@ -125,24 +123,24 @@ int SpliteTrapezoid(const std::array<Vert, 3>& tri, std::vector<Trapezoid<Vert> 
 	x = p1->pos.x + (p2->pos.x - p1->pos.x) * k;
 
 	if (x <= p3->pos.x) {		// triangle left
-		traps[0].left.v1 = *p1;
-		traps[0].left.v2 = *p2;
-		traps[0].right.v1 = *p1;
-		traps[0].right.v2 = *p3;
-		traps[1].left.v1 = *p2;
-		traps[1].left.v2 = *p3;
-		traps[1].right.v1 = *p1;
-		traps[1].right.v2 = *p3;
+		traps[0].left.v1 = XYRhw(*p1);
+		traps[0].left.v2 = XYRhw(*p2);
+		traps[0].right.v1 = XYRhw(*p1);
+		traps[0].right.v2 = XYRhw(*p3);
+		traps[1].left.v1 = XYRhw(*p2);
+		traps[1].left.v2 = XYRhw(*p3);
+		traps[1].right.v1 = XYRhw(*p1);
+		traps[1].right.v2 = XYRhw(*p3);
 	}
 	else {					// triangle right
-		traps[0].left.v1 = *p1;
-		traps[0].left.v2 = *p3;
-		traps[0].right.v1 = *p1;
-		traps[0].right.v2 = *p2;
-		traps[1].left.v1 = *p1;
-		traps[1].left.v2 = *p3;
-		traps[1].right.v1 = *p2;
-		traps[1].right.v2 = *p3;
+		traps[0].left.v1 = XYRhw(*p1);
+		traps[0].left.v2 = XYRhw(*p3);
+		traps[0].right.v1 = XYRhw(*p1);
+		traps[0].right.v2 = XYRhw(*p2);
+		traps[1].left.v1 = XYRhw(*p1);
+		traps[1].left.v2 = XYRhw(*p3);
+		traps[1].right.v1 = XYRhw(*p2);
+		traps[1].right.v2 = XYRhw(*p3);
 	}
 
 	return 2;
@@ -183,7 +181,7 @@ public:
 				const Vert& v1 = buffer.vertlist[i];
 				const Vert& v2 = buffer.vertlist[i + 1];
 				const Vert& v3 = buffer.vertlist[i + 2];
-				traversalTriangle({ v1, v2, v3 });
+				traversalTriangle(v1, v2, v3 );
 				i += 3;
 			}
 
@@ -222,47 +220,61 @@ private:
 		fraglist_.reserve(width_ * height_);
 	}
 
-	void traversalTriangle(const std::array<Vert, 3>& tri) {
-		Vert t1 = tri[0], t2 = tri[1], t3 = tri[2];
+	void traversalTriangle(const Vert& v0, const Vert& v1, const Vert& v2) {
+		Vert t0 = v0, t1 = v1, t2 = v2;
 
+		t0.rhwInitialize();
 		t1.rhwInitialize();
 		t2.rhwInitialize();
-		t3.rhwInitialize();
 
-		std::vector<Trapezoid<Vert> > traps;
-		SpliteTrapezoid({ t1, t2, t3 }, traps);
+		computeTriangleDerivative(t0, t1, t2);
+
+		std::vector<Trapezoid> traps;
+		SpliteTrapezoid(t0, t1, t2, traps);
 
 		for (auto i = traps.begin(); i != traps.end(); i++) {
 			traversalTrapezoid(*i);
 		}
 	}
 
-	void traversalScanline(Scanline<Vert>& scanline) {
+	void computeTriangleDerivative(const Vert& v0, const Vert& v1, const Vert& v2) {
+		Vert e01 = v1 - v0;
+		Vert e02 = v2 - v0;
+
+		float area = e02.pos.x * e01.pos.y - e01.pos.x * e02.pos.y;
+		float inv_area = 1.0f / area;
+		
+		v0_ = v0;
+		ddx_ = (e02 * e01.pos.y - e01 * e02.pos.y) * inv_area;
+		ddy_ = (e01 * e02.pos.x - e02 * e01.pos.x) * inv_area;
+	}
+
+	void traversalScanline(Scanline& scanline) {
 		int x = scanline.x;
 		int w = scanline.w;
 		for (; w > 0; x++, w--) {
 			if (x >= 0 && x < width_) {
-				float rhw = scanline.v.rhw;
+				float rhw = scanline.v.z;
 				float ww = 1.0f / rhw;
 
 				Frag frag;
 				frag.x = x;
 				frag.y = scanline.y;
-				frag.varyings = scanline.v.varyings;
-				TravMul(frag.varyings, ww, kTBPerspect);
+				frag.varyings = v0_.varyings + ddx_.varyings * (frag.x - v0_.pos.x) + ddy_.varyings * (frag.y - v0_.pos.y);
+				frag.varyings = frag.varyings * ww;
 				frag.z = rhw;
 
 				fraglist_.push_back(frag);
 			}
-			TravPlus(scanline.v, scanline.step, kTBLerp);
+			scanline.v = scanline.v + scanline.step;
 			if (x >= width_) {
 				break;
 			}
 		}
 	}
 
-	void traversalTrapezoid(Trapezoid<Vert>& trap) {
-		Scanline<Vert> scanline;
+	void traversalTrapezoid(Trapezoid& trap) {
+		Scanline scanline;
 		int j, top, bottom;
 		top = (int)(trap.top + 0.5f);
 		bottom = (int)(trap.bottom + 0.5f);
@@ -282,6 +294,8 @@ private:
 	std::vector<uint32_t*> framebuffer_;
 	std::vector<std::vector<float> > zbuffer_;
 	int width_, height_;
+	Vert ddx_, ddy_;
+	Vert v0_;
 	std::vector<Frag> fraglist_;
 	std::shared_ptr<FragShader> fragshader_;
 };
