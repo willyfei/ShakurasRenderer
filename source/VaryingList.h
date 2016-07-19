@@ -1,17 +1,10 @@
 #pragma once
 #include "Utility.h"
+#include "Vertex.h"
 #include <tuple>
 
 
 SHAKURAS_BEGIN;
-
-
-enum TraversalBehavior {
-	kTBNone = 0,
-	kTBLerp = 1U << 0,//线性插值
-	kTBPerspect = 1U << 1,//透视
-	kTBAll = kTBLerp | kTBPerspect
-};
 
 
 template<typename T, uint16_t B>

@@ -1,6 +1,5 @@
 #pragma once
 #include "MathAndGeometry.h"
-#include "VaryingList.h"
 #include <array>
 
 
@@ -10,6 +9,14 @@ SHAKURAS_BEGIN;
 enum PrimitiveFlag {
 	kPFNil = 0,
 	kPFTriangle = 1
+};
+
+
+enum TraversalBehavior {
+	kTBNone = 0,
+	kTBLerp = 1U << 0,//线性插值
+	kTBPerspect = 1U << 1,//透视
+	kTBAll = kTBLerp | kTBPerspect
 };
 
 
