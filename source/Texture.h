@@ -1,15 +1,15 @@
 #pragma once
 #include "MathAndGeometry.h"
-#include "GsColor.h"
+#include "Color.h"
 #include <vector>
 
 
 SHAKURAS_BEGIN;
 
 
-class GsSurface {
+class Surface {
 public:
-	GsSurface() {}
+	Surface() {}
 
 public:
 	void reset(int ww, int hh, const uint32_t* data) {
@@ -39,7 +39,7 @@ private:
 };
 
 
-SHAKURAS_SHARED_PTR(GsSurface);
+SHAKURAS_SHARED_PTR(Surface);
 
 
 template<class Surface>
@@ -88,22 +88,22 @@ Vector3f BilinearSample(float u, float v, Surface& surface) {
 }
 
 
-class GsMipmap {
+class Mipmap {
 public:
-	GsMipmap() {}
+	Mipmap() {}
 
 public:
 	void reset(int ww, int hh, const uint32_t* data) {
 		surfaces_.clear();
 
-		GsSurfacePtr surface = std::make_shared<GsSurface>();
+		SurfacePtr surface = std::make_shared<Surface>();
 		surface->reset(ww, hh, data);
 		surfaces_.push_back(surface);
 
 		ww = (std::max)(1, (surface->width() + 1) / 2);
 		hh = (std::max)(1, (surface->height() + 1) / 2);
 		while (ww > 1 || hh > 1) {
-			GsSurfacePtr next_surface = std::make_shared<GsSurface>();
+			SurfacePtr next_surface = std::make_shared<Surface>();
 			next_surface->reset(ww, hh, nullptr);
 
 			for (int x = 0; x != next_surface->width(); x++) {
@@ -128,11 +128,11 @@ public:
 	inline void set(int x, int y, int l, const Vector3f& c) { surfaces_[l]->set(x, y, c); }
 
 private:
-	std::vector<GsSurfacePtr> surfaces_;
+	std::vector<SurfacePtr> surfaces_;
 };
 
 
-SHAKURAS_SHARED_PTR(GsMipmap);
+SHAKURAS_SHARED_PTR(Mipmap);
 
 
 SHAKURAS_END;

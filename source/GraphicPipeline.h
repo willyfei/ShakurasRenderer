@@ -1,14 +1,14 @@
 #pragma once
-#include "GsViewer.h"
+#include "Viewer.h"
 
 
 SHAKURAS_BEGIN;
 
 
 template<class StageBuffer, class AppStage, class GeomStage, class RasStage>
-class GsPipeline {
+class GraphicPipeline {
 public:
-	void initialize(GsViewerPtr viewer) {
+	void initialize(ViewerPtr viewer) {
 		appstage_.initialize(viewer);
 		geomstage_.initialize((float)viewer->width(), (float)viewer->height());
 		rasstage_.initialize(viewer->width(), viewer->height(), viewer->frameBuffer());

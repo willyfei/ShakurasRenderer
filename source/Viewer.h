@@ -5,7 +5,7 @@
 SHAKURAS_BEGIN;
 
 
-enum GsUserMessage {
+enum UserMessage {
 	kUMUp = 0,
 	kUMDown,
 	kUMLeft,
@@ -16,11 +16,11 @@ enum GsUserMessage {
 };
 
 
-class GsViewer {
+class Viewer {
 public:
-	virtual ~GsViewer() {}
+	virtual ~Viewer() {}
 	virtual int initialize(int w, int h, const char* title) = 0;
-	virtual bool testUserMessage(GsUserMessage msg) = 0;
+	virtual bool testUserMessage(UserMessage msg) = 0;
 	virtual void dispatch() = 0;
 	virtual void update(void) = 0;
 	virtual void* frameBuffer() = 0;
@@ -29,11 +29,11 @@ public:
 };
 
 
-SHAKURAS_SHARED_PTR(GsViewer);
+SHAKURAS_SHARED_PTR(Viewer);
 
 
 //Windows
-GsViewerPtr CreateGsViewer(std::string platform);
+ViewerPtr CreateGsViewer(std::string platform);
 
 
 SHAKURAS_END;

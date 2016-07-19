@@ -1,8 +1,8 @@
 #pragma once
 #include "MathAndGeometry.h"
-#include "GsGeometryStage.h"
-#include "GsVertexFragment.h"
-#include "GsColor.h"
+#include "GeometryStage.h"
+#include "Vertex.h"
+#include "Color.h"
 #include <vector>
 #include <array>
 
@@ -11,10 +11,10 @@ SHAKURAS_BEGIN;
 
 
 template<class Vert>
-class GsEdge {
+class Edge {
 public:
-	GsEdge() {}
-	GsEdge(const Vert& vv, const Vert& vv1, const Vert& vv2) : v(vv), v1(vv1), v2(vv2) {}
+	Edge() {}
+	Edge(const Vert& vv, const Vert& vv1, const Vert& vv2) : v(vv), v1(vv1), v2(vv2) {}
 
 public:
 	void scanlineInterp(float y) {
@@ -31,7 +31,7 @@ public:
 
 
 template<class Vert>
-class GsTrapezoid {
+class Trapezoid {
 public:
 	void scanlineInterp(float y) {
 		left.scanlineInterp(y);
@@ -40,14 +40,14 @@ public:
 
 public:
 	float top, bottom;
-	GsEdge<Vert> left, right;
+	Edge<Vert> left, right;
 };
 
 
 template<class Vert>
-class GsScanline {
+class Scanline {
 public:
-	void initialize(const GsTrapezoid<Vert>& trap, int yy) {
+	void initialize(const Trapezoid<Vert>& trap, int yy) {
 		float width = trap.right.v.pos.x - trap.left.v.pos.x;
 		x = (int)(trap.left.v.pos.x + 0.5f);
 		w = (int)(trap.right.v.pos.x + 0.5f) - x;
@@ -68,7 +68,7 @@ public:
 
 
 template<class Vert>
-int SpliteTrapezoid(const std::array<Vert, 3>& tri, std::vector<GsTrapezoid<Vert> >& traps) {
+int SpliteTrapezoid(const std::array<Vert, 3>& tri, std::vector<Trapezoid<Vert> >& traps) {
 	const Vert* p1 = &tri[0];
 	const Vert* p2 = &tri[1];
 	const Vert* p3 = &tri[2];
@@ -80,7 +80,7 @@ int SpliteTrapezoid(const std::array<Vert, 3>& tri, std::vector<GsTrapezoid<Vert
 	if (p1->pos.y == p2->pos.y && p1->pos.y == p3->pos.y) return 0;
 	if (p1->pos.x == p2->pos.x && p1->pos.x == p3->pos.x) return 0;
 
-	traps.push_back(GsTrapezoid<Vert>());
+	traps.push_back(Trapezoid<Vert>());
 	if (p1->pos.y == p2->pos.y) {	// triangle down
 		if (p1->pos.x > p2->pos.x) std::swap(p1, p2);
 		traps[0].top = p1->pos.y;
@@ -115,7 +115,7 @@ int SpliteTrapezoid(const std::array<Vert, 3>& tri, std::vector<GsTrapezoid<Vert
 		}
 	}
 
-	traps.push_back(GsTrapezoid<Vert>());
+	traps.push_back(Trapezoid<Vert>());
 	traps[0].top = p1->pos.y;
 	traps[0].bottom = p2->pos.y;
 	traps[1].top = p2->pos.y;
@@ -150,7 +150,7 @@ int SpliteTrapezoid(const std::array<Vert, 3>& tri, std::vector<GsTrapezoid<Vert
 
 
 template<class UniformList, class Vert, class Frag, class FragShader>
-class GsRasterizerStage {
+class RasterizerStage {
 public:
 	void initialize(int ww, int hh, void* fb) {
 		width_ = ww;
@@ -177,7 +177,7 @@ public:
 		fragshader_ = std::make_shared<FragShader>();
 	}
 
-	void process(GsStageBuffer<UniformList, Vert>& buffer) {
+	void process(StageBuffer<UniformList, Vert>& buffer) {
 		clear();
 
 		//triangle setup, Ê¡ÂÔ
@@ -238,7 +238,7 @@ private:
 		t2.rhwInitialize();
 		t3.rhwInitialize();
 
-		std::vector<GsTrapezoid<Vert> > traps;
+		std::vector<Trapezoid<Vert> > traps;
 		SpliteTrapezoid({ t1, t2, t3 }, traps);
 
 		for (auto i = traps.begin(); i != traps.end(); i++) {
@@ -246,7 +246,7 @@ private:
 		}
 	}
 
-	void traversalScanline(GsScanline<Vert>& scanline) {
+	void traversalScanline(Scanline<Vert>& scanline) {
 		int x = scanline.x;
 		int w = scanline.w;
 		for (; w > 0; x++, w--) {
@@ -271,8 +271,8 @@ private:
 		}
 	}
 
-	void traversalTrapezoid(GsTrapezoid<Vert>& trap) {
-		GsScanline<Vert> scanline;
+	void traversalTrapezoid(Trapezoid<Vert>& trap) {
+		Scanline<Vert> scanline;
 		int j, top, bottom;
 		top = (int)(trap.top + 0.5f);
 		bottom = (int)(trap.bottom + 0.5f);

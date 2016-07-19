@@ -30,7 +30,7 @@ inline void ScreenMapping(Vector4f& v, float width, float height) {
 
 
 template<class UniformList, class Vert, class VertShader>
-class GsGeometryStage {
+class GeometryStage {
 public:
 	void initialize(float w, float h) {
 		width_ = w;
@@ -42,7 +42,7 @@ public:
 		vertshader_ = vs;
 	}
 
-	void process(GsStageBuffer<UniformList, Vert>& buffer) {
+	void process(StageBuffer<UniformList, Vert>& buffer) {
 		//vertex sharding
 		for (auto i = buffer.vertlist.begin(); i != buffer.vertlist.end(); i++) {
 			vertshader_->process(buffer.uniforms, *i);

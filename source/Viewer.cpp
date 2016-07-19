@@ -1,4 +1,4 @@
-#include "GsViewer.h"
+#include "Viewer.h"
 #include <Windows.h>
 #include <tchar.h>
 #include <map>
@@ -11,7 +11,7 @@ SHAKURAS_BEGIN;
 LRESULT ScreenEventProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
-class GsWindowsViewer : public GsViewer, public std::enable_shared_from_this<GsWindowsViewer> {
+class GsWindowsViewer : public Viewer, public std::enable_shared_from_this<GsWindowsViewer> {
 public:
 	GsWindowsViewer() {
 		screen_w = screen_h = 0;
@@ -91,7 +91,7 @@ public:
 		return 0;
 	}
 
-	virtual bool testUserMessage(GsUserMessage msg) {
+	virtual bool testUserMessage(UserMessage msg) {
 		switch (msg) {
 		case shakuras::kUMUp:
 			return screen_keys[VK_UP] != 0;
@@ -207,7 +207,7 @@ LRESULT ScreenEventProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 
-GsViewerPtr CreateGsViewer(std::string platform) {
+ViewerPtr CreateGsViewer(std::string platform) {
 	if (platform == "Windows") {
 		return std::make_shared<GsWindowsViewer>();
 	}

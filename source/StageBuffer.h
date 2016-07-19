@@ -9,7 +9,7 @@ SHAKURAS_BEGIN;
 
 
 template<class UniformList, class Vert>
-struct GsStageBuffer {
+struct StageBuffer {
 	UniformList uniforms;
 	Matrix44f projtrsf;
 	std::vector<Vert> vertlist;

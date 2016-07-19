@@ -1,12 +1,13 @@
 #pragma once
 #include "MathAndGeometry.h"
-#include "GsTexture.h"
-#include "GsVaryingList.h"
-#include "GsVertexFragment.h"
-#include "GsStageBuffer.h"
-#include "GsGeometryStage.h"
-#include "GsRasterizerStage.h"
-#include "GsPipeline.h"
+#include "Texture.h"
+#include "VaryingList.h"
+#include "Vertex.h"
+#include "Fragment.h"
+#include "StageBuffer.h"
+#include "GeometryStage.h"
+#include "RasterizerStage.h"
+#include "GraphicPipeline.h"
 
 
 SHAKURAS_BEGIN;
@@ -15,7 +16,7 @@ SHAKURAS_BEGIN;
 namespace preset_std {
 
 	struct UniformList {
-		GsSurfacePtr texture;
+		SurfacePtr texture;
 		Matrix44f mvtrsf;
 		Vector3f ambient;
 		Vector3f diffuse;
@@ -30,17 +31,17 @@ namespace preset_std {
 	};
 
 	typedef std::tuple<
-		GsVarying<Vector2f, kTBAll>,//纹理坐标
-		GsVarying<Vector3f, kTBAll>,//法向
-		GsVarying<Vector3f, kTBAll>,//光源方向(light_pos - pos)
-		GsVarying<Vector3f, kTBAll>//相机方向(eye_pos - pos)
+		Varying<Vector2f, kTBAll>,//纹理坐标
+		Varying<Vector3f, kTBAll>,//法向
+		Varying<Vector3f, kTBAll>,//光源方向(light_pos - pos)
+		Varying<Vector3f, kTBAll>//相机方向(eye_pos - pos)
 	> VaryingList;
 
-	typedef GsVertex<AttribList, VaryingList> Vertex;
+	typedef Vertex<AttribList, VaryingList> Vertex;
 
 	typedef GsFragment<VaryingList> Fragment;
 
-	typedef GsStageBuffer<UniformList, Vertex> StageBuffer;
+	typedef StageBuffer<UniformList, Vertex> StageBuffer;
 
 	class VertexShader {
 	public:
@@ -86,9 +87,9 @@ namespace preset_std {
 		}
 	};
 
-	typedef GsGeometryStage<UniformList, Vertex, VertexShader> GeomStage;
+	typedef GeometryStage<UniformList, Vertex, VertexShader> GeomStage;
 
-	typedef GsRasterizerStage<UniformList, Vertex, Fragment, FragmentShader> RasStage;
+	typedef RasterizerStage<UniformList, Vertex, Fragment, FragmentShader> RasStage;
 }
 
 

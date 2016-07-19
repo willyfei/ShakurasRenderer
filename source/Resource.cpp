@@ -1,4 +1,4 @@
-#include "GsResource.h"
+#include "Resource.h"
 
 #define STB_IMAGE_IMPLEMENTATION 1
 #include "stb_image.h"
@@ -6,7 +6,7 @@
 SHAKURAS_BEGIN;
 
 
-GsSurfacePtr GridTexture() {
+SurfacePtr GridTexture() {
 	static uint32_t pixels[256][256];
 	int i, j;
 	for (j = 0; j < 256; j++) {
@@ -16,14 +16,14 @@ GsSurfacePtr GridTexture() {
 		}
 	}
 
-	GsSurfacePtr tex = std::make_shared<GsSurface>();
+	SurfacePtr tex = std::make_shared<Surface>();
 	tex->reset(256, 256, &(pixels[0][0]));
 
 	return tex;
 }
 
 
-GsSurfacePtr LoadTexture(std::string filepath) {
+SurfacePtr LoadTexture(std::string filepath) {
 	int x, y;
 	stbi_uc* data = stbi_load(filepath.c_str(), &x, &y, 0, 4);
 	if (!data) {
@@ -37,7 +37,7 @@ GsSurfacePtr LoadTexture(std::string filepath) {
 		}
 	}
 
-	GsSurfacePtr tex = std::make_shared<GsSurface>();
+	SurfacePtr tex = std::make_shared<Surface>();
 	tex->reset(x, y, (uint32_t*)data);
 
 	STBI_FREE(data);

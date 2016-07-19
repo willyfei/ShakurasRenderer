@@ -6,7 +6,7 @@
 SHAKURAS_BEGIN;
 
 
-enum GsTraversalBehavior {
+enum TraversalBehavior {
 	kTBNone = 0,
 	kTBLerp = 1U << 0,//线性插值
 	kTBPerspect = 1U << 1,//透视
@@ -15,7 +15,7 @@ enum GsTraversalBehavior {
 
 
 template<typename T, uint16_t B>
-class GsVarying {
+class Varying {
 public:
 	T value;
 
@@ -25,10 +25,10 @@ public:
 	inline void lerpMul(float t) {
 		if (B & kTBLerp) value = value * t;
 	}
-	inline void lerpPlus(const GsVarying<T, B>& v2) {
+	inline void lerpPlus(const Varying<T, B>& v2) {
 		if (B & kTBLerp) value = value + v2.value;
 	}
-	inline void lerpSub(const GsVarying<T, B>& v2) {
+	inline void lerpSub(const Varying<T, B>& v2) {
 		if (B & kTBLerp) value = value - v2.value;
 	}
 };

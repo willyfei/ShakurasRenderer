@@ -1,10 +1,10 @@
 // Shakuras.cpp : 定义控制台应用程序的入口点。
 //
 
-#include "GsResource.h"
-#include "GsViewer.h"
-#include "GsPipeline.h"
-#include "GsPreset.h"
+#include "Resource.h"
+#include "Viewer.h"
+#include "GraphicPipeline.h"
+#include "Preset.h"
 #include <tuple>
 #include <Windows.h>
 
@@ -64,7 +64,7 @@ namespace skexample {
 
 	class AppStage {
 	public:
-		void initialize(GsViewerPtr viewer) {
+		void initialize(ViewerPtr viewer) {
 			float w = (float)viewer->width();
 			float h = (float)viewer->height();
 
@@ -112,16 +112,16 @@ namespace skexample {
 		}
 
 	private:
-		GsViewerPtr viewer_;
+		ViewerPtr viewer_;
 		preset_std::StageBuffer output_;
-		std::vector<GsSurfacePtr> texlist_;
+		std::vector<SurfacePtr> texlist_;
 		int itex_;
 		int nspace_;
 		float alpha_;
 		float pos_;
 	};
 
-	typedef GsPipeline<preset_std::StageBuffer, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
+	typedef GraphicPipeline<preset_std::StageBuffer, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
 }
 
 
@@ -131,7 +131,7 @@ int main()
 		"Left/Right: rotation, Up/Down: forward/backward, Space: switch texture";
 
 	int width = 1600, height = 900;
-	GsViewerPtr viewer = CreateGsViewer("Windows");
+	ViewerPtr viewer = CreateGsViewer("Windows");
 	if (!viewer || viewer->initialize(width, height, title) != 0) {
 		return -1;
 	}
