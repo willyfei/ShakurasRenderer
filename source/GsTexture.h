@@ -135,7 +135,4 @@ private:
 SHAKURAS_SHARED_PTR(GsMipmap);
 
 
-
-
-
 SHAKURAS_END;

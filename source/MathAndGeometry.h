@@ -97,15 +97,6 @@ public:
 		z = zz;
 		w = ww;
 	}
-
-	void projection() {
-		if (w != 0.0f) {
-			S inv = 1.0f / w;
-			x *= inv;
-			y *= inv;
-			z *= inv;
-		}
-	}
 };
 
 template<class S>
@@ -343,7 +334,6 @@ typedef Matrix44<float> Matrix44f;
 #define kGSPI 3.1415926f
 
 
-//”Úœﬁ÷∆
 template<class T>
 inline T Clamp(T val, T low, T high) {
 	return val < low ? low : (high < val ? high : val);

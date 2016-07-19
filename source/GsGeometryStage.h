@@ -49,6 +49,12 @@ public:
 		}
 
 		//geometry sharding
+		for (size_t i = 0; i < buffer.vertlist.size();) {
+			if (buffer.vertlist[i].cat == kVCTriangle) {
+
+			}
+		}
+
 
 		//projection transform
 		for (auto i = buffer.vertlist.begin(); i != buffer.vertlist.end(); i++) {
@@ -56,8 +62,7 @@ public:
 		}
 
 		//cliping, ¼ò»¯ÊµÏÖ
-		size_t i = 0;
-		while (i < buffer.vertlist.size()) {
+		for (size_t i = 0; i < buffer.vertlist.size();) {
 			if (buffer.vertlist[i].cat == kVCTriangle) {
 				if (CheckCVV(buffer.vertlist[i].pos) != 0 ||
 					CheckCVV(buffer.vertlist[i + 1].pos) != 0 ||
