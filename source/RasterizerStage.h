@@ -5,6 +5,7 @@
 #include "Color.h"
 #include <vector>
 #include <array>
+#include "Sampler.h"
 
 
 SHAKURAS_BEGIN;
@@ -211,6 +212,26 @@ int SpliteTrapezoid(const Vert& v0, const Vert& v1, const Vert& v2, std::vector<
 }
 
 
+template<class UniformList, class Frag, class FragShader>
+class TileShader {
+public:
+	TileShader() {}
+
+public:
+	void process(const UniformList& u, std::array<Frag, 4>& tile) {
+		for (int i = 0; i != 4; i++) {
+			if (tile[i].draw) {
+				fragshader_.process(u, sampler, tile[i]);
+			}
+		}
+	}
+
+public:
+	Sampler sampler;
+	FragShader fragshader_;
+};
+
+
 template<class UniformList, class Vert, class Frag, class FragShader>
 class RasterizerStage {
 public:
@@ -218,8 +239,6 @@ public:
 		width_ = ww;
 		height_ = hh;
 
-		tilelist_.clear();
-		masklist_.clear();
 		framebuffer_.resize(height_, nullptr);
 		zbuffer_.resize(height_);
 
@@ -231,8 +250,6 @@ public:
 		for (int i = 0; i < height_; i++) {
 			framebuffer_[i] = (uint32_t*)(framebuf + width_ * 4 * i);
 		}
-
-		fragshader_ = std::make_shared<FragShader>();
 	}
 
 	void process(StageBuffer<UniformList, Vert>& buffer) {
@@ -242,43 +259,15 @@ public:
 
 		for (size_t i = 0; i < buffer.vertlist.size();) {
 			//triangle traversal
+			//fragment shader
+			//merging
 			if (buffer.vertlist[i].primf == kPFTriangle) {
 				const Vert& v1 = buffer.vertlist[i];
 				const Vert& v2 = buffer.vertlist[i + 1];
 				const Vert& v3 = buffer.vertlist[i + 2];
-				traversalTriangle(v1, v2, v3);
+				drawTriangle(buffer.uniforms, v1, v2, v3);
 				i += 3;
 			}
-
-			//fragment shader
-			for (size_t ii = 0; ii != tilelist_.size(); ii++) {
-				if (masklist_[ii][0]) {
-					fragshader_->process(buffer.uniforms, tilelist_[ii][0]);
-				}
-				if (masklist_[ii][1]) {
-					fragshader_->process(buffer.uniforms, tilelist_[ii][1]);
-				}
-				if (masklist_[ii][2]) {
-					fragshader_->process(buffer.uniforms, tilelist_[ii][2]);
-				}
-				if (masklist_[ii][3]) {
-					fragshader_->process(buffer.uniforms, tilelist_[ii][3]);
-				}
-			}
-
-			//merging
-			for (size_t ii = 0; ii != tilelist_.size(); ii++) {
-				for (size_t iii = 0; iii != 4; iii++) {
-					Frag& frag = tilelist_[ii][iii];
-					if (masklist_[ii][iii] && frag.z > zbuffer_[frag.y][frag.x]) {
-						zbuffer_[frag.y][frag.x] = frag.z;
-						framebuffer_[frag.y][frag.x] = IRgba(frag.c);
-					}
-				}
-			}
-
-			masklist_.clear();
-			tilelist_.clear();
 		}
 	}
 
@@ -294,11 +283,9 @@ private:
 			std::vector<float>& dst = zbuffer_[y];
 			std::fill(dst.begin(), dst.end(), 0.0f);
 		}
-
-		tilelist_.clear();
 	}
 
-	void traversalTriangle(const Vert& v0, const Vert& v1, const Vert& v2) {
+	void drawTriangle(const UniformList& u, const Vert& v0, const Vert& v1, const Vert& v2) {
 		Vert t0 = v0, t1 = v1, t2 = v2;
 
 		t0.rhwInitialize();
@@ -311,7 +298,7 @@ private:
 		SpliteTrapezoid(t0, t1, t2, traps);
 
 		for (auto i = traps.begin(); i != traps.end(); i++) {
-			traversalTrapezoid(*i);
+			drawTrapezoid(u, *i);
 		}
 	}
 
@@ -339,7 +326,7 @@ private:
 	}
 
 
-	void traversalScanline(Scanline22& s22) {
+	void drawScanline(const UniformList& u, Scanline22& s22) {
 		int x = s22.xbegin();
 		int w = s22.xwidth();
 		for (; w > 0; x += 2, w -= 2) {
@@ -350,25 +337,33 @@ private:
 				// 2, 3
 				// 0, 1
 				std::array<Frag, 4> tile;
-				std::array<bool, 4> mask;
 				tile[0] = lerpFrag(x, s22.s0.y, rhw0);
+				tile[0].draw = s22.mask0(x);
 				tile[2] = lerpFrag(x, s22.s1.y, rhw1);
-				mask[0] = s22.mask0(x);
-				mask[2] = s22.mask1(x);
+				tile[2].draw = s22.mask1(x);
 
 				s22.next(x);
 				rhw0 = s22.s0.v.z;
 				rhw1 = s22.s1.v.z;
 
 				tile[1] = lerpFrag(x + 1, s22.s0.y, rhw0);
+				tile[1].draw = s22.mask0(x + 1);
 				tile[3] = lerpFrag(x + 1, s22.s1.y, rhw1);
-				mask[1] = s22.mask0(x + 1);
-				mask[3] = s22.mask1(x + 1);
-
-				tilelist_.push_back(tile);
-				masklist_.push_back(mask);
+				tile[3].draw = s22.mask1(x + 1);
 
 				s22.next(x + 1);
+
+				//fragment shader
+				tileshader_.process(u, tile);
+
+				//merging
+				for (size_t i = 0; i != 4; i++) {
+					const Frag& frag = tile[i];
+					if (frag.draw && frag.z > zbuffer_[frag.y][frag.x]) {
+						zbuffer_[frag.y][frag.x] = frag.z;
+						framebuffer_[frag.y][frag.x] = IRgba(frag.c);
+					}
+				}
 			}
 
 			if (x >= width_) {
@@ -377,7 +372,7 @@ private:
 		}
 	}
 
-	void traversalTrapezoid(Trapezoid& trap) {
+	void drawTrapezoid(const UniformList& u, Trapezoid& trap) {
 		Scanline22 scanline;
 		int j, top, bottom;
 		top = (int)(trap.top + 0.5f);
@@ -385,7 +380,7 @@ private:
 		for (j = top; j < bottom; j += 2) {
 			if (j >= 0 && j < height_) {
 				scanline.initialize(trap, j);
-				traversalScanline(scanline);
+				drawScanline(u, scanline);
 			}
 			if (j >= height_) {
 				break;
@@ -399,9 +394,7 @@ private:
 	int width_, height_;
 	Vert ddx_, ddy_;
 	Vert v0_;
-	std::vector<std::array<bool, 4> > masklist_;
-	std::vector<std::array<Frag, 4> > tilelist_;
-	std::shared_ptr<FragShader> fragshader_;
+	TileShader<UniformList, Frag, FragShader> tileshader_;
 };
 
 

@@ -99,7 +99,7 @@ namespace preset_std {
 
 	class FragmentShader {
 	public:
-		void process(const UniformList& u, Fragment& f) {
+		void process(const UniformList& u, Sampler& sampler, Fragment& f) {
 			Vector3f norm = f.varyings.normal;
 			Vector3f light_dir = f.varyings.light_dir;
 			Vector3f eye_dir = f.varyings.eye_dir;
@@ -112,7 +112,7 @@ namespace preset_std {
 			Vector3f illum = u.ambient + u.diffuse * illum_diffuse + u.specular * illum_specular;
 
 			Vector2f uv = f.varyings.uv;
-			Vector3f tc = BilinearSample(uv.x, uv.y, *u.texture);
+			Vector3f tc = sampler.surfaceBilinear(uv.x, uv.y, *u.texture);
 			Vector3f c(tc.x * illum.x, tc.y * illum.y, tc.z * illum.z);
 
 			Clamp(c.x, 0.0f, 1.0f);

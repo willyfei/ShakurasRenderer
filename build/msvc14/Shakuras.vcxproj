@@ -253,6 +253,7 @@
     <ClInclude Include="..\..\source\Preset.h" />
     <ClInclude Include="..\..\source\RasterizerStage.h" />
     <ClInclude Include="..\..\source\Resource.h" />
+    <ClInclude Include="..\..\source\Sampler.h" />
     <ClInclude Include="..\..\source\StageBuffer.h" />
     <ClInclude Include="..\..\source\Surface.h" />
     <ClInclude Include="..\..\source\Vertex.h" />

@@ -69,7 +69,7 @@ namespace skexample {
 			float h = (float)viewer->height();
 
 			texlist_.push_back(LoadSurface("1.png"));
-			texlist_.push_back(LoadSurface("1.png"));
+			texlist_.push_back(LoadSurface("1.jpg"));
 			texlist_.push_back(LoadSurface("2.png"));
 			texlist_.push_back(GridSurface());
 			itex_ = 0;
