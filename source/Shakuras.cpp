@@ -68,9 +68,10 @@ namespace skexample {
 			float w = (float)viewer->width();
 			float h = (float)viewer->height();
 
-			texlist_.push_back(LoadTexture("1.png"));
-			texlist_.push_back(LoadTexture("2.png"));
-			texlist_.push_back(LoadTexture("1.jpg"));
+			texlist_.push_back(LoadSurface("1.png"));
+			texlist_.push_back(LoadSurface("1.png"));
+			texlist_.push_back(LoadSurface("2.png"));
+			texlist_.push_back(GridSurface());
 			itex_ = 0;
 			nspace_ = 0;
 
@@ -131,7 +132,7 @@ int main()
 		"Left/Right: rotation, Up/Down: forward/backward, Space: switch texture";
 
 	int width = 1600, height = 900;
-	ViewerPtr viewer = CreateGsViewer("Windows");
+	ViewerPtr viewer = CreateViewer("Windows");
 	if (!viewer || viewer->initialize(width, height, title) != 0) {
 		return -1;
 	}

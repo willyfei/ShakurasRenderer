@@ -6,7 +6,7 @@
 SHAKURAS_BEGIN;
 
 
-SurfacePtr GridTexture() {
+SurfacePtr GridSurface() {
 	static uint32_t pixels[256][256];
 	int i, j;
 	for (j = 0; j < 256; j++) {
@@ -23,7 +23,7 @@ SurfacePtr GridTexture() {
 }
 
 
-SurfacePtr LoadTexture(std::string filepath) {
+SurfacePtr LoadSurface(std::string filepath) {
 	int x, y;
 	stbi_uc* data = stbi_load(filepath.c_str(), &x, &y, 0, 4);
 	if (!data) {

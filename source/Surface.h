@@ -42,8 +42,8 @@ private:
 SHAKURAS_SHARED_PTR(Surface);
 
 
-template<class Surface>
-Vector3f NearestSample(float u, float v, Surface& surface) {
+template<class S>
+Vector3f NearestSample(float u, float v, const S& surface) {
 	u *= (surface.width() - 1);
 	v *= (surface.height() - 1);
 
@@ -57,8 +57,8 @@ Vector3f NearestSample(float u, float v, Surface& surface) {
 }
 
 
-template<class Surface>
-Vector3f BilinearSample(float u, float v, Surface& surface) {
+template<class S>
+Vector3f BilinearSample(float u, float v, const S& surface) {
 	u *= (surface.width() - 1);
 	v *= (surface.height() - 1);
 
@@ -86,53 +86,6 @@ Vector3f BilinearSample(float u, float v, Surface& surface) {
 	
 	return ic;
 }
-
-
-class Mipmap {
-public:
-	Mipmap() {}
-
-public:
-	void reset(int ww, int hh, const uint32_t* data) {
-		surfaces_.clear();
-
-		SurfacePtr surface = std::make_shared<Surface>();
-		surface->reset(ww, hh, data);
-		surfaces_.push_back(surface);
-
-		ww = (std::max)(1, (surface->width() + 1) / 2);
-		hh = (std::max)(1, (surface->height() + 1) / 2);
-		while (ww > 1 || hh > 1) {
-			SurfacePtr next_surface = std::make_shared<Surface>();
-			next_surface->reset(ww, hh, nullptr);
-
-			for (int x = 0; x != next_surface->width(); x++) {
-				float u = ((float)x) / (next_surface->width() - 1);
-
-				for (int y = 0; y != next_surface->height(); y++) {
-					float v = ((float)y) / (next_surface->height() - 1);
-
-					Vector3f c = BilinearSample(u, v, *surface);
-					next_surface->set(x, y, c);
-				}
-			}
-
-			surface = next_surface;
-			surfaces_.push_back(surface);
-		}
-	}
-
-	inline int width() const { return surfaces_.empty() ? 0 : surfaces_.back()->width(); }
-	inline int height() const { return surfaces_.empty() ? 0 : surfaces_.back()->height(); }
-	inline Vector3f get(int x, int y, int l) const { return surfaces_[l]->get(x, y); }
-	inline void set(int x, int y, int l, const Vector3f& c) { surfaces_[l]->set(x, y, c); }
-
-private:
-	std::vector<SurfacePtr> surfaces_;
-};
-
-
-SHAKURAS_SHARED_PTR(Mipmap);
 
 
 SHAKURAS_END;

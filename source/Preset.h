@@ -1,6 +1,6 @@
 #pragma once
 #include "MathAndGeometry.h"
-#include "Texture.h"
+#include "Mipmap.h"
 #include "Vertex.h"
 #include "Fragment.h"
 #include "StageBuffer.h"

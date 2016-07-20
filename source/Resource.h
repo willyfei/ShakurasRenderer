@@ -2,7 +2,7 @@
 #include "MathAndGeometry.h"
 #include "Vertex.h"
 #include "Fragment.h"
-#include "Texture.h"
+#include "Surface.h"
 #include <vector>
 #include <array>
 
@@ -11,8 +11,8 @@ SHAKURAS_BEGIN;
 
 
 //texture×ÊÔ´
-SurfacePtr GridTexture();
-SurfacePtr LoadTexture(std::string filepath);
+SurfacePtr GridSurface();
+SurfacePtr LoadSurface(std::string filepath);
 
 
 SHAKURAS_END;

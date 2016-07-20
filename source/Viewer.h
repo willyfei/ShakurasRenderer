@@ -33,7 +33,7 @@ SHAKURAS_SHARED_PTR(Viewer);
 
 
 //Windows
-ViewerPtr CreateGsViewer(std::string platform);
+ViewerPtr CreateViewer(std::string platform);
 
 
 SHAKURAS_END;

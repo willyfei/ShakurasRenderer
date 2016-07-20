@@ -207,7 +207,7 @@ LRESULT ScreenEventProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 
-ViewerPtr CreateGsViewer(std::string platform) {
+ViewerPtr CreateViewer(std::string platform) {
 	if (platform == "Windows") {
 		return std::make_shared<WindowsViewer>();
 	}

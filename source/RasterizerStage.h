@@ -28,9 +28,10 @@ public:
 
 class Trapezoid {
 public:
-	void scanlineInterp(float y) {
+	bool scanlineInterp(float y) {
 		left.scanlineInterp(y);
 		right.scanlineInterp(y);
+		return top <= y && y <= bottom;
 	}
 
 public:
@@ -41,7 +42,9 @@ public:
 
 class Scanline {
 public:
-	void initialize(const Trapezoid& trap, int yy) {
+	bool initialize(Trapezoid& trap, int yy) {
+		bool res = trap.scanlineInterp((float)yy + 0.5f);
+
 		float width = trap.right.v.x - trap.left.v.x;
 		x = (int)(trap.left.v.x + 0.5f);
 		w = (int)(trap.right.v.x + 0.5f) - x;
@@ -50,8 +53,15 @@ public:
 		if (trap.left.v.x >= trap.right.v.x) {
 			w = 0;
 		}
-		step = trap.right.v;
 		step = (trap.right.v - trap.left.v) / width;
+
+		return res;
+	}
+
+	void next(int xpos) {
+		if (x <= xpos) {
+			v = v + step;
+		}
 	}
 
 public:
@@ -60,10 +70,64 @@ public:
 };
 
 
+class Scanline22 {
+public:
+	void initialize(Trapezoid& trap, int yy) {
+		f0 = s0.initialize(trap, yy);
+		f1 = s1.initialize(trap, yy + 1);
+	}
+
+	inline int xbegin() const {
+		if (f0 && f1) {
+			return (std::min)(s0.x, s1.x);
+		}
+		else if (f0) {
+			return s0.x;
+		}
+		else if (f1) {
+			return s1.x;
+		}
+		return -1;
+	}
+
+	int xwidth() const {
+		if (f0 && f1) {
+			int s = (std::min)(s0.x, s1.x);
+			int e = (std::max)(s0.x + s0.w, s1.x + s1.w);
+			return e - s;
+		}
+		else if (f0) {
+			return s0.w;
+		}
+		else if (f1) {
+			return s1.w;
+		}
+		return -1;
+	}
+
+	inline bool mask0(int x) const {
+		return f0 && s0.x <= x && x < s0.x + s0.w;
+	}
+	inline bool mask1(int x) const {
+		return f1 && s1.x <= x && x < s1.x + s1.w;
+	}
+
+	void next(int xpos) {
+		s0.next(xpos);
+		s1.next(xpos);
+	}
+
+public:
+	bool f0, f1;
+	Scanline s0, s1;
+};
+
+
 template<class Vert>
 inline Vector3f XYRhw(const Vert& v) {
 	return Vector3f(v.pos.x, v.pos.y, v.rhw);
 }
+
 
 template<class Vert>
 int SpliteTrapezoid(const Vert& v0, const Vert& v1, const Vert& v2, std::vector<Trapezoid>& traps) {
@@ -154,7 +218,8 @@ public:
 		width_ = ww;
 		height_ = hh;
 
-		fraglist_.clear();
+		tilelist_.clear();
+		masklist_.clear();
 		framebuffer_.resize(height_, nullptr);
 		zbuffer_.resize(height_);
 
@@ -181,25 +246,39 @@ public:
 				const Vert& v1 = buffer.vertlist[i];
 				const Vert& v2 = buffer.vertlist[i + 1];
 				const Vert& v3 = buffer.vertlist[i + 2];
-				traversalTriangle(v1, v2, v3 );
+				traversalTriangle(v1, v2, v3);
 				i += 3;
 			}
 
 			//fragment shader
-			for (auto ii = fraglist_.begin(); ii != fraglist_.end(); ii++) {
-				fragshader_->process(buffer.uniforms, *ii);
-			}
-
-			//merging
-			for (auto ii = fraglist_.begin(); ii != fraglist_.end(); ii++) {
-				Frag& frag = *ii;
-				if (frag.z > zbuffer_[frag.y][frag.x]) {
-					zbuffer_[frag.y][frag.x] = frag.z;
-					framebuffer_[frag.y][frag.x] = IRgba(frag.c);
+			for (size_t ii = 0; ii != tilelist_.size(); ii++) {
+				if (masklist_[ii][0]) {
+					fragshader_->process(buffer.uniforms, tilelist_[ii][0]);
+				}
+				if (masklist_[ii][1]) {
+					fragshader_->process(buffer.uniforms, tilelist_[ii][1]);
+				}
+				if (masklist_[ii][2]) {
+					fragshader_->process(buffer.uniforms, tilelist_[ii][2]);
+				}
+				if (masklist_[ii][3]) {
+					fragshader_->process(buffer.uniforms, tilelist_[ii][3]);
 				}
 			}
 
-			fraglist_.clear();
+			//merging
+			for (size_t ii = 0; ii != tilelist_.size(); ii++) {
+				for (size_t iii = 0; iii != 4; iii++) {
+					Frag& frag = tilelist_[ii][iii];
+					if (masklist_[ii][iii] && frag.z > zbuffer_[frag.y][frag.x]) {
+						zbuffer_[frag.y][frag.x] = frag.z;
+						framebuffer_[frag.y][frag.x] = IRgba(frag.c);
+					}
+				}
+			}
+
+			masklist_.clear();
+			tilelist_.clear();
 		}
 	}
 
@@ -216,8 +295,7 @@ private:
 			std::fill(dst.begin(), dst.end(), 0.0f);
 		}
 
-		fraglist_.clear();
-		fraglist_.reserve(width_ * height_);
+		tilelist_.clear();
 	}
 
 	void traversalTriangle(const Vert& v0, const Vert& v1, const Vert& v2) {
@@ -249,24 +327,50 @@ private:
 		ddy_ = (e01 * e02.pos.x - e02 * e01.pos.x) * inv_area;
 	}
 
-	void traversalScanline(Scanline& scanline) {
-		int x = scanline.x;
-		int w = scanline.w;
-		for (; w > 0; x++, w--) {
+
+	Frag lerpFrag(int x, int y, float rhw) {
+		Frag frag;
+		frag.x = x;
+		frag.y = y;
+		frag.varyings = (v0_.varyings + ddx_.varyings * (x - v0_.pos.x) + ddy_.varyings * (y - v0_.pos.y)) / rhw;
+		frag.z = rhw;
+
+		return frag;
+	}
+
+
+	void traversalScanline(Scanline22& s22) {
+		int x = s22.xbegin();
+		int w = s22.xwidth();
+		for (; w > 0; x += 2, w -= 2) {
 			if (x >= 0 && x < width_) {
-				float rhw = scanline.v.z;
-				float ww = 1.0f / rhw;
+				float rhw0 = s22.s0.v.z;
+				float rhw1 = s22.s1.v.z;
 
-				Frag frag;
-				frag.x = x;
-				frag.y = scanline.y;
-				frag.varyings = v0_.varyings + ddx_.varyings * (frag.x - v0_.pos.x) + ddy_.varyings * (frag.y - v0_.pos.y);
-				frag.varyings = frag.varyings * ww;
-				frag.z = rhw;
+				// 2, 3
+				// 0, 1
+				std::array<Frag, 4> tile;
+				std::array<bool, 4> mask;
+				tile[0] = lerpFrag(x, s22.s0.y, rhw0);
+				tile[2] = lerpFrag(x, s22.s1.y, rhw1);
+				mask[0] = s22.mask0(x);
+				mask[2] = s22.mask1(x);
 
-				fraglist_.push_back(frag);
+				s22.next(x);
+				rhw0 = s22.s0.v.z;
+				rhw1 = s22.s1.v.z;
+
+				tile[1] = lerpFrag(x + 1, s22.s0.y, rhw0);
+				tile[3] = lerpFrag(x + 1, s22.s1.y, rhw1);
+				mask[1] = s22.mask0(x + 1);
+				mask[3] = s22.mask1(x + 1);
+
+				tilelist_.push_back(tile);
+				masklist_.push_back(mask);
+
+				s22.next(x + 1);
 			}
-			scanline.v = scanline.v + scanline.step;
+
 			if (x >= width_) {
 				break;
 			}
@@ -274,13 +378,12 @@ private:
 	}
 
 	void traversalTrapezoid(Trapezoid& trap) {
-		Scanline scanline;
+		Scanline22 scanline;
 		int j, top, bottom;
 		top = (int)(trap.top + 0.5f);
 		bottom = (int)(trap.bottom + 0.5f);
-		for (j = top; j < bottom; j++) {
+		for (j = top; j < bottom; j += 2) {
 			if (j >= 0 && j < height_) {
-				trap.scanlineInterp((float)j + 0.5f);
 				scanline.initialize(trap, j);
 				traversalScanline(scanline);
 			}
@@ -296,7 +399,8 @@ private:
 	int width_, height_;
 	Vert ddx_, ddy_;
 	Vert v0_;
-	std::vector<Frag> fraglist_;
+	std::vector<std::array<bool, 4> > masklist_;
+	std::vector<std::array<Frag, 4> > tilelist_;
 	std::shared_ptr<FragShader> fragshader_;
 };
 
