@@ -54,9 +54,6 @@
     <ClInclude Include="..\..\source\StageBuffer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\Texture.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\Fragment.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -64,6 +61,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\Viewer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Surface.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Mipmap.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

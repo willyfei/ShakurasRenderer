@@ -249,11 +249,12 @@
     <ClInclude Include="..\..\source\Fragment.h" />
     <ClInclude Include="..\..\source\GeometryStage.h" />
     <ClInclude Include="..\..\source\GraphicPipeline.h" />
+    <ClInclude Include="..\..\source\Mipmap.h" />
     <ClInclude Include="..\..\source\Preset.h" />
     <ClInclude Include="..\..\source\RasterizerStage.h" />
     <ClInclude Include="..\..\source\Resource.h" />
     <ClInclude Include="..\..\source\StageBuffer.h" />
-    <ClInclude Include="..\..\source\Texture.h" />
+    <ClInclude Include="..\..\source\Surface.h" />
     <ClInclude Include="..\..\source\Vertex.h" />
     <ClInclude Include="..\..\source\Viewer.h" />
     <ClInclude Include="..\..\source\MathAndGeometry.h" />
