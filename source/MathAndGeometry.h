@@ -123,10 +123,19 @@ inline float Length2(const V2& v) {
 	return ::sqrt(v.x * v.x + v.y * v.y);
 }
 
-
 template<class V3>
 inline float Length3(const V3& v) {
 	return ::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+}
+
+template<class V2>
+inline void Normalize2(V2& v, float len = 1.0f) {
+	float cur_len = Length2(v);
+	if (cur_len != len) {
+		float scale = len / cur_len;
+		v.x *= scale;
+		v.y *= scale;
+	}
 }
 
 template<class V3>
@@ -158,7 +167,6 @@ template<class V3>
 inline V3 Reflect(const V3& i, const V3& n) {
 	return i - n * (2.0f * DotProduct(i, n));
 }
-
 
 
 //æÿ’Û
