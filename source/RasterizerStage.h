@@ -219,15 +219,17 @@ public:
 
 public:
 	void process(const UniformList& u, std::array<Frag, 4>& tile) {
+		sampler_.ddx_ = TexCoord(tile[1].varyings) - TexCoord(tile[0].varyings);
+		sampler_.ddy_ = TexCoord(tile[2].varyings) - TexCoord(tile[0].varyings);
 		for (int i = 0; i != 4; i++) {
 			if (tile[i].draw) {
-				fragshader_.process(u, sampler, tile[i]);
+				fragshader_.process(u, sampler_, tile[i]);
 			}
 		}
 	}
 
 public:
-	Sampler sampler;
+	Sampler sampler_;
 	FragShader fragshader_;
 };
 
@@ -314,7 +316,6 @@ private:
 		ddy_ = (e01 * e02.pos.x - e02 * e01.pos.x) * inv_area;
 	}
 
-
 	Frag lerpFrag(int x, int y, float rhw) {
 		Frag frag;
 		frag.x = x;
@@ -324,7 +325,6 @@ private:
 
 		return frag;
 	}
-
 
 	void drawScanline(const UniformList& u, Scanline22& s22) {
 		int x = s22.xbegin();

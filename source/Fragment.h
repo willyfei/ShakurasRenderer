@@ -19,4 +19,10 @@ public:
 };
 
 
+template<class VaryingList>
+Vector2f TexCoord(const VaryingList& v) {
+	return Vector2f();
+}
+
+
 SHAKURAS_END;

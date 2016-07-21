@@ -69,67 +69,61 @@ inline MipmapPtr CreateMipmap(SurfacePtr surface) {
 
 
 template<class M>
-Vector3f NearestSample(float u, float v, float du, float dv, const M& mipmap) {
-	int ilow = 0, ihigh = 0;
-	float dlow = 0.0f, dhigh = 0.0f;
-	for (int i = 0; i != mipmap.levelCount(); i++) {
-		float d = (std::max)(du * mipmap.level(i).width(), dv * mipmap.level(i).height());
-		if (d < 1.0f) {
-			ihigh = i;
-			dhigh = d;
-			break;
-		}
-		ilow = i;
-		dlow = d;
-	}
+float ComputeLevel(Vector2f ddx, Vector2f ddy, const M& mipmap) {
+	int w = mipmap.level(0).width();
+	int h = mipmap.level(0).height();
 
-	return NearestSample(u, v, mipmap.level(ihigh));
+	Vector2f ddx_ts(ddx.x * w, ddx.y * h);
+	Vector2f ddy_ts(ddy.x * w, ddy.y * h);
+
+	float ddx_rho = Length2(ddx_ts);
+	float ddy_rho = Length2(ddy_ts);
+
+	float rho = (std::max)(ddx_rho, ddy_rho);
+
+	if (rho == 0.0f) rho = 0.000001f;
+	float lambda = log2(rho);
+	return lambda;
 }
 
 
 template<class M>
-Vector3f BilinearSample(float u, float v, float du, float dv, const M& mipmap) {
-	int ilow = 0, ihigh = 0;
-	float dlow = 0.0f, dhigh = 0.0f;
-	for (int i = 0; i != mipmap.levelCount(); i++) {
-		float d = (std::max)(du * mipmap.level(i).width(), dv * mipmap.level(i).height());
-		if (d < 1.0f) {
-			ihigh = i;
-			dhigh = d;
-			break;
-		}
-		ilow = i;
-		dlow = d;
-	}
-
-	return BilinearSample(u, v, mipmap.level(ihigh));
+Vector3f NearestSample(float u, float v, Vector2f ddx, Vector2f ddy, const M& mipmap) {
+	float lv = ComputeLevel(ddx, ddy, mipmap);
+	float lvf = floorf(lv);
+	lvf = Clamp(lvf, 0.0f, (float)mipmap.levelCount() - 1);
+	return NearestSample(u, v, mipmap.level((int)lvf));
 }
 
 
 template<class M>
-Vector3f TrilinearSample(float u, float v, float du, float dv, const M& mipmap) {
-	int ilow = 0, ihigh = 0;
-	float dlow = 0.0f, dhigh = 0.0f;
-	for (int i = 0; i != mipmap.levelCount(); i++) {
-		float d = (std::max)(du * mipmap.level(i).width(), dv * mipmap.level(i).height());
-		if (d < 1.0f) {
-			ihigh = i;
-			dhigh = d;
-			break;
-		}
-		ilow = i;
-		dlow = d;
+Vector3f BilinearSample(float u, float v, Vector2f ddx, Vector2f ddy, const M& mipmap) {
+	float lv = ComputeLevel(ddx, ddy, mipmap);
+	float lvf = floorf(lv);
+	lvf = Clamp(lvf, 0.0f, (float)mipmap.levelCount() - 1);
+	return BilinearSample(u, v, mipmap.level((int)lvf));
+}
+
+
+template<class M>
+Vector3f TrilinearSample(float u, float v, Vector2f ddx, Vector2f ddy, const M& mipmap) {
+	float lv = ComputeLevel(ddx, ddy, mipmap);
+	float lvf = floorf(lv);
+	float lvc = lvf + 1;
+
+	lv = Clamp(lv, 0.0f, (float)mipmap.levelCount() - 1);
+	lvf = Clamp(lvf, 0.0f, (float)mipmap.levelCount() - 1);
+	lvc = Clamp(lvc, 0.0f, (float)mipmap.levelCount() - 1);
+
+	if (lvf == lvc) {
+		return BilinearSample(u, v, mipmap.level((int)lvf));
 	}
 
-	Vector3f clow = BilinearSample(u, v, mipmap.level(ilow));
-	if (ilow == ihigh) {
-		return clow;
-	}
+	Vector3f cf = BilinearSample(u, v, mipmap.level((int)lvf));
+	Vector3f cc = BilinearSample(u, v, mipmap.level((int)lvc));
 
-	Vector3f chigh = BilinearSample(u, v, mipmap.level(ihigh));
-
-	float t = (1.0f - dlow) / (dhigh - dlow);
-	return clow + (chigh - clow) * t;
+	float t = (lv - lvf) / (lvc - lvf);
+	return cc + (cf - cc) * t;
 }
 
 

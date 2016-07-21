@@ -118,14 +118,20 @@ inline Vector4<S> operator/(const Vector4<S>& v1, S d) {
 }
 
 
+template<class V2>
+inline float Length2(const V2& v) {
+	return ::sqrt(v.x * v.x + v.y * v.y);
+}
+
+
 template<class V3>
-inline float Length(const V3& v) {
+inline float Length3(const V3& v) {
 	return ::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
 template<class V3>
 inline void Normalize(V3& v, float len = 1.0f) {
-	float cur_len = Length(v);
+	float cur_len = Length3(v);
 	if (cur_len != len) {
 		float scale = len / cur_len;
 		v.x *= scale;

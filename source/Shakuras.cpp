@@ -68,10 +68,10 @@ namespace skexample {
 			float w = (float)viewer->width();
 			float h = (float)viewer->height();
 
-			texlist_.push_back(LoadSurface("1.png"));
-			texlist_.push_back(LoadSurface("1.jpg"));
-			texlist_.push_back(LoadSurface("2.png"));
-			texlist_.push_back(GridSurface());
+			texlist_.push_back(CreateMipmap(LoadSurface("1.png")));
+			texlist_.push_back(CreateMipmap(LoadSurface("1.jpg")));
+			texlist_.push_back(CreateMipmap(LoadSurface("2.png")));
+			texlist_.push_back(CreateMipmap(GridSurface()));
 			itex_ = 0;
 			nspace_ = 0;
 
@@ -115,7 +115,7 @@ namespace skexample {
 	private:
 		ViewerPtr viewer_;
 		preset_std::StageBuffer output_;
-		std::vector<SurfacePtr> texlist_;
+		std::vector<MipmapPtr> texlist_;
 		int itex_;
 		int nspace_;
 		float alpha_;

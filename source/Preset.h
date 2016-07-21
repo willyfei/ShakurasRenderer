@@ -15,7 +15,7 @@ SHAKURAS_BEGIN;
 namespace preset_std {
 
 	struct UniformList {
-		SurfacePtr texture;
+		MipmapPtr texture;
 		Matrix44f mvtrsf;
 		Vector3f ambient;
 		Vector3f diffuse;
@@ -112,7 +112,7 @@ namespace preset_std {
 			Vector3f illum = u.ambient + u.diffuse * illum_diffuse + u.specular * illum_specular;
 
 			Vector2f uv = f.varyings.uv;
-			Vector3f tc = sampler.surfaceBilinear(uv.x, uv.y, *u.texture);
+			Vector3f tc = sampler.mipmapTrilinear(uv.x, uv.y, *u.texture);
 			Vector3f c(tc.x * illum.x, tc.y * illum.y, tc.z * illum.z);
 
 			Clamp(c.x, 0.0f, 1.0f);
@@ -128,5 +128,10 @@ namespace preset_std {
 	typedef RasterizerStage<UniformList, Vertex, Fragment, FragmentShader> RasStage;
 }
 
+
+template<>
+Vector2f TexCoord<preset_std::VaryingList>(const preset_std::VaryingList& v) {
+	return v.uv;
+}
 
 SHAKURAS_END;
