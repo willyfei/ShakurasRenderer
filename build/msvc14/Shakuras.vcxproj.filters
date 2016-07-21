@@ -51,9 +51,6 @@
     <ClInclude Include="..\..\source\Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\StageBuffer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\Fragment.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -72,6 +69,12 @@
     <ClInclude Include="..\..\source\Sampler.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ObjParser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\DrawCommand.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -84,6 +87,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\Resource.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Utility.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ObjParser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

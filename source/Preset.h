@@ -3,7 +3,7 @@
 #include "Mipmap.h"
 #include "Vertex.h"
 #include "Fragment.h"
-#include "StageBuffer.h"
+#include "DrawCommand.h"
 #include "GeometryStage.h"
 #include "RasterizerStage.h"
 #include "GraphicPipeline.h"
@@ -16,10 +16,10 @@ namespace preset_std {
 
 	struct UniformList {
 		MipmapPtr texture;
-		Matrix44f mvtrsf;
 		Vector3f ambient;
 		Vector3f diffuse;
 		Vector3f specular;
+		Matrix44f mvtrsf;
 		Vector3f light_pos;
 		Vector3f eye_pos;
 	};
@@ -77,7 +77,7 @@ namespace preset_std {
 
 	typedef shakuras::Fragment<VaryingList> Fragment;
 
-	typedef shakuras::StageBuffer<UniformList, Vertex> StageBuffer;
+	typedef shakuras::DrawCommand<UniformList, Vertex> DrawCallBuffer;
 
 	class VertexShader {
 	public:
@@ -112,7 +112,10 @@ namespace preset_std {
 			Vector3f illum = u.ambient + u.diffuse * illum_diffuse + u.specular * illum_specular;
 
 			Vector2f uv = f.varyings.uv;
-			Vector3f tc = sampler.mipmapTrilinear(uv.x, uv.y, *u.texture);
+			Vector3f tc(1.0f, 1.0f, 1.0f);//Ä¬ÈÏ°×É«
+			if (u.texture) {
+				tc = sampler.mipmapTrilinear(uv.x, uv.y, *u.texture);
+			}
 			Vector3f c(tc.x * illum.x, tc.y * illum.y, tc.z * illum.z);
 
 			Clamp(c.x, 0.0f, 1.0f);

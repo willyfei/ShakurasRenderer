@@ -106,10 +106,10 @@ public:
 		return -1;
 	}
 
-	inline bool mask0(int x) const {
+	inline bool draw0(int x) const {
 		return f0 && s0.x <= x && x < s0.x + s0.w;
 	}
-	inline bool mask1(int x) const {
+	inline bool draw1(int x) const {
 		return f1 && s1.x <= x && x < s1.x + s1.w;
 	}
 
@@ -215,9 +215,6 @@ int SpliteTrapezoid(const V& v0, const V& v1, const V& v2, std::vector<Trapezoid
 template<class UL, class F, class FS>
 class TileShader {
 public:
-	TileShader() {}
-
-public:
 	void process(const UL& u, std::array<F, 4>& tile) {
 		sampler_.ddx_ = TexCoord(tile[1].varyings) - TexCoord(tile[0].varyings);
 		sampler_.ddy_ = TexCoord(tile[2].varyings) - TexCoord(tile[0].varyings);
@@ -254,31 +251,28 @@ public:
 		}
 	}
 
-	void process(StageBuffer<UL, V>& buffer) {
-		clear();
-
+	void process(DrawCommand<UL, V>& cmd) {
 		//triangle setup, Ê¡ÂÔ
 
-		for (size_t i = 0; i < buffer.vertlist.size();) {
+		for (size_t i = 0; i < cmd.vertlist.size();) {
 			//triangle traversal
 			//fragment shader
 			//merging
-			if (buffer.vertlist[i].primf == kPFTriangle) {
-				const V& v1 = buffer.vertlist[i];
-				const V& v2 = buffer.vertlist[i + 1];
-				const V& v3 = buffer.vertlist[i + 2];
-				drawTriangle(buffer.uniforms, v1, v2, v3);
+			if (cmd.vertlist[i].primf == kPFTriangle) {
+				const V& v1 = cmd.vertlist[i];
+				const V& v2 = cmd.vertlist[i + 1];
+				const V& v3 = cmd.vertlist[i + 2];
+				drawTriangle(cmd.uniforms, v1, v2, v3);
 				i += 3;
 				continue;
 			}
 		}
 	}
 
-private:
-	void clear() {
+	void clean() {
+		uint32_t cc = IBgr(Vector3f(0.2f, 0.2f, 0.6f));
 		for (int y = 0; y < height_; y++) {
 			uint32_t *dst = framebuffer_[y];
-			uint32_t cc = IBgr(Vector3f(0.2f, 0.2f, 0.6f));
 			for (int x = width_; x > 0; dst++, x--) dst[0] = cc;
 		}
 
@@ -288,6 +282,7 @@ private:
 		}
 	}
 
+private:
 	void drawTriangle(const UL& u, const V& v0, const V& v1, const V& v2) {
 		V t0 = v0, t1 = v1, t2 = v2;
 
@@ -339,18 +334,18 @@ private:
 				// 0, 1
 				std::array<F, 4> tile;
 				tile[0] = lerpFrag(x, s22.s0.y, rhw0);
-				tile[0].draw = s22.mask0(x);
+				tile[0].draw = s22.draw0(x);
 				tile[2] = lerpFrag(x, s22.s1.y, rhw1);
-				tile[2].draw = s22.mask1(x);
+				tile[2].draw = s22.draw1(x);
 
 				s22.next(x);
 				rhw0 = s22.s0.v.z;
 				rhw1 = s22.s1.v.z;
 
 				tile[1] = lerpFrag(x + 1, s22.s0.y, rhw0);
-				tile[1].draw = s22.mask0(x + 1);
+				tile[1].draw = s22.draw0(x + 1);
 				tile[3] = lerpFrag(x + 1, s22.s1.y, rhw1);
-				tile[3].draw = s22.mask1(x + 1);
+				tile[3].draw = s22.draw1(x + 1);
 
 				s22.next(x + 1);
 

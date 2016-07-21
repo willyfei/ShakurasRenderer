@@ -46,7 +46,15 @@ public:
 	}
 
 	inline int levelCount() const { return (int)surfaces_.size(); }
-	inline const Surface& level(int l) const  { return *surfaces_[l]; }
+	inline const Surface& level(int l) const  {
+		if (l < 0) {
+			return *surfaces_.front();
+		}
+		else if (levelCount() <= l) {
+			return *surfaces_.back();
+		}
+		return *surfaces_[l];
+	}
 
 private:
 	std::vector<SurfacePtr> surfaces_;

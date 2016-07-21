@@ -250,11 +250,12 @@
     <ClInclude Include="..\..\source\GeometryStage.h" />
     <ClInclude Include="..\..\source\GraphicPipeline.h" />
     <ClInclude Include="..\..\source\Mipmap.h" />
+    <ClInclude Include="..\..\source\ObjParser.h" />
     <ClInclude Include="..\..\source\Preset.h" />
     <ClInclude Include="..\..\source\RasterizerStage.h" />
     <ClInclude Include="..\..\source\Resource.h" />
     <ClInclude Include="..\..\source\Sampler.h" />
-    <ClInclude Include="..\..\source\StageBuffer.h" />
+    <ClInclude Include="..\..\source\DrawCommand.h" />
     <ClInclude Include="..\..\source\Surface.h" />
     <ClInclude Include="..\..\source\Vertex.h" />
     <ClInclude Include="..\..\source\Viewer.h" />
@@ -265,9 +266,11 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\ObjParser.cpp" />
     <ClCompile Include="..\..\source\Resource.cpp" />
     <ClCompile Include="..\..\source\Viewer.cpp" />
     <ClCompile Include="..\..\source\Shakuras.cpp" />
+    <ClCompile Include="..\..\source\Utility.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

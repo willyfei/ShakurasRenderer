@@ -5,7 +5,7 @@
 SHAKURAS_BEGIN;
 
 
-template<class SB, class AS, class GS, class RS>
+template<class CMD, class AS, class GS, class RS>
 class GraphicPipeline {
 public:
 	void initialize(ViewerPtr viewer) {
@@ -15,12 +15,15 @@ public:
 	}
 
 	void process() {
-		SB buffer;
-		appstage_.process(buffer);
+		std::vector<CMD> cmds;
+		appstage_.process(cmds);
 
-		geomstage_.process(buffer);
+		rasstage_.clean();
 
-		rasstage_.process(buffer);
+		for (auto i = cmds.begin(); i != cmds.end(); i++) {
+			geomstage_.process(*i);
+			rasstage_.process(*i);
+		}
 	}
 
 

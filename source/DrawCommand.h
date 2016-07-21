@@ -7,9 +7,8 @@
 SHAKURAS_BEGIN;
 
 
-
 template<class UL, class V>
-struct StageBuffer {
+struct DrawCommand {
 	UL uniforms;
 	Matrix44f projtrsf;
 	std::vector<V> vertlist;

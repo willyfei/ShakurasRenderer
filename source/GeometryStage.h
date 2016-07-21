@@ -42,32 +42,32 @@ public:
 		vertshader_ = vs;
 	}
 
-	void process(StageBuffer<UL, V>& buffer) {
+	void process(DrawCommand<UL, V>& cmd) {
 		//vertex sharding
-		for (auto i = buffer.vertlist.begin(); i != buffer.vertlist.end(); i++) {
-			vertshader_->process(buffer.uniforms, *i);
+		for (auto i = cmd.vertlist.begin(); i != cmd.vertlist.end(); i++) {
+			vertshader_->process(cmd.uniforms, *i);
 		}
 
 		//geometry sharding
-		for (size_t i = 0; i < buffer.vertlist.size();) {
-			if (buffer.vertlist[i].primf == kPFTriangle) {
+		for (size_t i = 0; i < cmd.vertlist.size();) {
+			if (cmd.vertlist[i].primf == kPFTriangle) {
 				i += 3;
 			}
 		}
 
 
 		//projection transform
-		for (auto i = buffer.vertlist.begin(); i != buffer.vertlist.end(); i++) {
-			i->pos = buffer.projtrsf.transform(i->pos);
+		for (auto i = cmd.vertlist.begin(); i != cmd.vertlist.end(); i++) {
+			i->pos = cmd.projtrsf.transform(i->pos);
 		}
 
 		//cliping, ºÚªØ µœ÷
-		for (size_t i = 0; i < buffer.vertlist.size();) {
-			if (buffer.vertlist[i].primf == kPFTriangle) {
-				if (CheckCVV(buffer.vertlist[i].pos) != 0 ||
-					CheckCVV(buffer.vertlist[i + 1].pos) != 0 ||
-					CheckCVV(buffer.vertlist[i + 2].pos) != 0) {
-					UnstableErase(buffer.vertlist, i, 3);
+		for (size_t i = 0; i < cmd.vertlist.size();) {
+			if (cmd.vertlist[i].primf == kPFTriangle) {
+				if (CheckCVV(cmd.vertlist[i].pos) != 0 ||
+					CheckCVV(cmd.vertlist[i + 1].pos) != 0 ||
+					CheckCVV(cmd.vertlist[i + 2].pos) != 0) {
+					unstable_erase(cmd.vertlist, i, 3);
 				}
 				else {
 					i += 3;
@@ -76,7 +76,7 @@ public:
 		}
 
 		//screen mapping
-		for (auto i = buffer.vertlist.begin(); i != buffer.vertlist.end(); i++) {
+		for (auto i = cmd.vertlist.begin(); i != cmd.vertlist.end(); i++) {
 			ScreenMapping(i->pos, width_, height_);
 		}
 	}
