@@ -130,7 +130,7 @@ inline float Length3(const V3& v) {
 }
 
 template<class V3>
-inline void Normalize(V3& v, float len = 1.0f) {
+inline void Normalize3(V3& v, float len = 1.0f) {
 	float cur_len = Length3(v);
 	if (cur_len != len) {
 		float scale = len / cur_len;
@@ -218,7 +218,7 @@ public:
 		S qcos = (S)cos(theta * 0.5f);
 		Vector3<S> vec(x, y, z);
 		S w = qcos;
-		Normalize(vec);
+		Normalize3(vec);
 		x = vec.x * qsin;
 		y = vec.y * qsin;
 		z = vec.z * qsin;
@@ -240,9 +240,9 @@ public:
 	static Matrix44<S> LookAt(const Vector3<S>& eye, const Vector3<S>& at, const Vector3<S>& up) {
 		Vector3<S> xaxis, yaxis, zaxis;
 		zaxis = at - eye;
-		Normalize(zaxis);
+		Normalize3(zaxis);
 		xaxis = CrossProduct(up, zaxis);
-		Normalize(xaxis);
+		Normalize3(xaxis);
 		yaxis = CrossProduct(zaxis, xaxis);
 
 		Matrix44<S> mat;
