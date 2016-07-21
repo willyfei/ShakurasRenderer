@@ -12,6 +12,8 @@
 SHAKURAS_BEGIN;
 
 
+//一层mipmap纹理
+//Phong着色
 namespace preset_std {
 
 	struct UniformList {

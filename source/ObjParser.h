@@ -5,10 +5,6 @@
 #include "Resource.h"
 #include <vector>
 #include <string>
-#include <array>
-#include <map>
-#include <fstream>
-#include <algorithm>
 
 
 SHAKURAS_BEGIN;

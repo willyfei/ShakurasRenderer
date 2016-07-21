@@ -1,4 +1,8 @@
 #include "ObjParser.h"
+#include <array>
+#include <map>
+#include <fstream>
+#include <algorithm>
 
 
 SHAKURAS_BEGIN;
