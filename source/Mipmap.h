@@ -69,7 +69,7 @@ inline MipmapPtr CreateMipmap(SurfacePtr surface) {
 
 
 template<class M>
-float ComputeLevel(Vector2f ddx, Vector2f ddy, const M& mipmap) {
+float ComputeLevel(const Vector2f& ddx, const Vector2f& ddy, const M& mipmap) {
 	int w = mipmap.level(0).width();
 	int h = mipmap.level(0).height();
 
@@ -88,7 +88,7 @@ float ComputeLevel(Vector2f ddx, Vector2f ddy, const M& mipmap) {
 
 
 template<class M>
-Vector3f NearestSample(float u, float v, Vector2f ddx, Vector2f ddy, const M& mipmap) {
+Vector3f NearestSample(float u, float v, const Vector2f& ddx, const Vector2f& ddy, const M& mipmap) {
 	float lv = ComputeLevel(ddx, ddy, mipmap);
 	float lvf = floorf(lv);
 	lvf = Clamp(lvf, 0.0f, (float)mipmap.levelCount() - 1);
@@ -97,7 +97,7 @@ Vector3f NearestSample(float u, float v, Vector2f ddx, Vector2f ddy, const M& mi
 
 
 template<class M>
-Vector3f BilinearSample(float u, float v, Vector2f ddx, Vector2f ddy, const M& mipmap) {
+Vector3f BilinearSample(float u, float v, const Vector2f& ddx, const Vector2f& ddy, const M& mipmap) {
 	float lv = ComputeLevel(ddx, ddy, mipmap);
 	float lvf = floorf(lv);
 	lvf = Clamp(lvf, 0.0f, (float)mipmap.levelCount() - 1);
@@ -106,7 +106,7 @@ Vector3f BilinearSample(float u, float v, Vector2f ddx, Vector2f ddy, const M& m
 
 
 template<class M>
-Vector3f TrilinearSample(float u, float v, Vector2f ddx, Vector2f ddy, const M& mipmap) {
+Vector3f TrilinearSample(float u, float v, const Vector2f& ddx, const Vector2f& ddy, const M& mipmap) {
 	float lv = ComputeLevel(ddx, ddy, mipmap);
 	float lvf = floorf(lv);
 	float lvc = lvf + 1;

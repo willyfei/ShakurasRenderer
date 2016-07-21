@@ -8,11 +8,11 @@ SHAKURAS_BEGIN;
 
 
 
-template<class UniformList, class Vert>
+template<class UL, class V>
 struct StageBuffer {
-	UniformList uniforms;
+	UL uniforms;
 	Matrix44f projtrsf;
-	std::vector<Vert> vertlist;
+	std::vector<V> vertlist;
 };
 
 

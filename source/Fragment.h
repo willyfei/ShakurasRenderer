@@ -5,7 +5,7 @@
 SHAKURAS_BEGIN;
 
 
-template<class VaryingList>
+template<class VL>
 class Fragment {
 public:
 	Fragment() : x(0), y(0), z(1.0f), draw(true) {}
@@ -13,14 +13,14 @@ public:
 public:
 	int x, y;
 	float z;
-	VaryingList varyings;
+	VL varyings;
 	bool draw;
 	Vector4f c;
 };
 
 
-template<class VaryingList>
-Vector2f TexCoord(const VaryingList& v) {
+template<class VL>
+inline Vector2f TexCoord(const VL& vl) {
 	return Vector2f();
 }
 

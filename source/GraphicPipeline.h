@@ -5,7 +5,7 @@
 SHAKURAS_BEGIN;
 
 
-template<class StageBuffer, class AppStage, class GeomStage, class RasStage>
+template<class SB, class AS, class GS, class RS>
 class GraphicPipeline {
 public:
 	void initialize(ViewerPtr viewer) {
@@ -15,7 +15,7 @@ public:
 	}
 
 	void process() {
-		StageBuffer buffer;
+		SB buffer;
 		appstage_.process(buffer);
 
 		geomstage_.process(buffer);
@@ -25,9 +25,9 @@ public:
 
 
 protected:
-	AppStage appstage_;
-	GeomStage geomstage_;
-	RasStage rasstage_;
+	AS appstage_;
+	GS geomstage_;
+	RS rasstage_;
 };
 
 

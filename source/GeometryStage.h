@@ -29,20 +29,20 @@ inline void ScreenMapping(Vector4f& v, float width, float height) {
 }
 
 
-template<class UniformList, class Vert, class VertShader>
+template<class UL, class V, class VS>
 class GeometryStage {
 public:
 	void initialize(float w, float h) {
 		width_ = w;
 		height_ = h;
-		vertshader_ = std::make_shared<VertShader>();
+		vertshader_ = std::make_shared<VS>();
 	}
 
-	void setShader(std::shared_ptr<VertShader> vs) {
+	void setShader(std::shared_ptr<VS> vs) {
 		vertshader_ = vs;
 	}
 
-	void process(StageBuffer<UniformList, Vert>& buffer) {
+	void process(StageBuffer<UL, V>& buffer) {
 		//vertex sharding
 		for (auto i = buffer.vertlist.begin(); i != buffer.vertlist.end(); i++) {
 			vertshader_->process(buffer.uniforms, *i);
@@ -83,7 +83,7 @@ public:
 
 private:
 	float width_, height_;
-	std::shared_ptr<VertShader> vertshader_;
+	std::shared_ptr<VS> vertshader_;
 };
 
 

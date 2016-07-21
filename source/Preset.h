@@ -130,7 +130,7 @@ namespace preset_std {
 
 
 template<>
-Vector2f TexCoord<preset_std::VaryingList>(const preset_std::VaryingList& v) {
+inline Vector2f TexCoord<preset_std::VaryingList>(const preset_std::VaryingList& v) {
 	return v.uv;
 }
 

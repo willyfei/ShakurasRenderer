@@ -12,13 +12,13 @@ enum PrimitiveFlag {
 };
 
 
-template<class AttribList, class VaryingList>
+template<class A, class V>
 class Vertex {
 public:
 	Vertex() : rhw(1.0f), primf(kPFNil) {}
 	Vertex(const Vector4f& ppos)
 		: pos(ppos), primf(kPFNil) {}
-	Vertex(const Vector4f& ppos, const VaryingList& vvar, float rrhw, short pprimf)
+	Vertex(const Vector4f& ppos, const V& vvar, float rrhw, short pprimf)
 		: pos(ppos), varyings(vvar), rhw(rrhw), primf(pprimf) {}
 
 public:
@@ -28,8 +28,8 @@ public:
 	}
 
 public:
-	AttribList attribs;
-	VaryingList varyings;
+	A attribs;
+	V varyings;
 	Vector4f pos;
 	float rhw;
 	short primf;

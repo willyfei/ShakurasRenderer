@@ -124,17 +124,17 @@ public:
 };
 
 
-template<class Vert>
-inline Vector3f XYRhw(const Vert& v) {
+template<class V>
+inline Vector3f XYRhw(const V& v) {
 	return Vector3f(v.pos.x, v.pos.y, v.rhw);
 }
 
 
-template<class Vert>
-int SpliteTrapezoid(const Vert& v0, const Vert& v1, const Vert& v2, std::vector<Trapezoid>& traps) {
-	const Vert* p1 = &v0;
-	const Vert* p2 = &v1;
-	const Vert* p3 = &v2;
+template<class V>
+int SpliteTrapezoid(const V& v0, const V& v1, const V& v2, std::vector<Trapezoid>& traps) {
+	const V* p1 = &v0;
+	const V* p2 = &v1;
+	const V* p3 = &v2;
 	float k, x;
 
 	if (p1->pos.y > p2->pos.y) std::swap(p1, p2);
@@ -212,13 +212,13 @@ int SpliteTrapezoid(const Vert& v0, const Vert& v1, const Vert& v2, std::vector<
 }
 
 
-template<class UniformList, class Frag, class FragShader>
+template<class UL, class F, class FS>
 class TileShader {
 public:
 	TileShader() {}
 
 public:
-	void process(const UniformList& u, std::array<Frag, 4>& tile) {
+	void process(const UL& u, std::array<F, 4>& tile) {
 		sampler_.ddx_ = TexCoord(tile[1].varyings) - TexCoord(tile[0].varyings);
 		sampler_.ddy_ = TexCoord(tile[2].varyings) - TexCoord(tile[0].varyings);
 		for (int i = 0; i != 4; i++) {
@@ -230,11 +230,11 @@ public:
 
 public:
 	Sampler sampler_;
-	FragShader fragshader_;
+	FS fragshader_;
 };
 
 
-template<class UniformList, class Vert, class Frag, class FragShader>
+template<class UL, class V, class F, class FS>
 class RasterizerStage {
 public:
 	void initialize(int ww, int hh, void* fb) {
@@ -254,7 +254,7 @@ public:
 		}
 	}
 
-	void process(StageBuffer<UniformList, Vert>& buffer) {
+	void process(StageBuffer<UL, V>& buffer) {
 		clear();
 
 		//triangle setup, Ê¡ÂÔ
@@ -264,11 +264,12 @@ public:
 			//fragment shader
 			//merging
 			if (buffer.vertlist[i].primf == kPFTriangle) {
-				const Vert& v1 = buffer.vertlist[i];
-				const Vert& v2 = buffer.vertlist[i + 1];
-				const Vert& v3 = buffer.vertlist[i + 2];
+				const V& v1 = buffer.vertlist[i];
+				const V& v2 = buffer.vertlist[i + 1];
+				const V& v3 = buffer.vertlist[i + 2];
 				drawTriangle(buffer.uniforms, v1, v2, v3);
 				i += 3;
+				continue;
 			}
 		}
 	}
@@ -287,8 +288,8 @@ private:
 		}
 	}
 
-	void drawTriangle(const UniformList& u, const Vert& v0, const Vert& v1, const Vert& v2) {
-		Vert t0 = v0, t1 = v1, t2 = v2;
+	void drawTriangle(const UL& u, const V& v0, const V& v1, const V& v2) {
+		V t0 = v0, t1 = v1, t2 = v2;
 
 		t0.rhwInitialize();
 		t1.rhwInitialize();
@@ -304,9 +305,9 @@ private:
 		}
 	}
 
-	void computeTriangleDerivative(const Vert& v0, const Vert& v1, const Vert& v2) {
-		Vert e01 = v1 - v0;
-		Vert e02 = v2 - v0;
+	void computeTriangleDerivative(const V& v0, const V& v1, const V& v2) {
+		V e01 = v1 - v0;
+		V e02 = v2 - v0;
 
 		float area = e02.pos.x * e01.pos.y - e01.pos.x * e02.pos.y;
 		float inv_area = 1.0f / area;
@@ -316,8 +317,8 @@ private:
 		ddy_ = (e01 * e02.pos.x - e02 * e01.pos.x) * inv_area;
 	}
 
-	Frag lerpFrag(int x, int y, float rhw) {
-		Frag frag;
+	F lerpFrag(int x, int y, float rhw) {
+		F frag;
 		frag.x = x;
 		frag.y = y;
 		frag.varyings = (v0_.varyings + ddx_.varyings * (x - v0_.pos.x) + ddy_.varyings * (y - v0_.pos.y)) / rhw;
@@ -326,7 +327,7 @@ private:
 		return frag;
 	}
 
-	void drawScanline(const UniformList& u, Scanline22& s22) {
+	void drawScanline(const UL& u, Scanline22& s22) {
 		int x = s22.xbegin();
 		int w = s22.xwidth();
 		for (; w > 0; x += 2, w -= 2) {
@@ -336,7 +337,7 @@ private:
 
 				// 2, 3
 				// 0, 1
-				std::array<Frag, 4> tile;
+				std::array<F, 4> tile;
 				tile[0] = lerpFrag(x, s22.s0.y, rhw0);
 				tile[0].draw = s22.mask0(x);
 				tile[2] = lerpFrag(x, s22.s1.y, rhw1);
@@ -358,7 +359,7 @@ private:
 
 				//merging
 				for (size_t i = 0; i != 4; i++) {
-					const Frag& frag = tile[i];
+					const F& frag = tile[i];
 					if (frag.draw && frag.z > zbuffer_[frag.y][frag.x]) {
 						zbuffer_[frag.y][frag.x] = frag.z;
 						framebuffer_[frag.y][frag.x] = IRgba(frag.c);
@@ -372,7 +373,7 @@ private:
 		}
 	}
 
-	void drawTrapezoid(const UniformList& u, Trapezoid& trap) {
+	void drawTrapezoid(const UL& u, Trapezoid& trap) {
 		Scanline22 scanline;
 		int j, top, bottom;
 		top = (int)(trap.top + 0.5f);
@@ -392,9 +393,9 @@ private:
 	std::vector<uint32_t*> framebuffer_;
 	std::vector<std::vector<float> > zbuffer_;
 	int width_, height_;
-	Vert ddx_, ddy_;
-	Vert v0_;
-	TileShader<UniformList, Frag, FragShader> tileshader_;
+	V ddx_, ddy_;
+	V v0_;
+	TileShader<UL, F, FS> tileshader_;
 };
 
 
