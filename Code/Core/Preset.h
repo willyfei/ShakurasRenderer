@@ -116,7 +116,8 @@ namespace preset_std {
 			Vector2f uv = f.varyings.uv;
 			Vector3f tc(1.0f, 1.0f, 1.0f);//Ä¬ÈÏ°×É«
 			if (u.texture) {
-				tc = sampler.mipmapTrilinear(uv.x, uv.y, *u.texture);
+				//tc = sampler.surfaceBilinear(uv.x, uv.y, u.texture->level(0));
+				tc = sampler.mipmapBilinear(uv.x, uv.y, *u.texture);
 			}
 			Vector3f c(tc.x * illum.x, tc.y * illum.y, tc.z * illum.z);
 

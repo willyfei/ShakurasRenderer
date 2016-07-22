@@ -17,7 +17,7 @@ public:
 	Edge(const Vector3f& vv, const Vector3f& vv1, const Vector3f& vv2) : v(vv), v1(vv1), v2(vv2) {}
 
 public:
-	void scanlineInterp(float y) {
+	void interpY(float y) {
 		float t = (y - v1.y) / (v2.y - v1.y);
 		v = v1 + (v2 - v1) * t;
 	}
@@ -29,9 +29,9 @@ public:
 
 class Trapezoid {
 public:
-	bool scanlineInterp(float y) {
-		left.scanlineInterp(y);
-		right.scanlineInterp(y);
+	bool interpY(float y) {
+		left.interpY(y);
+		right.interpY(y);
 		return top <= y && y <= bottom;
 	}
 
@@ -43,8 +43,8 @@ public:
 
 class Scanline {
 public:
-	bool initialize(Trapezoid& trap, int yy) {
-		bool res = trap.scanlineInterp((float)yy + 0.5f);
+	void initialize(Trapezoid& trap, int yy) {
+		draw = trap.interpY((float)yy + 0.5f);
 
 		float width = trap.right.v.x - trap.left.v.x;
 		x = (int)(trap.left.v.x + 0.5f);
@@ -55,71 +55,75 @@ public:
 			w = 0;
 		}
 		step = (trap.right.v - trap.left.v) / width;
-
-		return res;
 	}
 
-	void next(int xpos) {
-		if (x <= xpos) {
-			v = v + step;
-		}
+	void moveX(int x1) {
+		v = v + step * (float)(x1 - x);
+	}
+
+	void next() {
+		v = v + step;
 	}
 
 public:
 	Vector3f v, step;
 	int x, y, w;
+	bool draw;
 };
 
 
 class Scanline22 {
 public:
 	void initialize(Trapezoid& trap, int yy) {
-		f0 = s0.initialize(trap, yy);
-		f1 = s1.initialize(trap, yy + 1);
+		s0.initialize(trap, yy);
+		s1.initialize(trap, yy + 1);
+
+		int xb = xbegin();
+		s0.moveX(xb);
+		s1.moveX(xb);
 	}
 
 	inline int xbegin() const {
-		if (f0 && f1) {
+		if (s0.draw && s1.draw) {
 			return (std::min)(s0.x, s1.x);
 		}
-		else if (f0) {
+		else if (s0.draw) {
 			return s0.x;
 		}
-		else if (f1) {
+		else if (s1.draw) {
 			return s1.x;
 		}
 		return -1;
 	}
 
-	int xwidth() const {
-		if (f0 && f1) {
+	inline int xwidth() const {
+		if (s0.draw && s1.draw) {
 			int s = (std::min)(s0.x, s1.x);
 			int e = (std::max)(s0.x + s0.w, s1.x + s1.w);
 			return e - s;
 		}
-		else if (f0) {
+		else if (s0.draw) {
 			return s0.w;
 		}
-		else if (f1) {
+		else if (s1.draw) {
 			return s1.w;
 		}
 		return -1;
 	}
 
 	inline bool draw0(int x) const {
-		return f0 && s0.x <= x && x < s0.x + s0.w;
+		return s0.draw && s0.x <= x && x < s0.x + s0.w;
 	}
 	inline bool draw1(int x) const {
-		return f1 && s1.x <= x && x < s1.x + s1.w;
+		return s1.draw && s1.x <= x && x < s1.x + s1.w;
 	}
 
-	void next(int xpos) {
-		s0.next(xpos);
-		s1.next(xpos);
+	void next() {
+		s0.next();
+		s1.next();
 	}
 
 public:
-	bool f0, f1;
 	Scanline s0, s1;
 };
 
@@ -231,6 +235,36 @@ public:
 };
 
 
+template<class V, class F>
+class LerpDerivative {
+public:
+	void setTriangle(const V& v0, const V& v1, const V& v2) {
+		V e01 = v1 - v0;
+		V e02 = v2 - v0;
+
+		float area = e02.pos.x * e01.pos.y - e01.pos.x * e02.pos.y;
+		float inv_area = 1.0f / area;
+
+		v0_ = v0;
+		ddx_ = (e02 * e01.pos.y - e01 * e02.pos.y) * inv_area;
+		ddy_ = (e01 * e02.pos.x - e02 * e01.pos.x) * inv_area;
+	}
+
+	F lerp(int x, int y, float rhw) const {
+		F frag;
+		frag.x = x;
+		frag.y = y;
+		frag.varyings = (v0_.varyings + ddx_.varyings * (x - v0_.pos.x) + ddy_.varyings * (y - v0_.pos.y)) / rhw;
+		frag.z = rhw;
+
+		return frag;
+	}
+
+private:
+	V v0_, ddy_, ddx_;
+};
+
+
 template<class UL, class V, class F, class FS>
 class RasterizerStage {
 public:
@@ -290,64 +324,38 @@ private:
 		t1.rhwInitialize();
 		t2.rhwInitialize();
 
-		computeTriangleDerivative(t0, t1, t2);
+		LerpDerivative<V, F> lerpd;
+		lerpd.setTriangle(t0, t1, t2);
 
 		std::vector<Trapezoid> traps;
 		SpliteTrapezoid(t0, t1, t2, traps);
 
 		for (auto i = traps.begin(); i != traps.end(); i++) {
-			drawTrapezoid(u, *i);
+			drawTrapezoid(u, lerpd, *i);
 		}
 	}
 
-	void computeTriangleDerivative(const V& v0, const V& v1, const V& v2) {
-		V e01 = v1 - v0;
-		V e02 = v2 - v0;
-
-		float area = e02.pos.x * e01.pos.y - e01.pos.x * e02.pos.y;
-		float inv_area = 1.0f / area;
-		
-		v0_ = v0;
-		ddx_ = (e02 * e01.pos.y - e01 * e02.pos.y) * inv_area;
-		ddy_ = (e01 * e02.pos.x - e02 * e01.pos.x) * inv_area;
-	}
-
-	F lerpFrag(int x, int y, float rhw) {
-		F frag;
-		frag.x = x;
-		frag.y = y;
-		frag.varyings = (v0_.varyings + ddx_.varyings * (x - v0_.pos.x) + ddy_.varyings * (y - v0_.pos.y)) / rhw;
-		frag.z = rhw;
-
-		return frag;
-	}
-
-	void drawScanline(const UL& u, Scanline22& s22) {
+	void drawScanline(const UL& u, const LerpDerivative<V, F>& lerpd, Scanline22& s22) {
 		int x = s22.xbegin();
 		int w = s22.xwidth();
 		for (; w > 0; x += 2, w -= 2) {
 			if (x >= 0 && x < width_) {
-				float rhw0 = s22.s0.v.z;
-				float rhw1 = s22.s1.v.z;
-
 				// 2, 3
 				// 0, 1
 				std::array<F, 4> tile;
-				tile[0] = lerpFrag(x, s22.s0.y, rhw0);
+				tile[0] = lerpd.lerp(x, s22.s0.y, s22.s0.v.z);
 				tile[0].draw = s22.draw0(x);
-				tile[2] = lerpFrag(x, s22.s1.y, rhw1);
+				tile[2] = lerpd.lerp(x, s22.s1.y, s22.s1.v.z);
 				tile[2].draw = s22.draw1(x);
 
-				s22.next(x);
-				rhw0 = s22.s0.v.z;
-				rhw1 = s22.s1.v.z;
+				s22.next();
 
-				tile[1] = lerpFrag(x + 1, s22.s0.y, rhw0);
+				tile[1] = lerpd.lerp(x + 1, s22.s0.y, s22.s0.v.z);
 				tile[1].draw = s22.draw0(x + 1);
-				tile[3] = lerpFrag(x + 1, s22.s1.y, rhw1);
+				tile[3] = lerpd.lerp(x + 1, s22.s1.y, s22.s1.v.z);
 				tile[3].draw = s22.draw1(x + 1);
 
-				s22.next(x + 1);
+				s22.next();
 
 				//fragment shader
 				tileshader_.process(u, tile);
@@ -368,7 +376,7 @@ private:
 		}
 	}
 
-	void drawTrapezoid(const UL& u, Trapezoid& trap) {
+	void drawTrapezoid(const UL& u, const LerpDerivative<V, F>& lerpd, Trapezoid& trap) {
 		Scanline22 scanline;
 		int j, top, bottom;
 		top = (int)(trap.top + 0.5f);
@@ -376,7 +384,7 @@ private:
 		for (j = top; j < bottom; j += 2) {
 			if (j >= 0 && j < height_) {
 				scanline.initialize(trap, j);
-				drawScanline(u, scanline);
+				drawScanline(u, lerpd, scanline);
 			}
 			if (j >= height_) {
 				break;
@@ -388,8 +396,6 @@ private:
 	std::vector<uint32_t*> framebuffer_;
 	std::vector<std::vector<float> > zbuffer_;
 	int width_, height_;
-	V ddx_, ddy_;
-	V v0_;
 	TileShader<UL, F, FS> tileshader_;
 };
 

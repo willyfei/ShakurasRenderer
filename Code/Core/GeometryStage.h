@@ -48,12 +48,7 @@ public:
 			vertshader_->process(cmd.uniforms, *i);
 		}
 
-		//geometry sharding
-		for (size_t i = 0; i < cmd.vertlist.size();) {
-			if (cmd.vertlist[i].primf == kPFTriangle) {
-				i += 3;
-			}
-		}
+		//geometry sharding£¬Î´ÊµÏÖ
 
 
 		//projection transform

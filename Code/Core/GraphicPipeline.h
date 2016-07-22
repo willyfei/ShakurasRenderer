@@ -26,7 +26,6 @@ public:
 		}
 	}
 
-
 protected:
 	AS appstage_;
 	GS geomstage_;

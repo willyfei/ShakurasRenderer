@@ -1,6 +1,7 @@
 #pragma once
 #include "Surface.h"
 #include <vector>
+#include <assert.h>
 
 
 SHAKURAS_BEGIN;
@@ -89,7 +90,9 @@ float ComputeLevel(const Vector2f& ddx, const Vector2f& ddy, const M& mipmap) {
 
 	float rho = (std::max)(ddx_rho, ddy_rho);
 
-	if (rho == 0.0f) rho = 0.000001f;
+	if (rho == 0.0f) {
+		rho = 0.000001f;
+	}
 	float lambda = log2(rho);
 	return lambda;
 }
@@ -108,6 +111,7 @@ template<class M>
 Vector3f BilinearSample(float u, float v, const Vector2f& ddx, const Vector2f& ddy, const M& mipmap) {
 	float lv = ComputeLevel(ddx, ddy, mipmap);
 	float lvf = floorf(lv);
+
 	lvf = Clamp(lvf, 0.0f, (float)mipmap.levelCount() - 1);
 	return BilinearSample(u, v, mipmap.level((int)lvf));
 }
