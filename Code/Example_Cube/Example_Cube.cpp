@@ -88,7 +88,7 @@ namespace example_cube {
 			viewer_ = viewer;
 		}
 
-		void process(std::vector<preset_std::DrawCallBuffer>& cmds) {
+		void process(std::vector<preset_std::DrawCommand>& cmds) {
 			if (viewer_->testUserMessage(kUMSpace)) {
 				if (++nspace_ == 1) {
 					itex_ = (itex_ + 1) % texlist_.size();
@@ -112,7 +112,7 @@ namespace example_cube {
 
 	private:
 		WinViewerPtr viewer_;
-		preset_std::DrawCallBuffer output_;
+		preset_std::DrawCommand output_;
 		std::vector<MipmapPtr> texlist_;
 		int itex_;
 		int nspace_;
@@ -120,7 +120,7 @@ namespace example_cube {
 		float pos_;
 	};
 
-	typedef GraphicPipeline<preset_std::DrawCallBuffer, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
+	typedef GraphicPipeline<preset_std::DrawCommand, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
 }
 
 

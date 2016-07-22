@@ -79,7 +79,7 @@ namespace preset_std {
 
 	typedef shakuras::Fragment<VaryingList> Fragment;
 
-	typedef shakuras::DrawCommand<UniformList, Vertex> DrawCallBuffer;
+	typedef shakuras::DrawCommand<UniformList, Vertex> DrawCommand;
 
 	class VertexShader {
 	public:
