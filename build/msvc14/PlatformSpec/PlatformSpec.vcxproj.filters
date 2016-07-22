@@ -24,7 +24,7 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\PlatformSpec\WinViewer.h">
+    <ClInclude Include="..\..\..\Code\PlatformSpec\WinViewer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,7 +38,7 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\PlatformSpec\WinViewer.cpp">
+    <ClCompile Include="..\..\..\Code\PlatformSpec\WinViewer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

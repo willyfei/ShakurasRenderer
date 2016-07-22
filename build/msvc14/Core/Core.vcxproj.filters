@@ -15,43 +15,43 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Core\Color.h">
+    <ClInclude Include="..\..\..\Code\Core\Color.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Core\DrawCommand.h">
+    <ClInclude Include="..\..\..\Code\Core\DrawCommand.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Core\Fragment.h">
+    <ClInclude Include="..\..\..\Code\Core\Fragment.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Core\GeometryStage.h">
+    <ClInclude Include="..\..\..\Code\Core\GeometryStage.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Core\GraphicPipeline.h">
+    <ClInclude Include="..\..\..\Code\Core\GraphicPipeline.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Core\MathAndGeometry.h">
+    <ClInclude Include="..\..\..\Code\Core\MathAndGeometry.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Core\Mipmap.h">
+    <ClInclude Include="..\..\..\Code\Core\Mipmap.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Core\Preset.h">
+    <ClInclude Include="..\..\..\Code\Core\Preset.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Core\RasterizerStage.h">
+    <ClInclude Include="..\..\..\Code\Core\RasterizerStage.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Core\Sampler.h">
+    <ClInclude Include="..\..\..\Code\Core\Sampler.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Core\Vertex.h">
+    <ClInclude Include="..\..\..\Code\Core\Surface.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Core\Utility.h">
+    <ClInclude Include="..\..\..\Code\Core\Utility.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Core\Surface.h">
+    <ClInclude Include="..\..\..\Code\Core\Vertex.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

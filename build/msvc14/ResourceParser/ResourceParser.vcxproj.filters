@@ -24,13 +24,13 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\ResourceParser\ObjParser.h">
+    <ClInclude Include="..\..\..\Code\ResourceParser\ObjParser.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\ResourceParser\stb_image.h">
+    <ClInclude Include="..\..\..\Code\ResourceParser\stb_image.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\ResourceParser\SurfaceParser.h">
+    <ClInclude Include="..\..\..\Code\ResourceParser\SurfaceParser.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,10 +44,10 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\ResourceParser\ObjParser.cpp">
+    <ClCompile Include="..\..\..\Code\ResourceParser\ObjParser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\ResourceParser\SurfaceParser.cpp">
+    <ClCompile Include="..\..\..\Code\ResourceParser\SurfaceParser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

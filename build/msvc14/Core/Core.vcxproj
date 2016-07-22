@@ -26,6 +26,21 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Code\Core\Color.h" />
+    <ClInclude Include="..\..\..\Code\Core\DrawCommand.h" />
+    <ClInclude Include="..\..\..\Code\Core\Fragment.h" />
+    <ClInclude Include="..\..\..\Code\Core\GeometryStage.h" />
+    <ClInclude Include="..\..\..\Code\Core\GraphicPipeline.h" />
+    <ClInclude Include="..\..\..\Code\Core\MathAndGeometry.h" />
+    <ClInclude Include="..\..\..\Code\Core\Mipmap.h" />
+    <ClInclude Include="..\..\..\Code\Core\Preset.h" />
+    <ClInclude Include="..\..\..\Code\Core\RasterizerStage.h" />
+    <ClInclude Include="..\..\..\Code\Core\Sampler.h" />
+    <ClInclude Include="..\..\..\Code\Core\Surface.h" />
+    <ClInclude Include="..\..\..\Code\Core\Utility.h" />
+    <ClInclude Include="..\..\..\Code\Core\Vertex.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{658F1D21-D7D5-463A-8430-7F60E2E610CA}</ProjectGuid>
     <RootNamespace>Core</RootNamespace>
@@ -183,21 +198,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\Core\Color.h" />
-    <ClInclude Include="..\..\..\Core\DrawCommand.h" />
-    <ClInclude Include="..\..\..\Core\Fragment.h" />
-    <ClInclude Include="..\..\..\Core\GeometryStage.h" />
-    <ClInclude Include="..\..\..\Core\GraphicPipeline.h" />
-    <ClInclude Include="..\..\..\Core\MathAndGeometry.h" />
-    <ClInclude Include="..\..\..\Core\Mipmap.h" />
-    <ClInclude Include="..\..\..\Core\Preset.h" />
-    <ClInclude Include="..\..\..\Core\RasterizerStage.h" />
-    <ClInclude Include="..\..\..\Core\Sampler.h" />
-    <ClInclude Include="..\..\..\Core\Surface.h" />
-    <ClInclude Include="..\..\..\Core\Utility.h" />
-    <ClInclude Include="..\..\..\Core\Vertex.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

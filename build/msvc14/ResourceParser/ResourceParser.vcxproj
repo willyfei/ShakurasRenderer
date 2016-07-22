@@ -131,7 +131,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_RESPARSER_DLL;WIN32;_DEBUG;_WINDOWS;_USRDLL;RESOURCEPARSER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../Code</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -149,7 +149,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_RESPARSER_DLL;_DEBUG;_WINDOWS;_USRDLL;RESOURCEPARSER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../Code</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,7 +169,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_RESPARSER_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL;RESOURCEPARSER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../Code</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -193,7 +193,7 @@
       <SDLCheck>true</SDLCheck>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>../../..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../Code</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -215,7 +215,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_RESPARSER_DLL;NDEBUG;_WINDOWS;_USRDLL;RESOURCEPARSER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../Code</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -240,7 +240,7 @@
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <OmitFramePointers>false</OmitFramePointers>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>../../..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../Code</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -257,15 +257,15 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\ResourceParser\ObjParser.h" />
-    <ClInclude Include="..\..\..\ResourceParser\SurfaceParser.h" />
-    <ClInclude Include="..\..\..\ResourceParser\stb_image.h" />
+    <ClInclude Include="..\..\..\Code\ResourceParser\ObjParser.h" />
+    <ClInclude Include="..\..\..\Code\ResourceParser\stb_image.h" />
+    <ClInclude Include="..\..\..\Code\ResourceParser\SurfaceParser.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\ResourceParser\ObjParser.cpp" />
-    <ClCompile Include="..\..\..\ResourceParser\SurfaceParser.cpp" />
+    <ClCompile Include="..\..\..\Code\ResourceParser\ObjParser.cpp" />
+    <ClCompile Include="..\..\..\Code\ResourceParser\SurfaceParser.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
