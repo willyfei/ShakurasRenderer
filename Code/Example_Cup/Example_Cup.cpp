@@ -58,7 +58,6 @@ namespace example_cup {
 			viewer_ = viewer;
 		}
 
-
 		void process(std::vector<preset_std::DrawCallBuffer>& cmds) {
 			if (viewer_->testUserMessage(kUMUp)) pos_ -= 0.04f;
 			if (viewer_->testUserMessage(kUMDown)) pos_ += 0.04f;
@@ -91,7 +90,7 @@ namespace example_cup {
 int main()
 {
 	const char *title = "ShakurasRenderer - "
-		"Left/Right: rotation, Up/Down: forward/backward, Space: switch texture";
+		"Left/Right: rotation, Up/Down: forward/backward";
 
 	int width = 1600, height = 900;
 	WinViewerPtr viewer = std::make_shared<WinViewer>();

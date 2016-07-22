@@ -88,7 +88,6 @@ namespace example_cube {
 			viewer_ = viewer;
 		}
 
-
 		void process(std::vector<preset_std::DrawCallBuffer>& cmds) {
 			if (viewer_->testUserMessage(kUMSpace)) {
 				if (++nspace_ == 1) {
