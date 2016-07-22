@@ -94,7 +94,7 @@ float ComputeLevel(const Vector2f& ddx, const Vector2f& ddy, const M& mipmap) {
 		rho = 0.000001f;
 	}
 	float lambda = log2(rho);
-	return lambda;
+	return lambda - 1.0f;
 }
 
 

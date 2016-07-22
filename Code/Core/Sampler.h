@@ -33,7 +33,7 @@ public:
 	}
 
 public:
-	Vector2f ddx_, ddy_;
+	Vector2f ddx_, ddy_;//uvµÄµ¼Êý
 };
 
 
