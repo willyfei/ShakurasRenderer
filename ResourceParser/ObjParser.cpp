@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ObjParser.h"
 #include <array>
 #include <map>
@@ -5,7 +6,7 @@
 #include <algorithm>
 
 
-SHAKURAS_BEGIN;
+using namespace shakuras;
 
 
 bool LoadObjMtl(std::vector<ObjMtl>& mtls, const std::string& mtl_file) {
@@ -232,6 +233,3 @@ bool LoadObjMesh(const std::string& fname, std::vector<ObjMesh>& meshs, bool fli
 
 	return true;
 }
-
-
-SHAKURAS_END;

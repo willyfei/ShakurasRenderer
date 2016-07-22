@@ -1,5 +1,4 @@
 #pragma once
-#include "Viewer.h"
 
 
 SHAKURAS_BEGIN;
@@ -8,7 +7,8 @@ SHAKURAS_BEGIN;
 template<class CMD, class AS, class GS, class RS>
 class GraphicPipeline {
 public:
-	void initialize(ViewerPtr viewer) {
+	template<class VPTR>
+	void initialize(VPTR viewer) {
 		appstage_.initialize(viewer);
 		geomstage_.initialize((float)viewer->width(), (float)viewer->height());
 		rasstage_.initialize(viewer->width(), viewer->height(), viewer->frameBuffer());

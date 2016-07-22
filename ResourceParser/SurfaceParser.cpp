@@ -1,9 +1,11 @@
-#include "Resource.h"
+#include "stdafx.h"
+#include "SurfaceParser.h"
 
 #define STB_IMAGE_IMPLEMENTATION 1
 #include "stb_image.h"
 
-SHAKURAS_BEGIN;
+
+using namespace shakuras;
 
 
 SurfacePtr GridSurface() {
@@ -44,6 +46,3 @@ SurfacePtr LoadSurface(std::string filepath) {
 
 	return tex;
 }
-
-
-SHAKURAS_END;
