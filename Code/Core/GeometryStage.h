@@ -37,10 +37,6 @@ public:
 		height_ = h;
 	}
 
-	void setShader(std::shared_ptr<VS> vs) {
-		vertshader_ = vs;
-	}
-
 	void process(DrawCommand<UL, V>& cmd) {
 		//vertex sharding
 		for (auto i = cmd.vertlist.begin(); i != cmd.vertlist.end(); i++) {
