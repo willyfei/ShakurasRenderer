@@ -25,8 +25,10 @@ SurfacePtr GridSurface() {
 }
 
 
-SurfacePtr LoadSurface(std::string filepath) {
-	filepath = _FSPFX absolute(filepath, ResourceDir()).string();
+SurfacePtr LoadSurface(std::string filepath, bool isrelpath) {
+	if (isrelpath) {
+		filepath = _FSPFX absolute(filepath, ResourceDir()).string();
+	}
 
 	int x, y;
 	stbi_uc* data = stbi_load(filepath.c_str(), &x, &y, 0, 4);

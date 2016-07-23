@@ -73,7 +73,12 @@ bool LoadObjMtl(std::vector<ObjMtl>& mtls, const std::string& mtl_file, _FSPFX p
 		}
 		else if (cmd == "map_Kd") {
 			mtlf >> pmtl->tex_name;
-			pmtl->tex = CreateMipmap(LoadSurface(pmtl->tex_name));
+
+			full_path = dir_path;
+			full_path.concat("/");
+			full_path.concat(pmtl->tex_name);
+
+			pmtl->tex = CreateMipmap(LoadSurface(full_path.string(), false));
 		}
 		else {
 			// Unrecognized command

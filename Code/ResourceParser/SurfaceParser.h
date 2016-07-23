@@ -14,7 +14,7 @@
 
 //texture×ÊÔ´
 RESPARSER_DLL shakuras::SurfacePtr GridSurface();
-RESPARSER_DLL shakuras::SurfacePtr LoadSurface(std::string filepath);
+RESPARSER_DLL shakuras::SurfacePtr LoadSurface(std::string filepath, bool isrelpath = true);
 
 
 #pragma warning(pop) 
