@@ -35,7 +35,6 @@ public:
 	void initialize(float w, float h) {
 		width_ = w;
 		height_ = h;
-		vertshader_ = std::make_shared<VS>();
 	}
 
 	void setShader(std::shared_ptr<VS> vs) {
@@ -45,7 +44,7 @@ public:
 	void process(DrawCommand<UL, V>& cmd) {
 		//vertex sharding
 		for (auto i = cmd.vertlist.begin(); i != cmd.vertlist.end(); i++) {
-			vertshader_->process(cmd.uniforms, *i);
+			vertshader_.process(cmd.uniforms, *i);
 		}
 
 		//geometry sharding£¨Œ¥ µœ÷
@@ -78,7 +77,7 @@ public:
 
 private:
 	float width_, height_;
-	std::shared_ptr<VS> vertshader_;
+	VS vertshader_;
 };
 
 
