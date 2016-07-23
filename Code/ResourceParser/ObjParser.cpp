@@ -1,16 +1,22 @@
 #include "stdafx.h"
+#include "SurfaceParser.h"
 #include "ObjParser.h"
 #include <array>
 #include <map>
 #include <fstream>
 #include <algorithm>
+#include <filesystem>
+#include "ResUtility.h"
 
 
 using namespace shakuras;
 
+bool LoadObjMtl(std::vector<ObjMtl>& mtls, const std::string& mtl_file, _FSPFX path dir_path) {
+	_FSPFX path full_path = dir_path;
+	full_path.concat("/");
+	full_path.concat(mtl_file);
 
-bool LoadObjMtl(std::vector<ObjMtl>& mtls, const std::string& mtl_file) {
-	std::ifstream mtlf(mtl_file.c_str());
+	std::ifstream mtlf(full_path.c_str());
 	if (!mtlf) return false;
 
 	std::string cmd;
@@ -80,8 +86,10 @@ bool LoadObjMtl(std::vector<ObjMtl>& mtls, const std::string& mtl_file) {
 }
 
 
-bool LoadObj(const std::string& fname, std::vector<ObjVert>& verts, std::vector<uint32_t>& indices, std::vector<uint32_t>& attrs, std::vector<ObjMtl>& mtls, bool flip_tex_v) {
-	std::ifstream objf(fname.c_str());
+bool LoadObj(std::string fname, std::vector<ObjVert>& verts, std::vector<uint32_t>& indices, std::vector<uint32_t>& attrs, std::vector<ObjMtl>& mtls, bool flip_tex_v) {
+	fname = _FSPFX absolute(fname, ResourceDir()).string();
+
+	std::ifstream objf(fname);
 
 	if (!objf) return false;
 
@@ -195,8 +203,9 @@ bool LoadObj(const std::string& fname, std::vector<ObjVert>& verts, std::vector<
 
 	objf.close();
 
+	_FSPFX path abspath = _FSPFX absolute(_FSPFX path(fname));
 	if (!mtl_fname.empty()) {
-		LoadObjMtl(mtls, mtl_fname);
+		LoadObjMtl(mtls, mtl_fname, abspath.parent_path());
 	}
 	return true;
 }
@@ -208,6 +217,7 @@ bool LoadObjMesh(const std::string& fname, std::vector<ObjMesh>& meshs, bool fli
 	std::vector<uint32_t> indices;
 	std::vector<uint32_t> attrs;
 	std::vector<ObjMtl> mtls;
+
 	if (!LoadObj(fname, verts, indices, attrs, mtls, flip_tex_v)) {
 		return false;
 	}

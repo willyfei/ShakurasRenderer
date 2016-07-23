@@ -139,7 +139,8 @@
       <ImportLibrary>$(SolutionDir)Lib\$(Platform)\$(Configuration)\$(TargetName).lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy ..\..\..\Resource\*.* $(OutDir) /s /y</Command>
+      <Command>del /a /f /s /q $(OutDir)ResourceDir.cfg
+echo ../../../../../Resource&gt;&gt;$(OutDir)ResourceDir.cfg</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -157,7 +158,8 @@
       <ImportLibrary>$(SolutionDir)Lib\$(Platform)\$(Configuration)\$(TargetName).lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy ..\..\..\Resource\*.* $(OutDir) /s /y</Command>
+      <Command>del /a /f /s /q $(OutDir)ResourceDir.cfg
+echo ../../../../../Resource&gt;&gt;$(OutDir)ResourceDir.cfg</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -179,7 +181,8 @@
       <ImportLibrary>$(SolutionDir)Lib\$(Platform)\$(Configuration)\$(TargetName).lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy ..\..\..\Resource\*.* $(OutDir) /s /y</Command>
+      <Command>del /a /f /s /q $(OutDir)ResourceDir.cfg
+echo ../../../../../Resource&gt;&gt;$(OutDir)ResourceDir.cfg</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
@@ -203,7 +206,8 @@
       <ImportLibrary>$(SolutionDir)Lib\$(Platform)\$(Configuration)\$(TargetName).lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy ..\..\..\Resource\*.* $(OutDir) /s /y</Command>
+      <Command>del /a /f /s /q $(OutDir)ResourceDir.cfg
+echo ../../../../../Resource&gt;&gt;$(OutDir)ResourceDir.cfg</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -225,7 +229,8 @@
       <ImportLibrary>$(SolutionDir)Lib\$(Platform)\$(Configuration)\$(TargetName).lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy ..\..\..\Resource\*.* $(OutDir) /s /y</Command>
+      <Command>del /a /f /s /q $(OutDir)ResourceDir.cfg
+echo ../../../../../Resource&gt;&gt;$(OutDir)ResourceDir.cfg</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
@@ -250,7 +255,8 @@
       <ImportLibrary>$(SolutionDir)Lib\$(Platform)\$(Configuration)\$(TargetName).lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy ..\..\..\Resource\*.* $(OutDir) /s /y</Command>
+      <Command>del /a /f /s /q $(OutDir)ResourceDir.cfg
+echo ../../../../../Resource&gt;&gt;$(OutDir)ResourceDir.cfg</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -258,6 +264,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Code\ResourceParser\ObjParser.h" />
+    <ClInclude Include="..\..\..\Code\ResourceParser\ResUtility.h" />
     <ClInclude Include="..\..\..\Code\ResourceParser\stb_image.h" />
     <ClInclude Include="..\..\..\Code\ResourceParser\SurfaceParser.h" />
     <ClInclude Include="stdafx.h" />
@@ -265,6 +272,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Code\ResourceParser\ObjParser.cpp" />
+    <ClCompile Include="..\..\..\Code\ResourceParser\ResUtility.cpp" />
     <ClCompile Include="..\..\..\Code\ResourceParser\SurfaceParser.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
