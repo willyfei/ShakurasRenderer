@@ -62,7 +62,7 @@ public:
 				if (CheckCVV(cmd.vertlist[i].pos) != 0 ||
 					CheckCVV(cmd.vertlist[i + 1].pos) != 0 ||
 					CheckCVV(cmd.vertlist[i + 2].pos) != 0) {
-					unstable_erase(cmd.vertlist, i, 3);
+					UnstableErase(cmd.vertlist, i, 3);
 				}
 				else {
 					i += 3;
