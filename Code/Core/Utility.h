@@ -17,8 +17,7 @@ SHAKURAS_BEGIN;
 
 template<class T>
 void unstable_erase(std::vector<T>& vec, size_t pos, size_t count) {
-	size_t len = vec.size();
-	size_t bpos = len - count;
+	size_t bpos = vec.size() - count;
 	std::swap_ranges(vec.begin() + pos, vec.begin() + pos + count, vec.begin() + bpos);
 	vec.erase(vec.begin() + bpos, vec.end());
 }

@@ -21,7 +21,7 @@ namespace example_cup {
 			float h = (float)viewer->height();
 
 			std::vector<ObjMesh> meshs;
-			LoadObjMesh("cup.obj", meshs, false);
+			LoadObjMesh("Cup/cup.obj", meshs, false);
 
 			outputs_.clear();
 			outputs_.resize(meshs.size());

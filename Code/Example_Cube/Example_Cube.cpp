@@ -67,9 +67,9 @@ namespace example_cube {
 			float w = (float)viewer->width();
 			float h = (float)viewer->height();
 
-			texlist_.push_back(CreateMipmap(LoadSurface("1.png")));
-			texlist_.push_back(CreateMipmap(LoadSurface("1.jpg")));
-			texlist_.push_back(CreateMipmap(LoadSurface("2.png")));
+			texlist_.push_back(CreateMipmap(LoadSurface("Cube/1.png")));
+			texlist_.push_back(CreateMipmap(LoadSurface("Cube/1.jpg")));
+			texlist_.push_back(CreateMipmap(LoadSurface("Cube/2.png")));
 			texlist_.push_back(CreateMipmap(GridSurface()));
 			itex_ = 0;
 			nspace_ = 0;
