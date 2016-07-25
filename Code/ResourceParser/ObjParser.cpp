@@ -16,7 +16,7 @@ bool LoadObjMtl(std::vector<ObjMtl>& mtls, const std::string& mtl_file, _FSPFX p
 	full_path.concat("/");
 	full_path.concat(mtl_file);
 
-	std::ifstream mtlf(full_path.c_str());
+	std::ifstream mtlf(full_path.string());
 	if (!mtlf) return false;
 
 	std::string cmd;

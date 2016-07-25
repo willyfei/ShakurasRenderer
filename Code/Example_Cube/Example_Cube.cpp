@@ -129,7 +129,7 @@ int main()
 	const char *title = "ShakurasRenderer - "
 		"Left/Right: rotation, Up/Down: forward/backward, Space: switch texture";
 
-	int width = 1600, height = 900;
+	int width = 1024, height = 768;
 	WinViewerPtr viewer = std::make_shared<WinViewer>();
 	if (!viewer || viewer->initialize(width, height, title) != 0) {
 		return -1;
