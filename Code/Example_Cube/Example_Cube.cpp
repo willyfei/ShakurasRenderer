@@ -1,7 +1,6 @@
 // Example_Cube.cpp : 定义控制台应用程序的入口点。
 //
 
-#include "stdafx.h"
 #include <vector>
 #include "Core\Preset.h"
 #include "ResourceParser\SurfaceParser.h"

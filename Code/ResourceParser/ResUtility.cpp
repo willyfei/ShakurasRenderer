@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ResUtility.h"
 #include <fstream>
 #include <filesystem>

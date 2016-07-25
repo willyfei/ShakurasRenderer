@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "SurfaceParser.h"
 #include "ObjParser.h"
 #include <array>

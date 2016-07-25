@@ -3,7 +3,6 @@
 #include <Windows.h>
 #include <tchar.h>
 #include <map>
-#include <string>
 
 
 #ifdef _PLATFORMSPEC_DLL

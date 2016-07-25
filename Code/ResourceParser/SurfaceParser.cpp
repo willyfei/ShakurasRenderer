@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "SurfaceParser.h"
 
 #define STB_IMAGE_IMPLEMENTATION 1
