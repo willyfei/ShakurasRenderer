@@ -231,17 +231,18 @@ bool LoadObjMesh(const std::string& fname, std::vector<ObjMesh>& meshs, bool fli
 		ObjMesh mesh;
 
 		// Fill data
+		mesh.verts = verts;
 		mesh.mtl = mtls[i_mtl];
 
 		// Construct vertex indices
 		for (size_t i_indices = 0; i_indices < indices.size(); ++i_indices) {
 			if (attrs[i_indices / 3] == i_mtl) {
-				mesh.verts.push_back(verts[indices[i_indices]]);
+				mesh.tris.push_back(indices[i_indices]);
 			}
 		}
 
 		// Set mesh indices.
-		if (!mesh.verts.empty()) {
+		if (!mesh.tris.empty()) {
 			meshs.push_back(mesh);
 		}
 	}

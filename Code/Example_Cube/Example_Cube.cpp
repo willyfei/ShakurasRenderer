@@ -13,7 +13,7 @@ using namespace shakuras;
 
 namespace example_cube {
 
-	void GenerateCube(std::vector<preset_std::Vertex>& verts) {
+	void GenerateCube(preset_std::PrimitiveList& prims) {
 		static preset_std::Vertex mesh[8] = {
 			{ { -1, -1, -1, 1 } },
 			{ { 1, -1, -1, 1 } },
@@ -40,17 +40,17 @@ namespace example_cube {
 			p3.attribs.normal = norm;
 			p4.attribs.normal = norm;
 
-			int index = (int)verts.size();
-			verts.push_back(p1);
-			verts.back().primf = kPFTriangle;
-			verts.push_back(p2);
-			verts.push_back(p3);
+			size_t index = prims.verts_.size();
+			prims.verts_.push_back(p1);
+			prims.verts_.push_back(p2);
+			prims.verts_.push_back(p3);
+			prims.tris_.push_back({ index, index + 1, index + 2 });
 
-			index = (int)verts.size();
-			verts.push_back(p3);
-			verts.back().primf = kPFTriangle;
-			verts.push_back(p4);
-			verts.push_back(p1);
+			index = prims.verts_.size();
+			prims.verts_.push_back(p3);
+			prims.verts_.push_back(p4);
+			prims.verts_.push_back(p1);
+			prims.tris_.push_back({ index, index + 1, index + 2 });
 		};
 
 		draw_plane(0, 3, 2, 1);
@@ -74,7 +74,7 @@ namespace example_cube {
 			itex_ = 0;
 			nspace_ = 0;
 
-			GenerateCube(output_.vertlist);
+			GenerateCube(output_.prims);
 			output_.projtrsf = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
 			output_.uniforms.texture = texlist_[itex_];//纹理
 			output_.uniforms.ambient.set(0.4f, 0.4f, 0.4f);//环境光
@@ -88,7 +88,7 @@ namespace example_cube {
 			viewer_ = viewer;
 		}
 
-		void process(std::vector<preset_std::DrawCommand>& cmds) {
+		void process(std::vector<preset_std::DrawCall>& cmds) {
 			if (viewer_->testUserMessage(kUMSpace)) {
 				if (++nspace_ == 1) {
 					itex_ = (itex_ + 1) % texlist_.size();
@@ -112,7 +112,7 @@ namespace example_cube {
 
 	private:
 		WinViewerPtr viewer_;
-		preset_std::DrawCommand output_;
+		preset_std::DrawCall output_;
 		std::vector<MipmapPtr> texlist_;
 		int itex_;
 		int nspace_;
@@ -120,7 +120,7 @@ namespace example_cube {
 		float pos_;
 	};
 
-	typedef GraphicPipeline<preset_std::DrawCommand, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
+	typedef GraphicPipeline<preset_std::DrawCall, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
 }
 
 

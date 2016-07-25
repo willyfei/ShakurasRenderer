@@ -1,6 +1,7 @@
 #pragma once
 #include "Utility.h"
 #include "MathAndGeometry.h"
+#include "Primitive.h"
 #include <vector>
 
 
@@ -8,10 +9,10 @@ SHAKURAS_BEGIN;
 
 
 template<class UL, class V>
-struct DrawCommand {
+struct DrawCall {
 	UL uniforms;
 	Matrix44f projtrsf;
-	std::vector<V> vertlist;
+	PrimitiveList<V> prims;
 };
 
 

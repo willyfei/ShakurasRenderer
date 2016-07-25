@@ -37,36 +37,40 @@ public:
 		height_ = h;
 	}
 
-	void process(DrawCommand<UL, V>& cmd) {
+	void process(DrawCall<UL, V>& call) {
 		//vertex sharding
-		for (auto i = cmd.vertlist.begin(); i != cmd.vertlist.end(); i++) {
-			vertshader_.process(cmd.uniforms, *i);
+		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
+			vertshader_.process(call.uniforms, *i);
 		}
 
 		//geometry sharding，未实现
 
 
 		//projection transform
-		for (auto i = cmd.vertlist.begin(); i != cmd.vertlist.end(); i++) {
-			i->pos = cmd.projtrsf.transform(i->pos);
+		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
+			i->pos = call.projtrsf.transform(i->pos);
 		}
 
 		//cliping, 简化实现
-		for (size_t i = 0; i < cmd.vertlist.size();) {
-			if (cmd.vertlist[i].primf == kPFTriangle) {
-				if (CheckCVV(cmd.vertlist[i].pos) != 0 ||
-					CheckCVV(cmd.vertlist[i + 1].pos) != 0 ||
-					CheckCVV(cmd.vertlist[i + 2].pos) != 0) {
-					UnstableErase(cmd.vertlist, i, 3);
-				}
-				else {
-					i += 3;
-				}
+		for (size_t i = 0; i != call.prims.tris_.size();) {
+			const std::array<size_t, 3>& tri = call.prims.tris_[i];
+
+			const V& v1 = call.prims.verts_[tri[0]];
+			const V& v2 = call.prims.verts_[tri[1]];
+			const V& v3 = call.prims.verts_[tri[2]];
+
+			if (CheckCVV(v1.pos) != 0 ||
+				CheckCVV(v2.pos) != 0 ||
+				CheckCVV(v3.pos) != 0) {
+				UnstableErase(call.prims.tris_, i, 1);
+			}
+			else {
+				i++;
 			}
 		}
 
 		//screen mapping
-		for (auto i = cmd.vertlist.begin(); i != cmd.vertlist.end(); i++) {
+		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
 			ScreenMapping(i->pos, width_, height_);
 		}
 	}

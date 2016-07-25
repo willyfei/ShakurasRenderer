@@ -45,7 +45,8 @@ public:
 
 class RESPARSER_DLL ObjMesh {
 public:
-	std::vector<ObjVert> verts;//[0,1,2][3,4,5]...
+	std::vector<ObjVert> verts;
+	std::vector<size_t> tris;//[0,1,2][3,4,5]...
 	ObjMtl mtl;
 };
 

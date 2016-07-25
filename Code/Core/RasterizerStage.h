@@ -3,9 +3,9 @@
 #include "GeometryStage.h"
 #include "Vertex.h"
 #include "Color.h"
+#include "Sampler.h"
 #include <vector>
 #include <array>
-#include "Sampler.h"
 
 
 SHAKURAS_BEGIN;
@@ -285,21 +285,19 @@ public:
 		}
 	}
 
-	void process(DrawCommand<UL, V>& cmd) {
+	void process(DrawCall<UL, V>& call) {
 		//triangle setup, Ê¡ÂÔ
 
-		for (size_t i = 0; i < cmd.vertlist.size();) {
+		for (size_t i = 0; i != call.prims.tris_.size(); i++) {
 			//triangle traversal
 			//fragment shader
 			//merging
-			if (cmd.vertlist[i].primf == kPFTriangle) {
-				const V& v1 = cmd.vertlist[i];
-				const V& v2 = cmd.vertlist[i + 1];
-				const V& v3 = cmd.vertlist[i + 2];
-				drawTriangle(cmd.uniforms, v1, v2, v3);
-				i += 3;
-				continue;
-			}
+			const std::array<size_t, 3>& tri = call.prims.tris_[i];
+
+			const V& v1 = call.prims.verts_[tri[0]];
+			const V& v2 = call.prims.verts_[tri[1]];
+			const V& v3 = call.prims.verts_[tri[2]];
+			drawTriangle(call.uniforms, v1, v2, v3);
 		}
 	}
 

@@ -28,13 +28,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Code\Core\Color.h" />
-    <ClInclude Include="..\..\..\Code\Core\DrawCommand.h" />
+    <ClInclude Include="..\..\..\Code\Core\DrawCall.h" />
     <ClInclude Include="..\..\..\Code\Core\Fragment.h" />
     <ClInclude Include="..\..\..\Code\Core\GeometryStage.h" />
     <ClInclude Include="..\..\..\Code\Core\GraphicPipeline.h" />
     <ClInclude Include="..\..\..\Code\Core\MathAndGeometry.h" />
     <ClInclude Include="..\..\..\Code\Core\Mipmap.h" />
     <ClInclude Include="..\..\..\Code\Core\Preset.h" />
+    <ClInclude Include="..\..\..\Code\Core\Primitive.h" />
     <ClInclude Include="..\..\..\Code\Core\RasterizerStage.h" />
     <ClInclude Include="..\..\..\Code\Core\Sampler.h" />
     <ClInclude Include="..\..\..\Code\Core\Surface.h" />

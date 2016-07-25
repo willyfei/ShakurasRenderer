@@ -6,20 +6,12 @@
 SHAKURAS_BEGIN;
 
 
-enum PrimitiveFlag {
-	kPFNil = 0,
-	kPFTriangle = 1
-};
-
-
 template<class A, class V>
 class Vertex {
 public:
-	Vertex() : rhw(1.0f), primf(kPFNil) {}
+	Vertex() : rhw(1.0f) {}
 	Vertex(const Vector4f& ppos)
-		: pos(ppos), primf(kPFNil) {}
-	Vertex(const Vector4f& ppos, const V& vvar, float rrhw, short pprimf)
-		: pos(ppos), varyings(vvar), rhw(rrhw), primf(pprimf) {}
+		: pos(ppos) {}
 
 public:
 	void rhwInitialize() {
@@ -32,7 +24,6 @@ public:
 	V varyings;
 	Vector4f pos;
 	float rhw;
-	short primf;
 };
 
 

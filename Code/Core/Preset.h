@@ -3,7 +3,7 @@
 #include "Mipmap.h"
 #include "Vertex.h"
 #include "Fragment.h"
-#include "DrawCommand.h"
+#include "DrawCall.h"
 #include "GeometryStage.h"
 #include "RasterizerStage.h"
 #include "GraphicPipeline.h"
@@ -79,7 +79,9 @@ namespace preset_std {
 
 	typedef shakuras::Fragment<VaryingList> Fragment;
 
-	typedef shakuras::DrawCommand<UniformList, Vertex> DrawCommand;
+	typedef shakuras::DrawCall<UniformList, Vertex> DrawCall;
+
+	typedef shakuras::PrimitiveList<Vertex> PrimitiveList;
 
 	class VertexShader {
 	public:

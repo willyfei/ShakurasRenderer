@@ -4,7 +4,7 @@
 SHAKURAS_BEGIN;
 
 
-template<class CMD, class AS, class GS, class RS>
+template<class CALL, class AS, class GS, class RS>
 class GraphicPipeline {
 public:
 	template<class VPTR>
@@ -15,12 +15,12 @@ public:
 	}
 
 	void process() {
-		std::vector<CMD> cmds;
-		appstage_.process(cmds);
+		std::vector<CALL> calls;
+		appstage_.process(calls);
 
 		rasstage_.clean();
 
-		for (auto i = cmds.begin(); i != cmds.end(); i++) {
+		for (auto i = calls.begin(); i != calls.end(); i++) {
 			geomstage_.process(*i);
 			rasstage_.process(*i);
 		}
