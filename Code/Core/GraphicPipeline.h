@@ -1,4 +1,5 @@
 #pragma once
+#include "Profiler.h"
 
 
 SHAKURAS_BEGIN;
@@ -15,6 +16,8 @@ public:
 	}
 
 	void process() {
+		ScopeProfiling prof(profiler_);
+
 		std::vector<CALL> calls;
 		appstage_.process(calls);
 
@@ -27,6 +30,7 @@ public:
 	}
 
 protected:
+	Profiler profiler_;
 	AS appstage_;
 	GS geomstage_;
 	RS rasstage_;

@@ -36,6 +36,7 @@
     <ClInclude Include="..\..\..\Code\Core\Mipmap.h" />
     <ClInclude Include="..\..\..\Code\Core\Preset.h" />
     <ClInclude Include="..\..\..\Code\Core\Primitive.h" />
+    <ClInclude Include="..\..\..\Code\Core\Profiler.h" />
     <ClInclude Include="..\..\..\Code\Core\RasterizerStage.h" />
     <ClInclude Include="..\..\..\Code\Core\Sampler.h" />
     <ClInclude Include="..\..\..\Code\Core\Surface.h" />

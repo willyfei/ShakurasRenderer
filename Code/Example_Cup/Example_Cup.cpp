@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include <vector>
 #include "Core\Preset.h"
 #include "ResourceParser\SurfaceParser.h"
 #include "PlatformSpec\WinViewer.h"
