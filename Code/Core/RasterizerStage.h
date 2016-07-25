@@ -336,6 +336,8 @@ private:
 	void drawScanline(const UL& u, const LerpDerivative<V, F>& lerpd, Scanline22& s22) {
 		int x = s22.xbegin();
 		int w = s22.xwidth();
+		TileShader<UL, F, FS> tileshader;
+
 		for (; w > 0; x += 2, w -= 2) {
 			if (x >= 0 && x < width_) {
 				// 2, 3
@@ -356,7 +358,7 @@ private:
 				s22.next();
 
 				//fragment shader
-				tileshader_.process(u, tile);
+				tileshader.process(u, tile);
 
 				//merging
 				for (size_t i = 0; i != 4; i++) {
@@ -394,7 +396,6 @@ private:
 	std::vector<uint32_t*> framebuffer_;
 	std::vector<std::vector<float> > zbuffer_;
 	int width_, height_;
-	TileShader<UL, F, FS> tileshader_;
 };
 
 

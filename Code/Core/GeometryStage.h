@@ -38,9 +38,11 @@ public:
 	}
 
 	void process(DrawCall<UL, V>& call) {
+		VS vertshader;
+
 		//vertex sharding
 		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
-			vertshader_.process(call.uniforms, *i);
+			vertshader.process(call.uniforms, *i);
 		}
 
 		//geometry sharding£¨Œ¥ µœ÷
@@ -77,7 +79,6 @@ public:
 
 private:
 	float width_, height_;
-	VS vertshader_;
 };
 
 

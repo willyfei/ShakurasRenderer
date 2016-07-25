@@ -20,6 +20,7 @@ namespace example_cup {
 
 			std::vector<ObjMesh> meshs;
 			LoadObjMesh("Cup/cup.obj", meshs, false);
+			//LoadObjMesh("Sponza/part_of_sponza.obj", meshs, false);
 
 			outputs_.clear();
 			outputs_.resize(meshs.size());
