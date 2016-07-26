@@ -2,9 +2,32 @@
 #include "MathAndGeometry.h"
 #include "Color.h"
 #include <vector>
+#include <math.h>
 
 
 SHAKURAS_BEGIN;
+
+
+inline void ClampAddr(float u, float v, int w, int h, int& x, int& y) {
+	u *= (w - 1);
+	v *= (h - 1);
+
+	x = (int)(u + 0.5f);
+	y = (int)(v + 0.5f);
+
+	x = Clamp(x, 0, w - 1);
+	y = Clamp(y, 0, h - 1);
+}
+
+inline void RepeatAddr(float u, float v, int w, int h, int& x, int& y) {
+	u = fmodf(u, 1.0f);
+	v = fmodf(v, 1.0f);
+
+	u = (u < 0.0f ? 1.0f + u : u);
+	v = (v < 0.0f ? 1.0f + v : v);
+
+	ClampAddr(u, v, w, h, x, y);
+}
 
 
 class Surface {
@@ -42,29 +65,21 @@ private:
 SHAKURAS_SHARED_PTR(Surface);
 
 
-template<class S>
-Vector3f NearestSample(float u, float v, const S& surface) {
-	u *= (surface.width() - 1);
-	v *= (surface.height() - 1);
-
-	int x = (int)(u + 0.5f);
-	int y = (int)(v + 0.5f);
-
-	x = Clamp(x, 0, surface.width() - 1);
-	y = Clamp(y, 0, surface.height() - 1);
-
+template<class S, typename AF>
+Vector3f NearestSample(float u, float v, const S& surface, AF addressing) {
+	int x = 0, y = 0;
+	addressing(u, v, surface.width(), surface.height(), x, y);
 	return surface.get(x, y);
 }
 
 
-template<class S>
-Vector3f BilinearSample(float u, float v, const S& surface) {
+template<class S, typename AF>
+Vector3f BilinearSample(float u, float v, const S& surface, AF addressing) {
 	u *= (surface.width() - 1);
 	v *= (surface.height() - 1);
 
-	int fu = (int)u, fv = (int)v;
-	fu = Clamp(fu, 0, surface.width() - 1);
-	fv = Clamp(fv, 0, surface.height() - 1);
+	int fu = 0, fv = 0;
+	addressing((float)u, (float)v, surface.width(), surface.height(), fu, fv);
 
 	int cu = fu + 1, cv = fv + 1;
 	cu = Clamp(cu, 0, surface.width() - 1);
@@ -83,7 +98,7 @@ Vector3f BilinearSample(float u, float v, const S& surface) {
 	//v∑ΩœÚ≤Â÷µ
 	it = (cv != fv ? (v - fv) / (cv - fv) : 0.0f);
 	Vector3f ic = ibc + (itc - ibc) * it;
-	
+
 	return ic;
 }
 

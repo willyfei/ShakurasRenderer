@@ -30,7 +30,8 @@ SurfacePtr LoadSurface(std::string filepath, bool isrelpath) {
 	}
 
 	int x, y;
-	stbi_uc* data = stbi_load(filepath.c_str(), &x, &y, 0, 4);
+	int comp = 0;
+	stbi_uc* data = stbi_load(filepath.c_str(), &x, &y, &comp, 4);
 	if (!data) {
 		return nullptr;
 	}
@@ -45,7 +46,7 @@ SurfacePtr LoadSurface(std::string filepath, bool isrelpath) {
 	SurfacePtr tex = std::make_shared<Surface>();
 	tex->reset(x, y, (uint32_t*)data);
 
-	STBI_FREE(data);
+	stbi_image_free(data);
 
 	return tex;
 }

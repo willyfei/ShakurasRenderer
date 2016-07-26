@@ -47,7 +47,6 @@ namespace example_sponza {
 				cmd.uniforms.ambient = mesh.mtl.ambient;
 				cmd.uniforms.diffuse = mesh.mtl.diffuse;
 				cmd.uniforms.specular = mesh.mtl.specular;
-				cmd.uniforms.light_pos.set(0.0f, 25.0, 0.0f);//光源位置
 			}
 
 			pos_ = 0.0f;
@@ -66,6 +65,7 @@ namespace example_sponza {
 				preset_std::DrawCall& cmd = outputs_[i];
 				cmd.uniforms.mvtrsf = mvtrsf;//模型*视图变换
 				cmd.uniforms.eye_pos = eye;//相机位置
+				cmd.uniforms.light_pos = eye;//光源位置
 			}
 
 			cmds = outputs_;
@@ -77,7 +77,37 @@ namespace example_sponza {
 		float pos_;
 	};
 
-	typedef GraphicPipeline<preset_std::DrawCall, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
+
+	class FragmentShader {
+	public:
+		void process(const preset_std::UniformList& u, Sampler& sampler, preset_std::Fragment& f) {
+			Vector3f norm = f.varyings.normal;
+			Vector3f light_dir = f.varyings.light_dir;
+			Vector3f eye_dir = f.varyings.eye_dir;
+			Normalize3(norm);
+			Normalize3(light_dir);
+			Normalize3(eye_dir);
+
+			Vector2f uv = f.varyings.uv;
+			Vector3f diff_color(1.0f, 1.0f, 1.0f);//默认白色
+			if (u.texture) {
+				diff_color = sampler.surfaceNearest(uv.x, uv.y, u.texture->level(0), RepeatAddr);
+			}
+
+			float illum_diffuse = Clamp(DotProduct(light_dir, norm), 0.0f, 1.0f);
+			Vector3f c = diff_color * illum_diffuse;
+
+			Clamp(c.x, 0.0f, 1.0f);
+			Clamp(c.y, 0.0f, 1.0f);
+			Clamp(c.z, 0.0f, 1.0f);
+
+			f.c.set(c.x, c.y, c.z, 1.0f);
+		}
+	};
+
+	typedef RasterizerStage<preset_std::UniformList, preset_std::Vertex, preset_std::Fragment, FragmentShader> RasStage;
+
+	typedef GraphicPipeline<preset_std::DrawCall, AppStage, preset_std::GeomStage, RasStage> Pipeline;
 }
 
 

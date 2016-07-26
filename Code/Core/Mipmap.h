@@ -1,7 +1,6 @@
 #pragma once
 #include "Surface.h"
 #include <vector>
-#include <assert.h>
 
 
 SHAKURAS_BEGIN;
@@ -33,7 +32,7 @@ public:
 				for (int y = 0; y != next_surface->height(); y++) {
 					float v = ((float)y) / (next_surface->height() - 1);
 
-					Vector3f c = BilinearSample(u, v, *surface);
+					Vector3f c = BilinearSample(u, v, *surface, ClampAddr);
 					next_surface->set(x, y, c);
 				}
 			}
@@ -98,27 +97,27 @@ float ComputeLevel(const Vector2f& ddx, const Vector2f& ddy, const M& mipmap) {
 }
 
 
-template<class M>
-Vector3f NearestSample(float u, float v, const Vector2f& ddx, const Vector2f& ddy, const M& mipmap) {
+template<class M, typename AF>
+Vector3f NearestSample(float u, float v, const Vector2f& ddx, const Vector2f& ddy, const M& mipmap, AF addressing) {
 	float lv = ComputeLevel(ddx, ddy, mipmap);
 	float lvf = floorf(lv);
 	lvf = Clamp(lvf, 0.0f, (float)mipmap.levelCount() - 1);
-	return NearestSample(u, v, mipmap.level((int)lvf));
+	return NearestSample(u, v, mipmap.level((int)lvf), addressing);
 }
 
 
-template<class M>
-Vector3f BilinearSample(float u, float v, const Vector2f& ddx, const Vector2f& ddy, const M& mipmap) {
+template<class M, typename AF>
+Vector3f BilinearSample(float u, float v, const Vector2f& ddx, const Vector2f& ddy, const M& mipmap, AF addressing) {
 	float lv = ComputeLevel(ddx, ddy, mipmap);
 	float lvf = floorf(lv);
 
 	lvf = Clamp(lvf, 0.0f, (float)mipmap.levelCount() - 1);
-	return BilinearSample(u, v, mipmap.level((int)lvf));
+	return BilinearSample(u, v, mipmap.level((int)lvf), addressing);
 }
 
 
-template<class M>
-Vector3f TrilinearSample(float u, float v, const Vector2f& ddx, const Vector2f& ddy, const M& mipmap) {
+template<class M, typename AF>
+Vector3f TrilinearSample(float u, float v, const Vector2f& ddx, const Vector2f& ddy, const M& mipmap, AF addressing) {
 	float lv = ComputeLevel(ddx, ddy, mipmap);
 	float lvf = floorf(lv);
 	float lvc = lvf + 1;
@@ -128,11 +127,11 @@ Vector3f TrilinearSample(float u, float v, const Vector2f& ddx, const Vector2f& 
 	lvc = Clamp(lvc, 0.0f, (float)mipmap.levelCount() - 1);
 
 	if (lvf == lvc) {
-		return BilinearSample(u, v, mipmap.level((int)lvf));
+		return BilinearSample(u, v, mipmap.level((int)lvf), addressing);
 	}
 
-	Vector3f cf = BilinearSample(u, v, mipmap.level((int)lvf));
-	Vector3f cc = BilinearSample(u, v, mipmap.level((int)lvc));
+	Vector3f cf = BilinearSample(u, v, mipmap.level((int)lvf), addressing);
+	Vector3f cc = BilinearSample(u, v, mipmap.level((int)lvc), addressing);
 
 	float t = (lv - lvf) / (lvc - lvf);
 	return cc + (cf - cc) * t;
