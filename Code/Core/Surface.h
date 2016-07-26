@@ -10,14 +10,8 @@ SHAKURAS_BEGIN;
 
 
 inline void ClampAddr(float& u, float& v) {
-
-	float uu = u;
-	float vv = v;
-
 	u = Clamp(u, 0.0f, 1.0f);
 	v = Clamp(v, 0.0f, 1.0f);
-
-	assert(!isnan(u) && !isnan(v));
 }
 
 inline void RepeatAddr(float& u, float& v) {
