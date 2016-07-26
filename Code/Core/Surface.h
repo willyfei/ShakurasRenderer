@@ -3,30 +3,31 @@
 #include "Color.h"
 #include <vector>
 #include <math.h>
+#include <assert.h>
 
 
 SHAKURAS_BEGIN;
 
 
-inline void ClampAddr(float u, float v, int w, int h, int& x, int& y) {
-	u *= (w - 1);
-	v *= (h - 1);
+inline void ClampAddr(float& u, float& v) {
 
-	x = (int)(u + 0.5f);
-	y = (int)(v + 0.5f);
+	float uu = u;
+	float vv = v;
 
-	x = Clamp(x, 0, w - 1);
-	y = Clamp(y, 0, h - 1);
+	u = Clamp(u, 0.0f, 1.0f);
+	v = Clamp(v, 0.0f, 1.0f);
+
+	assert(!isnan(u) && !isnan(v));
 }
 
-inline void RepeatAddr(float u, float v, int w, int h, int& x, int& y) {
+inline void RepeatAddr(float& u, float& v) {
 	u = fmodf(u, 1.0f);
 	v = fmodf(v, 1.0f);
 
 	u = (u < 0.0f ? 1.0f + u : u);
 	v = (v < 0.0f ? 1.0f + v : v);
 
-	ClampAddr(u, v, w, h, x, y);
+	ClampAddr(u, v);
 }
 
 
@@ -67,36 +68,43 @@ SHAKURAS_SHARED_PTR(Surface);
 
 template<class S, typename AF>
 Vector3f NearestSample(float u, float v, const S& surface, AF addressing) {
-	int x = 0, y = 0;
-	addressing(u, v, surface.width(), surface.height(), x, y);
+	addressing(u, v);
+
+	u *= (surface.width() - 1);
+	v *= (surface.height() - 1);
+
+	int x = (int)(u + 0.5f);
+	int y = (int)(v + 0.5f);
+
 	return surface.get(x, y);
 }
 
 
 template<class S, typename AF>
 Vector3f BilinearSample(float u, float v, const S& surface, AF addressing) {
+	addressing(u, v);
+
 	u *= (surface.width() - 1);
 	v *= (surface.height() - 1);
 
-	int fu = 0, fv = 0;
-	addressing((float)u, (float)v, surface.width(), surface.height(), fu, fv);
+	int fx = (int)u, fy = (int)v;
 
-	int cu = fu + 1, cv = fv + 1;
-	cu = Clamp(cu, 0, surface.width() - 1);
-	cv = Clamp(cv, 0, surface.height() - 1);
+	int cx = fx + 1, cy = fy + 1;
+	cx = Clamp(cx, 0, surface.width() - 1);
+	cy = Clamp(cy, 0, surface.height() - 1);
 
-	Vector3f lbc = surface.get(fu, fv);//左下
-	Vector3f rbc = surface.get(cu, fv);//右下
-	Vector3f ltc = surface.get(fu, cv);//左上
-	Vector3f rtc = surface.get(cu, cv);//右上
+	Vector3f lbc = surface.get(fx, fy);//左下
+	Vector3f rbc = surface.get(cx, fy);//右下
+	Vector3f ltc = surface.get(fx, cy);//左上
+	Vector3f rtc = surface.get(cx, cy);//右上
 
 	//u方向插值
-	float it = (cu != fu ? (u - fu) / (cu - fu) : 0.0f);
+	float it = (cx != fx ? (u - fx) / (cx - fx) : 0.0f);
 	Vector3f ibc = lbc + (rbc - lbc) * it;
 	Vector3f itc = ltc + (rtc - ltc) * it;
 
 	//v方向插值
-	it = (cv != fv ? (v - fv) / (cv - fv) : 0.0f);
+	it = (cy != fy ? (v - fy) / (cy - fy) : 0.0f);
 	Vector3f ic = ibc + (itc - ibc) * it;
 
 	return ic;
