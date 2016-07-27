@@ -150,8 +150,18 @@ inline void Normalize3(V3& v, float len = 1.0f) {
 }
 
 template<class V3>
-inline float DotProduct(const V3& v1, const V3& v2) {
+inline float DotProduct3(const V3& v1, const V3& v2) {
 	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+}
+
+template<class V4>
+inline float DotProduct4(const V4& v1, const V4& v2) {
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
+}
+
+template<class V2>
+float CrossProduct2(const V2& v1, const V2& v2) {
+	return v1.x * v2.y - v1.y * v2.x;
 }
 
 template<class V3>
@@ -165,7 +175,7 @@ inline V3 CrossProduct(const V3& v1, const V3& v2) {
 
 template<class V3>
 inline V3 Reflect(const V3& i, const V3& n) {
-	return i - n * (2.0f * DotProduct(i, n));
+	return i - n * (2.0f * DotProduct3(i, n));
 }
 
 
@@ -257,17 +267,17 @@ public:
 		mat.m[0][0] = xaxis.x;
 		mat.m[1][0] = xaxis.y;
 		mat.m[2][0] = xaxis.z;
-		mat.m[3][0] = -DotProduct(xaxis, eye);
+		mat.m[3][0] = -DotProduct3(xaxis, eye);
 
 		mat.m[0][1] = yaxis.x;
 		mat.m[1][1] = yaxis.y;
 		mat.m[2][1] = yaxis.z;
-		mat.m[3][1] = -DotProduct(yaxis, eye);
+		mat.m[3][1] = -DotProduct3(yaxis, eye);
 
 		mat.m[0][2] = zaxis.x;
 		mat.m[1][2] = zaxis.y;
 		mat.m[2][2] = zaxis.z;
-		mat.m[3][2] = -DotProduct(zaxis, eye);
+		mat.m[3][2] = -DotProduct3(zaxis, eye);
 
 		mat.m[0][3] = mat.m[1][3] = mat.m[2][3] = 0.0f;
 		mat.m[3][3] = 1.0f;

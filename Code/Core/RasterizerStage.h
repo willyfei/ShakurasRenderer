@@ -4,6 +4,7 @@
 #include "Vertex.h"
 #include "Color.h"
 #include "Sampler.h"
+#include "Profiler.h"
 #include <vector>
 #include <array>
 
@@ -219,12 +220,13 @@ int SpliteTrapezoid(const V& v0, const V& v1, const V& v2, std::vector<Trapezoid
 template<class UL, class F, class FS>
 class TileShader {
 public:
-	void process(const UL& u, std::array<F, 4>& tile) {
+	void process(const UL& u, std::array<F, 4>& tile, Profiler* profiler) {
 		sampler_.ddx_ = TexCoord(tile[1].varyings) - TexCoord(tile[0].varyings);
 		sampler_.ddy_ = TexCoord(tile[2].varyings) - TexCoord(tile[0].varyings);
 		for (int i = 0; i != 4; i++) {
 			if (tile[i].draw) {
 				fragshader_.process(u, sampler_, tile[i]);
+				profiler->frag_sharder_excuted_++;
 			}
 		}
 	}
@@ -268,9 +270,10 @@ private:
 template<class UL, class V, class F, class FS>
 class RasterizerStage {
 public:
-	void initialize(int ww, int hh, void* fb) {
+	void initialize(int ww, int hh, void* fb, Profiler& profiler) {
 		width_ = ww;
 		height_ = hh;
+		profiler_ = &profiler;
 
 		framebuffer_.resize(height_, nullptr);
 		zbuffer_.resize(height_);
@@ -358,7 +361,8 @@ private:
 				s22.next();
 
 				//fragment shader
-				tileshader.process(u, tile);
+				profiler_->frag_count_ += 4;
+				tileshader.process(u, tile, profiler_);
 
 				//merging
 				for (size_t i = 0; i != 4; i++) {
@@ -396,6 +400,7 @@ private:
 	std::vector<uint32_t*> framebuffer_;
 	std::vector<std::vector<float> > zbuffer_;
 	int width_, height_;
+	Profiler* profiler_;
 };
 
 

@@ -20,10 +20,10 @@ public:
 	}
 
 public:
-	A attribs;
-	V varyings;
 	Vector4f pos;
 	float rhw;
+	A attribs;
+	V varyings;
 };
 
 

@@ -111,8 +111,8 @@ namespace preset_std {
 			Normalize3(light_dir);
 			Normalize3(eye_dir);
 
-			float illum_diffuse = Clamp(DotProduct(light_dir, norm), 0.0f, 1.0f);
-			float illum_specular = Clamp(DotProduct(Reflect(light_dir, norm), eye_dir), 0.0f, 1.0f);
+			float illum_diffuse = Clamp(DotProduct3(light_dir, norm), 0.0f, 1.0f);
+			float illum_specular = Clamp(DotProduct3(Reflect(light_dir, norm), eye_dir), 0.0f, 1.0f);
 			Vector3f illum = u.ambient + u.diffuse * illum_diffuse + u.specular * illum_specular;
 
 			Vector2f uv = f.varyings.uv;

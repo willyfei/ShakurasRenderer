@@ -94,7 +94,7 @@ namespace example_sponza {
 				diff_color = sampler.surfaceNearest(uv.x, uv.y, u.texture->level(0), RepeatAddr);
 			}
 
-			float illum_diffuse = Clamp(DotProduct(light_dir, norm), 0.0f, 1.0f);
+			float illum_diffuse = Clamp(DotProduct3(light_dir, norm), 0.0f, 1.0f);
 			Vector3f c = diff_color * illum_diffuse;
 
 			Clamp(c.x, 0.0f, 1.0f);

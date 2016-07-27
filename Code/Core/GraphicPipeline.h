@@ -11,8 +11,8 @@ public:
 	template<class VPTR>
 	void initialize(VPTR viewer) {
 		appstage_.initialize(viewer);
-		geomstage_.initialize((float)viewer->width(), (float)viewer->height());
-		rasstage_.initialize(viewer->width(), viewer->height(), viewer->frameBuffer());
+		geomstage_.initialize((float)viewer->width(), (float)viewer->height(), profiler_);
+		rasstage_.initialize(viewer->width(), viewer->height(), viewer->frameBuffer(), profiler_);
 	}
 
 	void process() {

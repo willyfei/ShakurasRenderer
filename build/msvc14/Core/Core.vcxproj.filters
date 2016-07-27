@@ -60,5 +60,8 @@
     <ClInclude Include="..\..\..\Code\Core\Profiler.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Code\Core\Clipper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
