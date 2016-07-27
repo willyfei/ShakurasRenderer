@@ -68,6 +68,10 @@ private:
 	// 0 : (, near)
 	// 1 : [near, far]
 	// 2 : (far, )
+	static const short kTooNear = 0;
+	static const short kOK = 1;
+	static const short kTooFar = 2;
+
 	inline short orientate(const Vector4f& pos, float& neard, float& fard) {
 		static const Vector4f near_plane = { 0.0f, 0.0f, 1.0f, 0.0f };
 		static const Vector4f far_plane = { 0.0f, 0.0f, -1.0f, 1.0f };
@@ -75,12 +79,12 @@ private:
 		neard = DotProduct4(near_plane, pos);
 		fard = DotProduct4(far_plane, pos);
 		if (neard < 0) {
-			return 0;
+			return kTooNear;
 		}
 		else if (fard < 0) {
-			return 2;
+			return kTooFar;
 		}
-		return 1;
+		return kOK;
 	}
 
 	void computeOrientate() {
@@ -110,10 +114,7 @@ private:
 
 		const short o1 = oris_[i1];
 		const short o2 = oris_[i2];
-		const short o3xyhX = oris_[i3];
-
-		std::array<size_t, 3> tri_index = { i1, i2, i3 };
-		std::array<const V*, 3> tri_pvert = { &v1, &v2, &v3 };
+		const short o3 = oris_[i3];
 		
 		//先剔除背面
 		if (!IsFront(v1.pos, v2.pos, v3.pos)) {
@@ -126,10 +127,10 @@ private:
 		// 2 : (far, )
 		//oris_记录了这个标记
 
-		std::array<int, 3> counter = { 0, 0, 0 };
-		counter[oris_[i1]]++;
-		counter[oris_[i2]]++;
-		counter[oris_[i3]]++;
+		std::array<char, 3> counter = { 0, 0, 0 };
+		counter[o1]++;
+		counter[o2]++;
+		counter[o3]++;
 
 		int max_count = *std::max_element(counter.begin(), counter.end());
 
@@ -144,15 +145,115 @@ private:
 		//S-3 每个点都属于不同的区域
 		//	S-3.1 插值得到四个点，生成五边形，拆分成三个三角形，输出
 
+		std::array<size_t, 3> tri_index = { i1, i2, i3 };
+		std::array<const V*, 3> tri_pvert = { &v1, &v2, &v3 };
+
 		if (max_count == 3) {
-			if (counter[1] == 3) {
+			//S-1.1
+			if (counter[kOK] == 3) {
 				oprims_.addTriangle(v1, v2, v3);
 			}
+
+			//S-1.2
+			//S-1.3
 		}
 		else if (max_count == 2) {
-			if (counter[1] == 1) {
+			//S-2.1
+			if (counter[kOK] == 1) {
+				//将kOK的顶点旋转到首部
+				int rot = (o1 == kOK ? 0 : (o2 == kOK ? 1 : 2));
+				std::rotate(tri_index.begin(), tri_index.begin() + rot, tri_index.end());
+				std::rotate(tri_pvert.begin(), tri_pvert.begin() + rot, tri_pvert.end());
 
+				//取合适的平面距离映射
+				short oo = (o1 != kOK ? o1 : (o2 != kOK ? o2 : o3));
+				const std::vector<float>* pds = (oo == kTooNear ? &neards_ : &fards_);
+
+				//插值
+				V lerp_v2 = SignedDistanceLerp(*tri_pvert[0], *tri_pvert[1], (*pds)[tri_index[0]], (*pds)[tri_index[1]]);
+				V lerp_v3 = SignedDistanceLerp(*tri_pvert[0], *tri_pvert[2], (*pds)[tri_index[0]], (*pds)[tri_index[2]]);
+
+				//输出
+				oprims_.addTriangle(*tri_pvert[0], lerp_v2, lerp_v3);
 			}
+			//S-2.2
+			else if (counter[kOK] == 2) {
+				//将非kOK的顶点旋转到首部
+				int rot = (o1 != kOK ? 0 : (o2 != kOK ? 1 : 2));
+				std::rotate(tri_index.begin(), tri_index.begin() + rot, tri_index.end());
+				std::rotate(tri_pvert.begin(), tri_pvert.begin() + rot, tri_pvert.end());
+
+				//取合适的平面距离映射
+				short oo = (o1 != kOK ? o1 : (o2 != kOK ? o2 : o3));
+				const std::vector<float>* pds = (oo == kTooNear ? &neards_ : &fards_);
+
+				//插值
+				V lerp_v2 = SignedDistanceLerp(*tri_pvert[0], *tri_pvert[1], (*pds)[tri_index[0]], (*pds)[tri_index[1]]);
+				V lerp_v3 = SignedDistanceLerp(*tri_pvert[0], *tri_pvert[2], (*pds)[tri_index[0]], (*pds)[tri_index[2]]);
+
+				//梯形为 [lerp_v2, v2, v3, lerp_v3]
+				//三角形为 [lerp_v2, v2, v3] [lerp_v2, v3, lerp_v3]
+
+				//输出
+				oprims_.addTriangle(lerp_v2, *tri_pvert[1], *tri_pvert[2]);
+				oprims_.addTriangle(lerp_v2, *tri_pvert[2], lerp_v3);
+			}
+			//S-2.3
+			else if (counter[kOK] == 0) {
+				//将自己位于一个区域的顶点旋转到首部
+				int rot = (o1 == o2 ? 2 : (o1 == o3 ? 1 : 0));
+				std::rotate(tri_index.begin(), tri_index.begin() + rot, tri_index.end());
+				std::rotate(tri_pvert.begin(), tri_pvert.begin() + rot, tri_pvert.end());
+
+				//分别取平面距离映射
+				short o_one = (o1 == o2 ? o3 : (o1 == o3 ? o2 : o1));
+				short o_two = (o_one == kTooFar ? kTooNear : kTooFar);
+				const std::vector<float>* pds_one = (o_one == kTooNear ? &neards_ : &fards_);
+				const std::vector<float>* pds_two = (o_two == kTooNear ? &neards_ : &fards_);
+
+				//插值
+				V lerp_v2_one = SignedDistanceLerp(*tri_pvert[0], *tri_pvert[1], (*pds_one)[tri_index[0]], (*pds_one)[tri_index[1]]);
+				V lerp_v3_one = SignedDistanceLerp(*tri_pvert[0], *tri_pvert[2], (*pds_one)[tri_index[0]], (*pds_one)[tri_index[2]]);
+				V lerp_v2_two = SignedDistanceLerp(*tri_pvert[0], *tri_pvert[1], (*pds_two)[tri_index[0]], (*pds_two)[tri_index[1]]);
+				V lerp_v3_two = SignedDistanceLerp(*tri_pvert[0], *tri_pvert[2], (*pds_two)[tri_index[0]], (*pds_two)[tri_index[2]]);
+
+				//梯形为 [lerp_v2_one, lerp_v2_two, lerp_v3_two, lerp_v3_one]
+				//三角形为 [lerp_v2_one, lerp_v2_two, lerp_v3_two] [lerp_v2_one, lerp_v3_two, lerp_v3_one]
+
+				//输出
+				oprims_.addTriangle(lerp_v2_one, lerp_v2_two, lerp_v3_two);
+				oprims_.addTriangle(lerp_v2_one, lerp_v3_two, lerp_v3_one);
+			}
+		}
+		else if (max_count == 1) {
+			//S - 3.1
+
+			//将kOK的顶点旋转到首部
+			int rot = (o1 == kOK ? 0 : (o2 == kOK ? 1 : 2));
+			std::rotate(tri_index.begin(), tri_index.begin() + rot, tri_index.end());
+			std::rotate(tri_pvert.begin(), tri_pvert.begin() + rot, tri_pvert.end());
+			
+			//方位标识也要旋转
+			std::array<short, 3> tri_o = { o1, o2, o3 };
+			std::rotate(tri_o.begin(), tri_o.begin() + rot, tri_o.end());
+
+			//分别取平面距离映射
+			const std::vector<float>* pds2 = (tri_o[1] == kTooNear ? &neards_ : &fards_);
+			const std::vector<float>* pds3 = (tri_o[2] == kTooNear ? &neards_ : &fards_);
+
+			//插值
+			V lerp_v01 = SignedDistanceLerp(*tri_pvert[0], *tri_pvert[1], (*pds2)[tri_index[0]], (*pds2)[tri_index[1]]);
+			V lerp_v02 = SignedDistanceLerp(*tri_pvert[0], *tri_pvert[2], (*pds3)[tri_index[0]], (*pds3)[tri_index[2]]);
+			V lerp_v12_1 = SignedDistanceLerp(*tri_pvert[1], *tri_pvert[2], (*pds2)[tri_index[1]], (*pds2)[tri_index[2]]);
+			V lerp_v12_2 = SignedDistanceLerp(*tri_pvert[1], *tri_pvert[2], (*pds3)[tri_index[1]], (*pds3)[tri_index[2]]);
+
+			//五边形为 [v1, lerp_v01, lerp_v12_1, lerp_v12_2, lerp_v02]
+			//三角形为 [v1, lerp_v01, lerp_v12_1] [v1, lerp_v12_1, lerp_v12_2] [v1, lerp_v12_2, lerp_v02]
+
+			//输出
+			oprims_.addTriangle(v1, lerp_v01, lerp_v12_1);
+			oprims_.addTriangle(v1, lerp_v12_1, lerp_v12_2);
+			oprims_.addTriangle(v1, lerp_v12_2, lerp_v02);
 		}
 	}
 
