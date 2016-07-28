@@ -20,7 +20,7 @@ inline int CheckCVV(const Vector4f& v) {
 }
 
 
-inline bool IsClockwise(const Vector4f& pos0, const Vector4f& pos1, const Vector4f& pos2) {
+inline bool IsCounterClockwise(const Vector4f& pos0, const Vector4f& pos1, const Vector4f& pos2) {
 	Vector2f pv_2d[3] =
 	{
 		{ pos0.x, pos0.y },
@@ -76,8 +76,8 @@ private:
 	static const short kTooFar = 2;
 
 	inline short orientate(const Vector4f& pos, float& neard, float& fard) {
-		static const Vector4f near_plane = { 0.0f, 0.0f, 1.0f, 0.0f };
-		static const Vector4f far_plane = { 0.0f, 0.0f, -1.0f, 1.0f };
+		const Vector4f near_plane = { 0.0f, 0.0f, 1.0f, 0.0f };
+		const Vector4f far_plane = { 0.0f, 0.0f, -1.0f, 1.0f };
 
 		neard = DotProduct4(near_plane, pos);
 		fard = DotProduct4(far_plane, pos);
@@ -120,7 +120,8 @@ private:
 		const short o3 = oris_[i3];
 		
 		//先剔除背面
-		if (IsClockwise(v1.pos, v2.pos, v3.pos)) {
+		//flip_y的情况下，逆时针表示背面
+		if (IsCounterClockwise(v1.pos, v2.pos, v3.pos)) {
 			return;
 		}
 
@@ -265,6 +266,7 @@ private:
 	std::vector<short> oris_;
 	std::vector<float> neards_;
 	std::vector<float> fards_;
+	float near_, far_;
 	PrimitiveList<V> oprims_;
 };
 

@@ -17,6 +17,8 @@ public:
 	}
 
 	void process(DrawCall<UL, V>& call) {
+		profiler_->geo_triangle_count_ += call.prims.tris_.size();
+
 		VS vertshader;
 
 		//vertex sharding

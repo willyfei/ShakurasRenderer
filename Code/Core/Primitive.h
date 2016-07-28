@@ -31,9 +31,15 @@ public:
 	}
 
 	void addTriangle(const V& v1, const V& v2, const V& v3) {
-		assert(!isnan(v1.pos.x) && !isnan(v1.pos.y) && !isnan(v1.pos.z) && !isnan(v1.pos.w) &&
-			!isnan(v2.pos.x) && !isnan(v2.pos.y) && !isnan(v2.pos.z) && !isnan(v2.pos.w) &&
-			!isnan(v3.pos.x) && !isnan(v3.pos.y) && !isnan(v3.pos.z) && !isnan(v3.pos.w));
+		if (isnan(v1.pos.x) || isnan(v1.pos.y) || isnan(v1.pos.z) || isnan(v1.pos.w) ||
+			isnan(v2.pos.x) || isnan(v2.pos.y) || isnan(v2.pos.z) || isnan(v2.pos.w) ||
+			isnan(v3.pos.x) || isnan(v3.pos.y) || isnan(v3.pos.z) || isnan(v3.pos.w)) {
+			int fuck = 1;
+		}
+
+		if (v1.pos.w < 0.0f || v2.pos.w < 0.0f || v3.pos.w < 0.0f) {
+			int fuck = 1;
+		}
 
 		size_t len = verts_.size();
 		verts_.push_back(v1);

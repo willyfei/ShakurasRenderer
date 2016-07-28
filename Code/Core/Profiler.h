@@ -20,6 +20,8 @@ public:
 		vert_sharder_excuted_ = 0;
 		frag_count_ = 0;
 		frag_sharder_excuted_ = 0;
+		geo_triangle_count_ = 0;
+		ras_triangle_count_ = 0;
 	}
 
 	void end() {
@@ -45,6 +47,12 @@ public:
 			//Frag-Sharder
 			std::cout << "Frag-Sharder Excuted : " << frag_sharder_excuted_ << std::endl;
 
+			//Geo-Triangle Count
+			std::cout << "Geo-Triangle Count : " << geo_triangle_count_ << std::endl;
+
+			//Ras-Triangle Count
+			std::cout << "Ras-Triangle Count : " << ras_triangle_count_ << std::endl;
+
 			//Duration
 			std::cout << "Duration In Milliseconds : " << du.count() << std::endl;
 
@@ -60,6 +68,8 @@ public:
 	size_t vert_sharder_excuted_;
 	size_t frag_count_;
 	size_t frag_sharder_excuted_;
+	size_t geo_triangle_count_;
+	size_t ras_triangle_count_;
 };
 
 

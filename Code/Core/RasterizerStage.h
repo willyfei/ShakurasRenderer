@@ -44,8 +44,8 @@ public:
 
 class Scanline {
 public:
-	void initialize(Trapezoid& trap, int yy, int ymax) {
-		draw = trap.interpY((float)yy + 0.5f) && yy < ymax;
+	void initialize(Trapezoid& trap, int yy) {
+		draw = trap.interpY((float)yy + 0.5f);
 
 		float width = trap.right.v.x - trap.left.v.x;
 		x = (int)(trap.left.v.x + 0.5f);
@@ -75,9 +75,9 @@ public:
 
 class Scanline22 {
 public:
-	void initialize(Trapezoid& trap, int yy, int ymax) {
-		s0.initialize(trap, yy, ymax);
-		s1.initialize(trap, yy + 1, ymax);
+	void initialize(Trapezoid& trap, int yy) {
+		s0.initialize(trap, yy);
+		s1.initialize(trap, yy + 1);
 
 		int xb = xbegin();
 		s0.moveX(xb);
@@ -256,6 +256,7 @@ public:
 		F frag;
 		frag.x = x;
 		frag.y = y;
+		if (rhw == 0.0f) rhw = 0.000001f;
 		frag.varyings = (v0_.varyings + ddx_.varyings * (x - v0_.pos.x) + ddy_.varyings * (y - v0_.pos.y)) / rhw;
 		frag.z = rhw;
 
@@ -289,6 +290,8 @@ public:
 	}
 
 	void process(DrawCall<UL, V>& call) {
+		profiler_->ras_triangle_count_ += call.prims.tris_.size();
+		
 		//triangle setup, Ê¡ÂÔ
 
 		for (size_t i = 0; i != call.prims.tris_.size(); i++) {
@@ -330,6 +333,10 @@ private:
 		}
 	}
 
+	inline bool isPixelCoord(int x, int y) {
+		return 0 <= x && x < width_ && 0 <= y && y < height_;
+	}
+
 	void drawScanline(const UL& u, const LerpDerivative<V, F>& lerpd, Scanline22& s22) {
 		int x = s22.xbegin();
 		int w = s22.xwidth();
@@ -341,16 +348,16 @@ private:
 				// 0, 1
 				std::array<F, 4> tile;
 				tile[0] = lerpd.lerp(x, s22.s0.y, s22.s0.v.z);
-				tile[0].draw = s22.draw0(x);
+				tile[0].draw = s22.draw0(x) && isPixelCoord(x, s22.s0.y);
 				tile[2] = lerpd.lerp(x, s22.s1.y, s22.s1.v.z);
-				tile[2].draw = s22.draw1(x);
+				tile[2].draw = s22.draw1(x) && isPixelCoord(x, s22.s1.y);
 
 				s22.next();
 
 				tile[1] = lerpd.lerp(x + 1, s22.s0.y, s22.s0.v.z);
-				tile[1].draw = s22.draw0(x + 1);
+				tile[1].draw = s22.draw0(x + 1) && isPixelCoord(x + 1, s22.s0.y);
 				tile[3] = lerpd.lerp(x + 1, s22.s1.y, s22.s1.v.z);
-				tile[3].draw = s22.draw1(x + 1);
+				tile[3].draw = s22.draw1(x + 1) && isPixelCoord(x + 1, s22.s1.y);
 
 				s22.next();
 
@@ -381,7 +388,7 @@ private:
 		bottom = (int)(trap.bottom + 0.5f);
 		for (j = top; j < bottom; j += 2) {
 			if (j >= 0 && j < height_) {
-				scanline.initialize(trap, j, height_);
+				scanline.initialize(trap, j);
 				drawScanline(u, lerpd, scanline);
 			}
 			if (j >= height_) {
