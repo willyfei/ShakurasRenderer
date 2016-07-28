@@ -32,8 +32,7 @@ namespace example_cube {
 			p3.attribs.uv.set(1, 1);
 			p4.attribs.uv.set(1, 0);
 
-			Vector4f norm = CrossProduct3(p3.pos - p2.pos, p1.pos - p2.pos);
-			norm.w = 0.0f;
+			Vector3f norm = CrossProduct3((p3.pos - p2.pos).xyz(), (p1.pos - p2.pos).xyz());
 			p1.attribs.normal = norm;
 			p2.attribs.normal = norm;
 			p3.attribs.normal = norm;
@@ -101,16 +100,16 @@ namespace example_cube {
 			if (viewer_->testUserMessage(kUMRight)) alpha_ -= 0.02f;
 
 			Vector3f eye(3 + pos_, 0, 0), at(0, 0, 0), up(0, 0, 1);
-			Vector4f light_pos(100.0f, -100.0f, 100.0f, 1.0f);
+			Vector3f eye_pos = eye;
+			Vector3f light_pos(100.0f, 100.0f, -100.0f);
 
 			Matrix44f modeltrsf = Matrix44f::Rotate(-1, -0.5, 1, alpha_);
 			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
-			light_pos = viewtrsf.transform(light_pos);
 			
 			output_.uniforms.texture = texlist_[itex_];//纹理
 			output_.uniforms.mvtrsf = modeltrsf * viewtrsf;//模型*视图变换
-			output_.uniforms.eye_pos = eye;//相机位置
-			output_.uniforms.light_pos.set(light_pos.x, light_pos.y, light_pos.z);//光源位置
+			output_.uniforms.eye_pos = eye_pos;//相机位置
+			output_.uniforms.light_pos = light_pos;//光源位置
 
 			cmds.push_back(output_);
 		}

@@ -28,7 +28,7 @@ namespace preset_std {
 
 	struct AttribList {
 		Vector2f uv;
-		Vector4f normal;
+		Vector3f normal;
 	};
 
 	struct VaryingList {
@@ -88,14 +88,11 @@ namespace preset_std {
 		void process(const UniformList& u, Vertex& v) {
 			v.varyings.uv = v.attribs.uv;
 
-			Vector4f norm = u.mvtrsf.transform(v.attribs.normal);
-			v.varyings.normal.set(norm.x, norm.y, norm.z);
+			v.varyings.normal = u.mvtrsf.transform(v.attribs.normal.xyz0()).xyz();
 
-			Vector3f light_pos = u.light_pos;
-			v.varyings.light_dir.set(light_pos.x - v.pos.x, light_pos.y - v.pos.y, light_pos.z - v.pos.z);
+			v.varyings.light_dir = u.light_pos - v.pos.xyz();
 
-			Vector3f eye_pos = u.eye_pos;
-			v.varyings.eye_dir.set(eye_pos.x - v.pos.x, eye_pos.y - v.pos.y, eye_pos.z - v.pos.z);
+			v.varyings.eye_dir = u.eye_pos - v.pos.xyz();
 
 			v.pos = u.mvtrsf.transform(v.pos);
 		}
@@ -125,6 +122,11 @@ namespace preset_std {
 			Clamp(c.x, 0.0f, 1.0f);
 			Clamp(c.y, 0.0f, 1.0f);
 			Clamp(c.z, 0.0f, 1.0f);
+
+			/*static Vector3f g_min_c(1.0f, 1.0f, 1.0f);
+			if (Length3(c) <= Length3(g_min_c)) {
+				g_min_c = c;
+			}*/
 
 			f.c.set(c.x, c.y, c.z, 1.0f);
 		}

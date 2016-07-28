@@ -35,7 +35,7 @@ namespace example_sponza {
 
 					v.pos.set(objv.pos.x, objv.pos.y, objv.pos.z, 1.0f);
 					v.attribs.uv = objv.uv;
-					v.attribs.normal.set(objv.normal.x, objv.normal.y, objv.normal.z, 0.0f);
+					v.attribs.normal = objv.normal;
 				}
 
 				for (size_t ii = 0; ii < mesh.tris.size(); ii += 3) {
@@ -59,13 +59,16 @@ namespace example_sponza {
 			if (viewer_->testUserMessage(kUMDown)) pos_ += 0.5f;
 
 			Vector3f eye(-36.0f + pos_, 18.0f, 0.0f), at(40.0f, 15.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
-			Matrix44f mvtrsf = Matrix44f::LookAt(eye, at, up);
+			Vector3f eye_pos = eye;
+			Vector3f light_pos = eye;
+
+			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
 
 			for (size_t i = 0; i != outputs_.size(); i++) {
 				preset_std::DrawCall& cmd = outputs_[i];
-				cmd.uniforms.mvtrsf = mvtrsf;//模型*视图变换
-				cmd.uniforms.eye_pos = eye;//相机位置
-				cmd.uniforms.light_pos = eye;//光源位置
+				cmd.uniforms.mvtrsf = viewtrsf;//模型*视图变换
+				cmd.uniforms.eye_pos = eye_pos;//相机位置
+				cmd.uniforms.light_pos = light_pos;//光源位置
 			}
 
 			cmds = outputs_;

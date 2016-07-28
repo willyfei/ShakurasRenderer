@@ -35,7 +35,7 @@ namespace example_cup {
 
 					v.pos.set(objv.pos.x, objv.pos.y, objv.pos.z, 1.0f);
 					v.attribs.uv = objv.uv;
-					v.attribs.normal.set(objv.normal.x, objv.normal.y, objv.normal.z, 0.0f);
+					v.attribs.normal = objv.normal;
 				}
 
 				for (size_t ii = 0; ii < mesh.tris.size(); ii += 3) {
@@ -47,7 +47,6 @@ namespace example_cup {
 				cmd.uniforms.ambient = mesh.mtl.ambient;
 				cmd.uniforms.diffuse = mesh.mtl.diffuse;
 				cmd.uniforms.specular = mesh.mtl.specular;
-				cmd.uniforms.light_pos.set(100.0f, 100.0f, -100.0f);//光源位置
 			}
 
 			alpha_ = 1.0f;
@@ -63,18 +62,17 @@ namespace example_cup {
 			if (viewer_->testUserMessage(kUMRight)) alpha_ -= 0.02f;
 
 			Vector3f eye(3 + pos_, 0, 0), at(0, 0, 0), up(0, 0, 1);
-			Vector4f light_pos(100.0f, -100.0f, 100.0f, 1.0f);
+			Vector3f eye_pos = eye;
+			Vector3f light_pos(100.0f, 80.0f, -60.0f);
 
 			Matrix44f modeltrsf = Matrix44f::Rotate(-1, -0.5, 1, alpha_);
 			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
-			Matrix44f mvtrsf = Matrix44f::Rotate(-1, -0.5, 1, alpha_) * Matrix44f::LookAt(eye, at, up);
-			light_pos = viewtrsf.transform(light_pos);
 
 			for (size_t i = 0; i != outputs_.size(); i++) {
 				preset_std::DrawCall& cmd = outputs_[i];
-				cmd.uniforms.mvtrsf = mvtrsf;//模型*视图变换
-				cmd.uniforms.eye_pos = eye;//相机位置
-				cmd.uniforms.light_pos.set(light_pos.x, light_pos.y, light_pos.z);//光源位置
+				cmd.uniforms.mvtrsf = modeltrsf * viewtrsf;//模型*视图变换
+				cmd.uniforms.eye_pos = eye_pos;//相机位置
+				cmd.uniforms.light_pos = light_pos;//光源位置
 			}
 
 			cmds = outputs_;

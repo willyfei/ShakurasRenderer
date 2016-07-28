@@ -44,6 +44,9 @@ inline Vector2<S> operator/(const Vector2<S>& v1, S d) {
 }
 
 
+template<class S> class Vector4;
+
+
 template<class S>
 class Vector3 {
 public:
@@ -58,6 +61,18 @@ public:
 		x = xx;
 		y = yy;
 		z = zz;
+	}
+
+	Vector2<S> xy() const {
+		return Vector2<S>(x, y);
+	}
+
+	Vector4<S> xyz0() const {
+		return Vector4<S>(x, y, z, 0.0f);
+	}
+
+	Vector4<S> xyz1() const {
+		return Vector4<S>(x, y, z, 1.0f);
 	}
 };
 
@@ -96,6 +111,14 @@ public:
 		y = yy;
 		z = zz;
 		w = ww;
+	}
+
+	Vector2<S> xy() const {
+		return Vector2<S>(x, y);
+	}
+
+	Vector3<S> xyz() const {
+		return Vector3<S>(x, y, z);
 	}
 };
 
