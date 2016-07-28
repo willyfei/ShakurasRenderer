@@ -42,25 +42,28 @@ namespace example_sponza {
 					cmd.prims.tris_.push_back({ mesh.tris[ii], mesh.tris[ii + 1], mesh.tris[ii + 2] });
 				}
 
-				cmd.proj_trsf = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
+				cmd.proj_trsf = Matrix44f::Perspective(kGSPI * 0.5f, w / h, 1.0f, 1000.0f);//投影变换
 				cmd.uniforms.texture = mesh.mtl.tex;
 				cmd.uniforms.ambient = mesh.mtl.ambient;
 				cmd.uniforms.diffuse = mesh.mtl.diffuse;
 				cmd.uniforms.specular = mesh.mtl.specular;
 			}
 
-			pos_ = 0.0f;
+			step_ = 0;
 
 			viewer_ = viewer;
 		}
 
 		void process(std::vector<preset_std::DrawCall>& cmds) {
-			if (viewer_->testUserMessage(kUMUp)) pos_ -= 0.5f;
-			if (viewer_->testUserMessage(kUMDown)) pos_ += 0.5f;
+			if (viewer_->testUserMessage(kUMUp)) step_++;
+			if (viewer_->testUserMessage(kUMDown)) step_--;
 
-			Vector3f eye(-36.0f + pos_, 8.0f, 0.0f), at(40.0f, 15.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
+			float xpos = -36.0f + fmodf(2.5f * step_, 66.0f);
+			float ypos = 10.0f + fmodf(2.0f * step_, 40.0f);
+
+			Vector3f eye(xpos, 8.0f, 0.0f), at(40.0f, 15.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
 			Vector3f eye_pos = eye;
-			Vector3f light_pos = eye;
+			Vector3f light_pos(0.0f, ypos, 0.0f);
 
 			Matrix44f modeltrsf = Matrix44f::Translate(-0.5f, 0, -0.5f);
 			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
@@ -80,8 +83,8 @@ namespace example_sponza {
 	private:
 		WinViewerPtr viewer_;
 		std::vector<preset_std::DrawCall> outputs_;
-		float pos_;
-	};
+		int step_;
+};
 
 
 	class FragmentShader {
