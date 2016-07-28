@@ -20,7 +20,6 @@ namespace example_cup {
 
 			std::vector<ObjMesh> meshs;
 			LoadObjMesh("Cup/cup.obj", meshs, false);
-			//LoadObjMesh("Sponza/part_of_sponza.obj", meshs, false);
 
 			outputs_.clear();
 			outputs_.resize(meshs.size());
@@ -64,12 +63,18 @@ namespace example_cup {
 			if (viewer_->testUserMessage(kUMRight)) alpha_ -= 0.02f;
 
 			Vector3f eye(3 + pos_, 0, 0), at(0, 0, 0), up(0, 0, 1);
+			Vector4f light_pos(100.0f, -100.0f, 100.0f, 1.0f);
+
+			Matrix44f modeltrsf = Matrix44f::Rotate(-1, -0.5, 1, alpha_);
+			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
 			Matrix44f mvtrsf = Matrix44f::Rotate(-1, -0.5, 1, alpha_) * Matrix44f::LookAt(eye, at, up);
+			light_pos = viewtrsf.transform(light_pos);
 
 			for (size_t i = 0; i != outputs_.size(); i++) {
 				preset_std::DrawCall& cmd = outputs_[i];
 				cmd.uniforms.mvtrsf = mvtrsf;//模型*视图变换
 				cmd.uniforms.eye_pos = eye;//相机位置
+				cmd.uniforms.light_pos.set(light_pos.x, light_pos.y, light_pos.z);//光源位置
 			}
 
 			cmds = outputs_;

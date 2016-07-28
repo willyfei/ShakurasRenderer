@@ -79,7 +79,6 @@ namespace example_cube {
 			output_.uniforms.ambient.set(0.4f, 0.4f, 0.4f);//环境光
 			output_.uniforms.diffuse.set(0.587609f, 0.587609f, 0.587609f);//漫反射
 			output_.uniforms.specular.set(0.071744f, 0.071744f, 0.071744f);//镜面反射
-			output_.uniforms.light_pos.set(100.0f, 100.0f, -100.0f);//光源位置
 
 			alpha_ = 1.0f;
 			pos_ = 3.5f;
@@ -102,9 +101,16 @@ namespace example_cube {
 			if (viewer_->testUserMessage(kUMRight)) alpha_ -= 0.02f;
 
 			Vector3f eye(3 + pos_, 0, 0), at(0, 0, 0), up(0, 0, 1);
+			Vector4f light_pos(100.0f, -100.0f, 100.0f, 1.0f);
+
+			Matrix44f modeltrsf = Matrix44f::Rotate(-1, -0.5, 1, alpha_);
+			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
+			light_pos = viewtrsf.transform(light_pos);
+			
 			output_.uniforms.texture = texlist_[itex_];//纹理
-			output_.uniforms.mvtrsf = Matrix44f::Rotate(-1, -0.5, 1, alpha_) * Matrix44f::LookAt(eye, at, up);//模型*视图变换
+			output_.uniforms.mvtrsf = modeltrsf * viewtrsf;//模型*视图变换
 			output_.uniforms.eye_pos = eye;//相机位置
+			output_.uniforms.light_pos.set(light_pos.x, light_pos.y, light_pos.z);//光源位置
 
 			cmds.push_back(output_);
 		}
