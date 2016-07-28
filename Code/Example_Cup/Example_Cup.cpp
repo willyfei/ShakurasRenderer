@@ -61,11 +61,11 @@ namespace example_cup {
 			if (viewer_->testUserMessage(kUMLeft)) alpha_ -= 0.02f;
 			if (viewer_->testUserMessage(kUMRight)) alpha_ += 0.02f;
 
-			Vector3f eye(0, - 3 - pos_, 0), at(0, 0, 0), up(0, 0, 1);
+			Vector3f eye(0, - 3 - pos_, 1.0f), at(0, 0, 0), up(0, 0, 1);
 			Vector3f eye_pos = eye;
 			Vector3f light_pos(-100.0f, -100.0f, 100.0f);
 
-			Matrix44f modeltrsf = Matrix44f::Translate(0.0f, -0.75f, 0.0f) *Matrix44f::Rotate(1.0f, 0.0f, 0.0f, 0.5f * kGSPI) * Matrix44f::Rotate(0.0f, 0.0f, 1.0f, alpha_);
+			Matrix44f modeltrsf = Matrix44f::Rotate(1.0f, 0.0f, 0.0f, 0.5f * kGSPI) * Matrix44f::Rotate(0.0f, 0.0f, 1.0f, alpha_);
 			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
 
 			for (size_t i = 0; i != outputs_.size(); i++) {
