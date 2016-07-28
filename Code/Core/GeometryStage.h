@@ -29,7 +29,7 @@ public:
 
 		//projection transform
 		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
-			i->pos = call.projtrsf.transform(i->pos);
+			i->pos = call.proj_trsf.transform(i->pos);
 		}
 
 		//screen mapping

@@ -73,13 +73,13 @@ namespace example_cube {
 			nspace_ = 0;
 
 			GenerateCube(output_.prims);
-			output_.projtrsf = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
+			output_.proj_trsf = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
 			output_.uniforms.texture = texlist_[itex_];//纹理
 			output_.uniforms.ambient.set(0.4f, 0.4f, 0.4f);//环境光
 			output_.uniforms.diffuse.set(0.587609f, 0.587609f, 0.587609f);//漫反射
 			output_.uniforms.specular.set(0.071744f, 0.071744f, 0.071744f);//镜面反射
 
-			alpha_ = 1.0f;
+			alpha_ = 0.0f;
 			pos_ = 3.5f;
 
 			viewer_ = viewer;
@@ -94,20 +94,21 @@ namespace example_cube {
 			else {
 				nspace_ = 0;
 			}
-			if (viewer_->testUserMessage(kUMUp)) pos_ -= 0.04f;
-			if (viewer_->testUserMessage(kUMDown)) pos_ += 0.04f;
-			if (viewer_->testUserMessage(kUMLeft)) alpha_ += 0.02f;
-			if (viewer_->testUserMessage(kUMRight)) alpha_ -= 0.02f;
+			if (viewer_->testUserMessage(kUMUp)) pos_ += 0.04f;
+			if (viewer_->testUserMessage(kUMDown)) pos_ -= 0.04f;
+			if (viewer_->testUserMessage(kUMLeft)) alpha_ -= 0.02f;
+			if (viewer_->testUserMessage(kUMRight)) alpha_ += 0.02f;
 
-			Vector3f eye(3 + pos_, 0, 0), at(0, 0, 0), up(0, 0, 1);
+			Vector3f eye(0, - 3 - pos_, 0), at(0, 0, 0), up(0, 0, 1);
 			Vector3f eye_pos = eye;
-			Vector3f light_pos(100.0f, 100.0f, -100.0f);
+			Vector3f light_pos(-100.0f, -100.0f, 100.0f);
 
-			Matrix44f modeltrsf = Matrix44f::Rotate(-1, -0.5, 1, alpha_);
+			Matrix44f modeltrsf = Matrix44f::Rotate(0.0f, 0.0f, 1.0f, alpha_);
 			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
 			
 			output_.uniforms.texture = texlist_[itex_];//纹理
-			output_.uniforms.mvtrsf = modeltrsf * viewtrsf;//模型*视图变换
+			output_.uniforms.model_trsf = modeltrsf;//模型变换
+			output_.uniforms.mv_trsf = modeltrsf * viewtrsf;//模型*视图变换
 			output_.uniforms.eye_pos = eye_pos;//相机位置
 			output_.uniforms.light_pos = light_pos;//光源位置
 

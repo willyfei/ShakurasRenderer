@@ -11,7 +11,7 @@ SHAKURAS_BEGIN;
 template<class UL, class V>
 struct DrawCall {
 	UL uniforms;
-	Matrix44f projtrsf;
+	Matrix44f proj_trsf;
 	PrimitiveList<V> prims;
 };
 

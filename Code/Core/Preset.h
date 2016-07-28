@@ -21,7 +21,8 @@ namespace preset_std {
 		Vector3f ambient;
 		Vector3f diffuse;
 		Vector3f specular;
-		Matrix44f mvtrsf;
+		Matrix44f model_trsf;
+		Matrix44f mv_trsf;
 		Vector3f light_pos;
 		Vector3f eye_pos;
 	};
@@ -88,13 +89,13 @@ namespace preset_std {
 		void process(const UniformList& u, Vertex& v) {
 			v.varyings.uv = v.attribs.uv;
 
-			v.varyings.normal = u.mvtrsf.transform(v.attribs.normal.xyz0()).xyz();
+			v.varyings.normal = u.model_trsf.transform(v.attribs.normal.xyz0()).xyz();
 
 			v.varyings.light_dir = u.light_pos - v.pos.xyz();
 
 			v.varyings.eye_dir = u.eye_pos - v.pos.xyz();
 
-			v.pos = u.mvtrsf.transform(v.pos);
+			v.pos = u.mv_trsf.transform(v.pos);
 		}
 	};
 

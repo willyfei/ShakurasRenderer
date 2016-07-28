@@ -42,7 +42,7 @@ namespace example_sponza {
 					cmd.prims.tris_.push_back({ mesh.tris[ii], mesh.tris[ii + 1], mesh.tris[ii + 2] });
 				}
 
-				cmd.projtrsf = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
+				cmd.proj_trsf = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
 				cmd.uniforms.texture = mesh.mtl.tex;
 				cmd.uniforms.ambient = mesh.mtl.ambient;
 				cmd.uniforms.diffuse = mesh.mtl.diffuse;
@@ -66,7 +66,7 @@ namespace example_sponza {
 
 			for (size_t i = 0; i != outputs_.size(); i++) {
 				preset_std::DrawCall& cmd = outputs_[i];
-				cmd.uniforms.mvtrsf = viewtrsf;//模型*视图变换
+				cmd.uniforms.mv_trsf = viewtrsf;//模型*视图变换
 				cmd.uniforms.eye_pos = eye_pos;//相机位置
 				cmd.uniforms.light_pos = light_pos;//光源位置
 			}
