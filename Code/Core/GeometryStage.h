@@ -34,28 +34,26 @@ public:
 			i->pos = call.proj_trsf.transform(i->pos);
 		}
 
-		//screen mapping
-		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
-			screenMapping(*i);
-		}
-
 		//cliping
 		Clipper<V> clipper(call.prims);
 		clipper.process();
+
+		//screen mapping
+		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
+			screenMapping(i->pos);
+		}
 	}
 
 private:
-	void screenMapping(V& v) {
-		float w = v.pos.w;
+	void screenMapping(Vector4f& v) {
+		float w = v.w;
 		float rhw = 1.0f / w;
 
-		V r;
-		r.pos.x = (v.pos.x * rhw + 1.0f) * (width_ - 1) * 0.5f;
-		r.pos.y = (1.0f - v.pos.y * rhw) * (height_ - 1) * 0.5f;
-		r.pos.z = v.pos.z * rhw;
-		r.pos.w = w;
-		r.varyings = v.varyings *rhw;
-		r.rhw = rhw;
+		Vector4f r;
+		r.x = (v.x * rhw + 1.0f) * width_ * 0.5f;
+		r.y = (1.0f - v.y * rhw) * height_ * 0.5f;
+		r.z = v.z * rhw;
+		r.w = w;
 
 		v = r;
 	}

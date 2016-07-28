@@ -321,7 +321,11 @@ public:
 	}
 
 private:
-	void drawTriangle(const UL& u, const V& v0, const V& v1, const V& v2) {
+	void drawTriangle(const UL& u, V v0, V v1, V v2) {
+		v0.rhwInitialize();
+		v1.rhwInitialize();
+		v2.rhwInitialize();
+
 		LerpDerivative<V, F> lerpd;
 		lerpd.setTriangle(v0, v1, v2);
 

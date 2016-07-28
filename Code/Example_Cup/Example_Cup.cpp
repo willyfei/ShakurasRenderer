@@ -65,7 +65,7 @@ namespace example_cup {
 			Vector3f eye_pos = eye;
 			Vector3f light_pos(-100.0f, -100.0f, 100.0f);
 
-			Matrix44f modeltrsf = Matrix44f::Translate(0.0f, -0.75f, 0.0f) * Matrix44f::Rotate(1.0f, 0.0f, 0.0f, 0.5f * kGSPI) * Matrix44f::Rotate(0.0f, 0.0f, 1.0f, alpha_);
+			Matrix44f modeltrsf = Matrix44f::Translate(0.0f, -0.75f, 0.0f) *Matrix44f::Rotate(1.0f, 0.0f, 0.0f, 0.5f * kGSPI) * Matrix44f::Rotate(0.0f, 0.0f, 1.0f, alpha_);
 			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
 
 			for (size_t i = 0; i != outputs_.size(); i++) {

@@ -23,13 +23,13 @@ inline int CheckCVV(const Vector4f& v) {
 inline bool IsCounterClockwise(const Vector4f& pos0, const Vector4f& pos1, const Vector4f& pos2) {
 	Vector2f pv_2d[3] =
 	{
-		{ pos0.x, pos0.y },
-		{ pos1.x, pos1.y },
-		{ pos2.x, pos2.y }
+		{ pos0.x / pos0.w, pos0.y / pos0.w },
+		{ pos1.x / pos1.w, pos1.y / pos1.w },
+		{ pos2.x / pos2.w, pos2.y / pos2.w }
 	};
 
 	float area = CrossProduct2(pv_2d[2] - pv_2d[0], pv_2d[1] - pv_2d[0]);
-	return area > 0.0f;
+	return area >= 0.0f;
 }
 
 
@@ -119,9 +119,8 @@ private:
 		const short o2 = oris_[i2];
 		const short o3 = oris_[i3];
 		
-		//先剔除背面
-		//flip_y的情况下，逆时针表示背面
-		if (IsCounterClockwise(v1.pos, v2.pos, v3.pos)) {
+		//剔除背面
+		if (!IsCounterClockwise(v1.pos, v2.pos, v3.pos)) {
 			return;
 		}
 

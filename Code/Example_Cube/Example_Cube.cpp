@@ -99,7 +99,7 @@ namespace example_cube {
 			if (viewer_->testUserMessage(kUMLeft)) alpha_ -= 0.02f;
 			if (viewer_->testUserMessage(kUMRight)) alpha_ += 0.02f;
 
-			Vector3f eye(0, - 3 - pos_, 0), at(0, 0, 0), up(0, 0, 1);
+			Vector3f eye(0, - 3 - pos_, 2.0f), at(0, 0, 0), up(0, 0, 1);
 			Vector3f eye_pos = eye;
 			Vector3f light_pos(-100.0f, -100.0f, 100.0f);
 
