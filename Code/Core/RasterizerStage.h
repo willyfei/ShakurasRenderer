@@ -44,8 +44,8 @@ public:
 
 class Scanline {
 public:
-	void initialize(Trapezoid& trap, int yy) {
-		draw = trap.interpY((float)yy + 0.5f);
+	void initialize(Trapezoid& trap, int yy, int ymax) {
+		draw = trap.interpY((float)yy + 0.5f) && yy < ymax;
 
 		float width = trap.right.v.x - trap.left.v.x;
 		x = (int)(trap.left.v.x + 0.5f);
@@ -75,9 +75,9 @@ public:
 
 class Scanline22 {
 public:
-	void initialize(Trapezoid& trap, int yy) {
-		s0.initialize(trap, yy);
-		s1.initialize(trap, yy + 1);
+	void initialize(Trapezoid& trap, int yy, int ymax) {
+		s0.initialize(trap, yy, ymax);
+		s1.initialize(trap, yy + 1, ymax);
 
 		int xb = xbegin();
 		s0.moveX(xb);
@@ -319,17 +319,11 @@ public:
 
 private:
 	void drawTriangle(const UL& u, const V& v0, const V& v1, const V& v2) {
-		V t0 = v0, t1 = v1, t2 = v2;
-
-		t0.rhwInitialize();
-		t1.rhwInitialize();
-		t2.rhwInitialize();
-
 		LerpDerivative<V, F> lerpd;
-		lerpd.setTriangle(t0, t1, t2);
+		lerpd.setTriangle(v0, v1, v2);
 
 		std::vector<Trapezoid> traps;
-		SpliteTrapezoid(t0, t1, t2, traps);
+		SpliteTrapezoid(v0, v1, v2, traps);
 
 		for (auto i = traps.begin(); i != traps.end(); i++) {
 			drawTrapezoid(u, lerpd, *i);
@@ -387,7 +381,7 @@ private:
 		bottom = (int)(trap.bottom + 0.5f);
 		for (j = top; j < bottom; j += 2) {
 			if (j >= 0 && j < height_) {
-				scanline.initialize(trap, j);
+				scanline.initialize(trap, j, height_);
 				drawScanline(u, lerpd, scanline);
 			}
 			if (j >= height_) {

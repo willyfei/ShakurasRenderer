@@ -7,18 +7,6 @@
 SHAKURAS_BEGIN;
 
 
-inline void ScreenMapping(Vector4f& v, float width, float height) {
-	float w = v.w;
-	Vector4f r;
-	float rhw = 1.0f / v.w;
-	r.x = (v.x * rhw + 1.0f) * width * 0.5f;
-	r.y = (1.0f - v.y * rhw) * height * 0.5f;
-	r.z = v.z * rhw;
-	r.w = w;
-	v = r;
-}
-
-
 template<class UL, class V, class VS>
 class GeometryStage {
 public:
@@ -39,21 +27,37 @@ public:
 
 		//geometry sharding£¬Î´ÊµÏÖ
 
-
 		//projection transform
 		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
 			i->pos = call.projtrsf.transform(i->pos);
 		}
 
+		//screen mapping
+		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
+			screenMapping(*i);
+		}
+
 		//cliping
 		Clipper<V> clipper(call.prims);
 		clipper.process();
-
-		//screen mapping
-		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
-			ScreenMapping(i->pos, width_, height_);
-		}
 	}
+
+private:
+	void screenMapping(V& v) {
+		float w = v.pos.w;
+		float rhw = 1.0f / w;
+
+		V r;
+		r.pos.x = (v.pos.x * rhw + 1.0f) * (width_ - 1) * 0.5f;
+		r.pos.y = (1.0f - v.pos.y * rhw) * (height_ - 1) * 0.5f;
+		r.pos.z = v.pos.z * rhw;
+		r.pos.w = w;
+		r.varyings = v.varyings *rhw;
+		r.rhw = rhw;
+
+		v = r;
+	}
+
 
 private:
 	float width_, height_;

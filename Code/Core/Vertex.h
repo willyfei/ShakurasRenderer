@@ -14,12 +14,6 @@ public:
 		: pos(ppos) {}
 
 public:
-	void rhwInitialize() {
-		rhw = 1.0f / pos.w;
-		varyings = varyings * rhw;
-	}
-
-public:
 	Vector4f pos;
 	float rhw;
 	A attribs;

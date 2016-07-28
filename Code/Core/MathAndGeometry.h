@@ -101,20 +101,20 @@ public:
 
 template<class S>
 inline Vector4<S> operator+(const Vector4<S>& v1, const Vector4<S>& v2) {
-	return Vector4<S>(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, 0.0f);
+	return Vector4<S>(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w);
 }
 template<class S>
 inline Vector4<S> operator-(const Vector4<S>& v1, const Vector4<S>& v2) {
-	return Vector4<S>(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, 0.0f);
+	return Vector4<S>(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w);
 }
 template<class S>
 inline Vector4<S> operator*(const Vector4<S>& v1, S t) {
-	return Vector4<S>(v1.x * t, v1.y * t, v1.z * t, 0.0f);
+	return Vector4<S>(v1.x * t, v1.y * t, v1.z * t, v1.w * t);
 }
 template<class S>
 inline Vector4<S> operator/(const Vector4<S>& v1, S d) {
 	S t = 1.0f / d;
-	return Vector4<S>(v1.x * t, v1.y * t, v1.z * t, 0.0f);
+	return Vector4<S>(v1.x * t, v1.y * t, v1.z * t, v1.w * t);
 }
 
 
@@ -165,7 +165,7 @@ float CrossProduct2(const V2& v1, const V2& v2) {
 }
 
 template<class V3>
-inline V3 CrossProduct(const V3& v1, const V3& v2) {
+inline V3 CrossProduct3(const V3& v1, const V3& v2) {
 	V3 v3;
 	v3.x = v1.y * v2.z - v1.z * v2.y;
 	v3.y = v1.z * v2.x - v1.x * v2.z;
@@ -259,9 +259,9 @@ public:
 		Vector3<S> xaxis, yaxis, zaxis;
 		zaxis = at - eye;
 		Normalize3(zaxis);
-		xaxis = CrossProduct(up, zaxis);
+		xaxis = CrossProduct3(up, zaxis);
 		Normalize3(xaxis);
-		yaxis = CrossProduct(zaxis, xaxis);
+		yaxis = CrossProduct3(zaxis, xaxis);
 
 		Matrix44<S> mat;
 		mat.m[0][0] = xaxis.x;

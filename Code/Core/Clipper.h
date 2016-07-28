@@ -20,27 +20,30 @@ inline int CheckCVV(const Vector4f& v) {
 }
 
 
-inline bool IsFront(const Vector4f& pos0, const Vector4f& pos1, const Vector4f& pos2) {
+inline bool IsClockwise(const Vector4f& pos0, const Vector4f& pos1, const Vector4f& pos2) {
 	Vector2f pv_2d[3] =
 	{
-		Vector2f(pos0.x, pos0.y) / pos0.w,
-		Vector2f(pos1.x, pos1.y) / pos1.w,
-		Vector2f(pos2.x, pos2.y) / pos2.w,
+		{ pos0.x, pos0.y },
+		{ pos1.x, pos1.y },
+		{ pos2.x, pos2.y }
 	};
 
-	float const area = CrossProduct2(pv_2d[2] - pv_2d[0], pv_2d[1] - pv_2d[0]);
+	float area = CrossProduct2(pv_2d[2] - pv_2d[0], pv_2d[1] - pv_2d[0]);
 	return area > 0.0f;
 }
 
 
 template<class V>
 inline V SignedDistanceLerp(const V& v1, const V& v2, float d1, float d2) {
+	V r;
 	if (d1 < d2) {
-		return v2 + (v1 - v2) * d2 / (d2 - d1);
+		r = v2 + (v1 - v2) * d2 / (d2 - d1);
 	}
 	else {
-		return v1 + (v2 - v1) * d1 / (d1 - d2);
+		r = v1 + (v2 - v1) * d1 / (d1 - d2);
 	}
+
+	return r;
 }
 
 
@@ -117,7 +120,7 @@ private:
 		const short o3 = oris_[i3];
 		
 		//ÏÈÌÞ³ý±³Ãæ
-		if (!IsFront(v1.pos, v2.pos, v3.pos)) {
+		if (IsClockwise(v1.pos, v2.pos, v3.pos)) {
 			return;
 		}
 

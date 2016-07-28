@@ -32,7 +32,7 @@ namespace example_cube {
 			p3.attribs.uv.set(1, 1);
 			p4.attribs.uv.set(1, 0);
 
-			Vector4f norm = CrossProduct(p3.pos - p2.pos, p1.pos - p2.pos);
+			Vector4f norm = CrossProduct3(p3.pos - p2.pos, p1.pos - p2.pos);
 			norm.w = 0.0f;
 			p1.attribs.normal = norm;
 			p2.attribs.normal = norm;
