@@ -26,6 +26,9 @@ public:
 		frame_count_++;
 		auto du = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - time_fps_);
 		if (du.count() > report_span_) {
+			//Span
+			std::cout << std::endl;
+
 			//FPS
 			float fps = (1.0f * report_span_ * frame_count_) / du.count();
 			std::cout << "FPS : " << fps << std::endl;
