@@ -27,9 +27,11 @@ namespace example_sponza {
 		void process(const UniformList& u, preset_std::Vertex& v) {
 			v.varyings.normal = v.attribs.normal;
 
-			v.pos = u.mvp_trsf.transform(v.pos);
+			v.varyings.eye_dir = u.eye_pos - v.pos.xyz();
 
 			v.varyings.light_dir = u.light_pos - v.pos.xyz();
+
+			v.pos = u.mvp_trsf.transform(v.pos);
 
 			v.varyings.uv = v.attribs.uv;
 		}
@@ -40,8 +42,10 @@ namespace example_sponza {
 	public:
 		void process(const UniformList& u, Sampler& sampler, preset_std::Fragment& f) {
 			Vector3f norm = f.varyings.normal;
+			Vector3f eye_dir = f.varyings.eye_dir;
 			Vector3f light_dir = f.varyings.light_dir;
 			Normalize3(norm);
+			Normalize3(eye_dir);
 			Normalize3(light_dir);
 
 			Vector2f uv = f.varyings.uv;
@@ -114,10 +118,10 @@ namespace example_sponza {
 			if (viewer_->testUserMessage(kUMUp)) step_++;
 			if (viewer_->testUserMessage(kUMDown)) step_--;
 
-			float xpos = -36.0f + fmodf(0.625f * step_, 66.0f);
+			float xpos = -30.0f + fmodf(0.625f * step_, 66.0f);
 			float ypos = 10.0f + fmodf(0.5f * step_, 40.0f);
 
-			Vector3f eye(xpos, 8.0f, 0.0f), at(40.0f, 15.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
+			Vector3f eye(xpos, 12.5f, 0.0f), at(40.0f, 15.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
 			Vector3f eye_pos = eye;
 			Vector3f light_pos(0.0f, ypos, 0.0f);
 
@@ -159,6 +163,7 @@ int main()
 
 	example_sponza::Pipeline pipeline;
 	pipeline.initialize(viewer);
+	pipeline.geomstage_.refuseBack(false);
 
 	while (!viewer->testUserMessage(kUMEsc) && !viewer->testUserMessage(kUMClose)) {
 		viewer->dispatch();

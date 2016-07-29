@@ -1,8 +1,8 @@
 #pragma once
 #include "Utility.h"
 #include <chrono>
-#include <map>
 #include <iostream>
+#include <unordered_map>
 
 
 SHAKURAS_BEGIN;
@@ -62,7 +62,7 @@ private:
 	std::chrono::time_point<std::chrono::steady_clock> time_pre_;
 	uint32_t report_span_;
 	size_t frame_count_;
-	std::map<std::string, int> counters_;
+	std::unordered_map<std::string, int> counters_;
 };
 
 

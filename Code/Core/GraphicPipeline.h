@@ -29,7 +29,7 @@ public:
 		}
 	}
 
-protected:
+public:
 	Profiler profiler_;
 	AS appstage_;
 	GS geomstage_;

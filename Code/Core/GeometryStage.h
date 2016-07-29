@@ -14,6 +14,7 @@ public:
 		width_ = w;
 		height_ = h;
 		profiler_ = &profiler;
+		refuse_back_ = true;
 	}
 
 	void process(DrawCall<UL, V>& call) {
@@ -35,12 +36,16 @@ public:
 		}
 
 		//cliping
-		Clipper<V>(call.prims, *profiler_).process();
+		Clipper<V>(call.prims, *profiler_, refuse_back_).process();
 
 		//screen mapping
 		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
 			screenMapping(i->pos);
 		}
+	}
+
+	void refuseBack(bool rb) {
+		refuse_back_ = rb;
 	}
 
 private:
@@ -60,6 +65,7 @@ private:
 
 private:
 	float width_, height_;
+	bool refuse_back_;
 	Profiler* profiler_;
 };
 

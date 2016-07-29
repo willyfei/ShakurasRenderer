@@ -39,10 +39,10 @@ inline V SignedDistanceLerp(const V& v1, const V& v2, float d1, float d2) {
 	V r;
 
 	if (d1 < d2) {
-		r = v2 + (v1 - v2) * d2 / (d2 - d1);
+		r = v2 + (v1 - v2) * (d2 / (d2 - d1));
 	}
 	else {
-		r = v1 + (v2 - v1) * d1 / (d1 - d2);
+		r = v1 + (v2 - v1) * (d1 / (d1 - d2));
 	}
 
 	return r;
@@ -52,9 +52,10 @@ inline V SignedDistanceLerp(const V& v1, const V& v2, float d1, float d2) {
 template<class V>
 class Clipper {
 public:
-	Clipper(PrimitiveList<V>& prims, Profiler& profiler) {
+	Clipper(PrimitiveList<V>& prims, Profiler& profiler, bool refuse_back) {
 		iprims_ = &prims;
 		profiler_ = &profiler;
+		refuse_back_ = refuse_back;
 	}
 
 public:
@@ -123,7 +124,7 @@ private:
 		const short o3 = oris_[i3];
 		
 		//剔除背面
-		if (!IsCounterClockwise(v1.pos, v2.pos, v3.pos)) {
+		if (refuse_back_ && !IsCounterClockwise(v1.pos, v2.pos, v3.pos)) {
 			return;
 		}
 
@@ -157,9 +158,8 @@ private:
 		if (max_count == 3) {
 			//S-1.1
 			if (counter[kOK] == 3) {
-				return;
 				profiler_->count("S-1.1");
-				oprims_.addTriangle(v1, v2, v3);
+				outputTriangle(v1, v2, v3);
 			}
 
 			//S-1.2
@@ -168,7 +168,6 @@ private:
 		else if (max_count == 2) {
 			//S-2.1
 			if (counter[kOK] == 1) {
-				return;
 				profiler_->count("S-2.1");
 
 				//将kOK的顶点旋转到首部
@@ -185,7 +184,7 @@ private:
 				V lerp_v3 = SignedDistanceLerp(*tri_pvert[0], *tri_pvert[2], (*pds)[tri_index[0]], (*pds)[tri_index[2]]);
 
 				//输出
-				oprims_.addTriangle(*tri_pvert[0], lerp_v2, lerp_v3);
+				outputTriangle(*tri_pvert[0], lerp_v2, lerp_v3);
 			}
 			//S-2.2
 			else if (counter[kOK] == 2) {
@@ -208,14 +207,11 @@ private:
 				//三角形为 [lerp_v2, v2, v3] [lerp_v2, v3, lerp_v3]
 
 				//输出
-				oprims_.addTriangle(lerp_v2, *tri_pvert[1], *tri_pvert[2]);
-				oprims_.addTriangle(lerp_v2, *tri_pvert[2], lerp_v3);
-				//oprims_.addTriangle(lerp_v2, *tri_pvert[2], *tri_pvert[1]);
-				//oprims_.addTriangle(lerp_v2, lerp_v3, *tri_pvert[2]);
+				outputTriangle(lerp_v2, *tri_pvert[1], *tri_pvert[2]);
+				outputTriangle(lerp_v2, *tri_pvert[2], lerp_v3);
 			}
 			//S-2.3
 			else if (counter[kOK] == 0) {
-				return;
 				profiler_->count("S-2.3");
 
 				//将自己位于一个区域的顶点旋转到首部
@@ -239,12 +235,11 @@ private:
 				//三角形为 [lerp_v2_one, lerp_v2_two, lerp_v3_two] [lerp_v2_one, lerp_v3_two, lerp_v3_one]
 
 				//输出
-				oprims_.addTriangle(lerp_v2_one, lerp_v2_two, lerp_v3_two);
-				oprims_.addTriangle(lerp_v2_one, lerp_v3_two, lerp_v3_one);
+				outputTriangle(lerp_v2_one, lerp_v2_two, lerp_v3_two);
+				outputTriangle(lerp_v2_one, lerp_v3_two, lerp_v3_one);
 			}
 		}
 		else if (max_count == 1) {
-			return;
 			//S - 3.1
 			profiler_->count("S-3.1");
 
@@ -271,10 +266,14 @@ private:
 			//三角形为 [v1, lerp_v01, lerp_v12_1] [v1, lerp_v12_1, lerp_v12_2] [v1, lerp_v12_2, lerp_v02]
 
 			//输出
-			oprims_.addTriangle(v1, lerp_v01, lerp_v12_1);
-			oprims_.addTriangle(v1, lerp_v12_1, lerp_v12_2);
-			oprims_.addTriangle(v1, lerp_v12_2, lerp_v02);
+			outputTriangle(v1, lerp_v01, lerp_v12_1);
+			outputTriangle(v1, lerp_v12_1, lerp_v12_2);
+			outputTriangle(v1, lerp_v12_2, lerp_v02);
 		}
+	}
+
+	inline void outputTriangle(const V& v1, const V& v2, const V& v3) {
+		oprims_.addTriangle(v1, v2, v3);
 	}
 
 private:
@@ -284,6 +283,7 @@ private:
 	std::vector<float> fards_;
 	PrimitiveList<V> oprims_;
 	Profiler* profiler_;
+	bool refuse_back_;
 };
 
 
