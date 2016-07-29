@@ -1,6 +1,7 @@
 #pragma once
 #include "Utility.h"
 #include <chrono>
+#include <map>
 #include <iostream>
 
 
@@ -17,11 +18,7 @@ public:
 
 public:
 	void begin() {
-		vert_sharder_excuted_ = 0;
-		frag_count_ = 0;
-		frag_sharder_excuted_ = 0;
-		geo_triangle_count_ = 0;
-		ras_triangle_count_ = 0;
+		counters_.clear();
 	}
 
 	void end() {
@@ -38,38 +35,34 @@ public:
 			std::cout << "FPS : " << fps << std::endl;
 			frame_count_ = 0;
 
-			//Vert-Sharder
-			std::cout << "Vert-Sharder Excuted : " << vert_sharder_excuted_ << std::endl;
-
-			//Frag
-			std::cout << "Frag Count : " << frag_count_ << std::endl;
-
-			//Frag-Sharder
-			std::cout << "Frag-Sharder Excuted : " << frag_sharder_excuted_ << std::endl;
-
-			//Geo-Triangle Count
-			std::cout << "Geo-Triangle Count : " << geo_triangle_count_ << std::endl;
-
-			//Ras-Triangle Count
-			std::cout << "Ras-Triangle Count : " << ras_triangle_count_ << std::endl;
-
 			//Duration
 			std::cout << "Duration In Milliseconds : " << du.count() << std::endl;
+
+			//Counters
+			for (auto i = counters_.begin(); i != counters_.end(); i++) {
+				std::cout << i->first << " : " << i->second << std::endl;
+			}
 
 			//Endl
 			std::cout << std::endl;
 		}
 	}
 
-public:
+	void count(const std::string& counter_name, int incr = 1) {
+		auto pos = counters_.find(counter_name);
+		if (pos != counters_.end()) {
+			pos->second += incr;
+		}
+		else {
+			counters_[counter_name] = incr;
+		}
+	}
+
+private:
 	std::chrono::time_point<std::chrono::steady_clock> time_pre_;
 	uint32_t report_span_;
 	size_t frame_count_;
-	size_t vert_sharder_excuted_;
-	size_t frag_count_;
-	size_t frag_sharder_excuted_;
-	size_t geo_triangle_count_;
-	size_t ras_triangle_count_;
+	std::map<std::string, int> counters_;
 };
 
 

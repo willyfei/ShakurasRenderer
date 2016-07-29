@@ -17,14 +17,14 @@ public:
 	}
 
 	void process(DrawCall<UL, V>& call) {
-		profiler_->geo_triangle_count_ += call.prims.tris_.size();
+		profiler_->count("Geo-Triangle Count", (int)call.prims.tris_.size());
 
 		VS vertshader;
 
 		//vertex sharding
 		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
 			vertshader.process(call.uniforms, *i);
-			profiler_->vert_sharder_excuted_++;
+			profiler_->count("Vert-Sharder Excuted", 1);
 		}
 
 		//geometry sharding£¨Œ¥ µœ÷
@@ -35,8 +35,7 @@ public:
 		}
 
 		//cliping
-		Clipper<V> clipper(call.prims);
-		clipper.process();
+		Clipper<V>(call.prims, *profiler_).process();
 
 		//screen mapping
 		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {

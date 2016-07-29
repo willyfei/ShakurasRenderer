@@ -226,7 +226,7 @@ public:
 		for (int i = 0; i != 4; i++) {
 			if (tile[i].draw) {
 				fragshader_.process(u, sampler_, tile[i]);
-				profiler->frag_sharder_excuted_++;
+				profiler->count("Frag-Sharder Excuted", 1);
 			}
 		}
 	}
@@ -290,7 +290,7 @@ public:
 	}
 
 	void process(DrawCall<UL, V>& call) {
-		profiler_->ras_triangle_count_ += call.prims.tris_.size();
+		profiler_->count("Ras-Triangle Count", (int)call.prims.tris_.size());
 		
 		//triangle setup, Ê¡ÂÔ
 
@@ -347,35 +347,33 @@ private:
 		TileShader<UL, F, FS> tileshader;
 
 		for (; w > 0; x += 2, w -= 2) {
-			if (x >= 0 && x < width_) {
-				// 2, 3
-				// 0, 1
-				std::array<F, 4> tile;
-				tile[0] = lerpd.lerp(x, s22.s0.y, s22.s0.v.z);
-				tile[0].draw = s22.draw0(x) && isPixelCoord(x, s22.s0.y);
-				tile[2] = lerpd.lerp(x, s22.s1.y, s22.s1.v.z);
-				tile[2].draw = s22.draw1(x) && isPixelCoord(x, s22.s1.y);
+			// 2, 3
+			// 0, 1
+			std::array<F, 4> tile;
+			tile[0] = lerpd.lerp(x, s22.s0.y, s22.s0.v.z);
+			tile[0].draw = s22.draw0(x) && isPixelCoord(x, s22.s0.y);
+			tile[2] = lerpd.lerp(x, s22.s1.y, s22.s1.v.z);
+			tile[2].draw = s22.draw1(x) && isPixelCoord(x, s22.s1.y);
 
-				s22.next();
+			s22.next();
 
-				tile[1] = lerpd.lerp(x + 1, s22.s0.y, s22.s0.v.z);
-				tile[1].draw = s22.draw0(x + 1) && isPixelCoord(x + 1, s22.s0.y);
-				tile[3] = lerpd.lerp(x + 1, s22.s1.y, s22.s1.v.z);
-				tile[3].draw = s22.draw1(x + 1) && isPixelCoord(x + 1, s22.s1.y);
+			tile[1] = lerpd.lerp(x + 1, s22.s0.y, s22.s0.v.z);
+			tile[1].draw = s22.draw0(x + 1) && isPixelCoord(x + 1, s22.s0.y);
+			tile[3] = lerpd.lerp(x + 1, s22.s1.y, s22.s1.v.z);
+			tile[3].draw = s22.draw1(x + 1) && isPixelCoord(x + 1, s22.s1.y);
 
-				s22.next();
+			s22.next();
 
-				//fragment shader
-				profiler_->frag_count_ += 4;
-				tileshader.process(u, tile, profiler_);
+			//fragment shader
+			profiler_->count("Frag Count", 4);
+			tileshader.process(u, tile, profiler_);
 
-				//merging
-				for (size_t i = 0; i != 4; i++) {
-					const F& frag = tile[i];
-					if (frag.draw && frag.z > zbuffer_[frag.y][frag.x]) {
-						zbuffer_[frag.y][frag.x] = frag.z;
-						framebuffer_[frag.y][frag.x] = IRgba(frag.c);
-					}
+			//merging
+			for (size_t i = 0; i != 4; i++) {
+				const F& frag = tile[i];
+				if (frag.draw && frag.z > zbuffer_[frag.y][frag.x]) {
+					zbuffer_[frag.y][frag.x] = frag.z;
+					framebuffer_[frag.y][frag.x] = IRgba(frag.c);
 				}
 			}
 

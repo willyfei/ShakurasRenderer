@@ -67,12 +67,8 @@ public:
 		return Vector2<S>(x, y);
 	}
 
-	Vector4<S> xyz0() const {
-		return Vector4<S>(x, y, z, 0.0f);
-	}
-
-	Vector4<S> xyz1() const {
-		return Vector4<S>(x, y, z, 1.0f);
+	Vector4<S> xyzw(S w) const {
+		return Vector4<S>(x, y, z, w);
 	}
 };
 

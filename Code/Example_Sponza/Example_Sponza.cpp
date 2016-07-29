@@ -12,6 +12,61 @@ using namespace shakuras;
 
 namespace example_sponza {
 
+	struct UniformList {
+		MipmapPtr texture;
+		Vector3f ambient;
+		Vector3f diffuse;
+		Vector3f specular;
+		Matrix44f mvp_trsf;
+		Vector3f light_pos;
+		Vector3f eye_pos;
+	};
+
+	class VertexShader {
+	public:
+		void process(const UniformList& u, preset_std::Vertex& v) {
+			v.varyings.normal = v.attribs.normal;
+
+			v.pos = u.mvp_trsf.transform(v.pos);
+
+			v.varyings.light_dir = u.light_pos - v.pos.xyz();
+
+			v.varyings.uv = v.attribs.uv;
+		}
+	};
+
+
+	class FragmentShader {
+	public:
+		void process(const UniformList& u, Sampler& sampler, preset_std::Fragment& f) {
+			Vector3f norm = f.varyings.normal;
+			Vector3f light_dir = f.varyings.light_dir;
+			Normalize3(norm);
+			Normalize3(light_dir);
+
+			Vector2f uv = f.varyings.uv;
+			Vector3f diff_color(1.0f, 1.0f, 1.0f);//默认白色
+			if (u.texture) {
+				diff_color = sampler.surfaceBilinear(uv.x, uv.y, u.texture->level(0), RepeatAddr);
+			}
+
+			float illum_diffuse = Clamp(DotProduct3(light_dir, norm), 0.0f, 1.0f);
+			Vector3f c = diff_color * illum_diffuse;
+
+			Clamp(c.x, 0.0f, 1.0f);
+			Clamp(c.y, 0.0f, 1.0f);
+			Clamp(c.z, 0.0f, 1.0f);
+
+			f.c.set(c.x, c.y, c.z, 1.0f);
+		}
+	};
+
+	typedef shakuras::DrawCall<UniformList, preset_std::Vertex> DrawCall;
+
+	typedef shakuras::GeometryStage<UniformList, preset_std::Vertex, VertexShader> GeomStage;
+
+	typedef shakuras::RasterizerStage<UniformList, preset_std::Vertex, preset_std::Fragment, FragmentShader> RasStage;
+
 	class AppStage {
 	public:
 		void initialize(WinViewerPtr viewer) {
@@ -26,7 +81,7 @@ namespace example_sponza {
 
 			for (size_t i = 0; i != meshs.size(); i++) {
 				const ObjMesh& mesh = meshs[i];
-				preset_std::DrawCall& cmd = outputs_[i];
+				DrawCall& cmd = outputs_[i];
 
 				cmd.prims.verts_.resize(mesh.verts.size());
 				for (size_t ii = 0; ii != mesh.verts.size(); ii++) {
@@ -42,7 +97,8 @@ namespace example_sponza {
 					cmd.prims.tris_.push_back({ mesh.tris[ii], mesh.tris[ii + 1], mesh.tris[ii + 2] });
 				}
 
-				cmd.proj_trsf = Matrix44f::Perspective(kGSPI * 0.5f, w / h, 1.0f, 1000.0f);//投影变换
+				projtrsf_ = Matrix44f::Perspective(kGSPI * 0.5f, w / h, 0.1f, 1000.0f);//投影变换
+				cmd.proj_trsf.reset();
 				cmd.uniforms.texture = mesh.mtl.tex;
 				cmd.uniforms.ambient = mesh.mtl.ambient;
 				cmd.uniforms.diffuse = mesh.mtl.diffuse;
@@ -54,25 +110,24 @@ namespace example_sponza {
 			viewer_ = viewer;
 		}
 
-		void process(std::vector<preset_std::DrawCall>& cmds) {
+		void process(std::vector<DrawCall>& cmds) {
 			if (viewer_->testUserMessage(kUMUp)) step_++;
 			if (viewer_->testUserMessage(kUMDown)) step_--;
 
-			float xpos = -36.0f + fmodf(2.5f * step_, 66.0f);
-			float ypos = 10.0f + fmodf(2.0f * step_, 40.0f);
+			float xpos = -36.0f + fmodf(0.625f * step_, 66.0f);
+			float ypos = 10.0f + fmodf(0.5f * step_, 40.0f);
 
 			Vector3f eye(xpos, 8.0f, 0.0f), at(40.0f, 15.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
 			Vector3f eye_pos = eye;
 			Vector3f light_pos(0.0f, ypos, 0.0f);
 
-			Matrix44f modeltrsf = Matrix44f::Translate(-0.5f, 0, -0.5f);
+			Matrix44f modeltrsf = Matrix44f::Translate(-0.5f, 0.0f, -0.5f);
 			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
 
 			for (size_t i = 0; i != outputs_.size(); i++) {
-				preset_std::DrawCall& cmd = outputs_[i];
+				DrawCall& cmd = outputs_[i];
 
-				cmd.uniforms.model_trsf = modeltrsf;
-				cmd.uniforms.mv_trsf = modeltrsf * viewtrsf;//模型*视图变换
+				cmd.uniforms.mvp_trsf = modeltrsf * viewtrsf * projtrsf_;//模型*视图*投影
 				cmd.uniforms.eye_pos = eye_pos;//相机位置
 				cmd.uniforms.light_pos = light_pos;//光源位置
 			}
@@ -82,41 +137,12 @@ namespace example_sponza {
 
 	private:
 		WinViewerPtr viewer_;
-		std::vector<preset_std::DrawCall> outputs_;
+		Matrix44f projtrsf_;
+		std::vector<DrawCall> outputs_;
 		int step_;
-};
-
-
-	class FragmentShader {
-	public:
-		void process(const preset_std::UniformList& u, Sampler& sampler, preset_std::Fragment& f) {
-			Vector3f norm = f.varyings.normal;
-			Vector3f light_dir = f.varyings.light_dir;
-			Vector3f eye_dir = f.varyings.eye_dir;
-			Normalize3(norm);
-			Normalize3(light_dir);
-			Normalize3(eye_dir);
-
-			Vector2f uv = f.varyings.uv;
-			Vector3f diff_color(1.0f, 1.0f, 1.0f);//默认白色
-			if (u.texture) {
-				diff_color = sampler.surfaceNearest(uv.x, uv.y, u.texture->level(0), RepeatAddr);
-			}
-
-			float illum_diffuse = Clamp(DotProduct3(light_dir, norm), 0.0f, 1.0f);
-			Vector3f c = diff_color * illum_diffuse;
-
-			Clamp(c.x, 0.0f, 1.0f);
-			Clamp(c.y, 0.0f, 1.0f);
-			Clamp(c.z, 0.0f, 1.0f);
-
-			f.c.set(c.x, c.y, c.z, 1.0f);
-		}
 	};
 
-	typedef RasterizerStage<preset_std::UniformList, preset_std::Vertex, preset_std::Fragment, FragmentShader> RasStage;
-
-	typedef GraphicPipeline<preset_std::DrawCall, AppStage, preset_std::GeomStage, RasStage> Pipeline;
+	typedef shakuras::GraphicPipeline<DrawCall, AppStage, GeomStage, RasStage> Pipeline;
 }
 
 
@@ -125,7 +151,7 @@ int main()
 	const char *title = "ShakurasRenderer - "
 		"Left/Right: rotation, Up/Down: forward/backward";
 
-	int width = 1024, height = 768;
+	int width = 512, height = 512;
 	WinViewerPtr viewer = std::make_shared<WinViewer>();
 	if (!viewer || viewer->initialize(width, height, title) != 0) {
 		return -1;

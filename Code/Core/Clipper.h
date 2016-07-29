@@ -1,6 +1,7 @@
 #pragma once
 #include "MathAndGeometry.h"
 #include "Primitive.h"
+#include "Profiler.h"
 #include <algorithm>
 #include <array>
 
@@ -36,6 +37,7 @@ inline bool IsCounterClockwise(const Vector4f& pos0, const Vector4f& pos1, const
 template<class V>
 inline V SignedDistanceLerp(const V& v1, const V& v2, float d1, float d2) {
 	V r;
+
 	if (d1 < d2) {
 		r = v2 + (v1 - v2) * d2 / (d2 - d1);
 	}
@@ -50,8 +52,9 @@ inline V SignedDistanceLerp(const V& v1, const V& v2, float d1, float d2) {
 template<class V>
 class Clipper {
 public:
-	Clipper(PrimitiveList<V>& prims) {
+	Clipper(PrimitiveList<V>& prims, Profiler& profiler) {
 		iprims_ = &prims;
+		profiler_ = &profiler;
 	}
 
 public:
@@ -59,7 +62,7 @@ public:
 		oprims_.clear();
 
 		computeOrientate();
-		
+
 		for (size_t i = 0; i != iprims_->tris_.size(); i++) {
 			clipTriangle(i);
 		}
@@ -154,6 +157,8 @@ private:
 		if (max_count == 3) {
 			//S-1.1
 			if (counter[kOK] == 3) {
+				return;
+				profiler_->count("S-1.1");
 				oprims_.addTriangle(v1, v2, v3);
 			}
 
@@ -163,6 +168,9 @@ private:
 		else if (max_count == 2) {
 			//S-2.1
 			if (counter[kOK] == 1) {
+				return;
+				profiler_->count("S-2.1");
+
 				//将kOK的顶点旋转到首部
 				int rot = (o1 == kOK ? 0 : (o2 == kOK ? 1 : 2));
 				std::rotate(tri_index.begin(), tri_index.begin() + rot, tri_index.end());
@@ -181,6 +189,8 @@ private:
 			}
 			//S-2.2
 			else if (counter[kOK] == 2) {
+				profiler_->count("S-2.2");
+
 				//将非kOK的顶点旋转到首部
 				int rot = (o1 != kOK ? 0 : (o2 != kOK ? 1 : 2));
 				std::rotate(tri_index.begin(), tri_index.begin() + rot, tri_index.end());
@@ -200,9 +210,14 @@ private:
 				//输出
 				oprims_.addTriangle(lerp_v2, *tri_pvert[1], *tri_pvert[2]);
 				oprims_.addTriangle(lerp_v2, *tri_pvert[2], lerp_v3);
+				//oprims_.addTriangle(lerp_v2, *tri_pvert[2], *tri_pvert[1]);
+				//oprims_.addTriangle(lerp_v2, lerp_v3, *tri_pvert[2]);
 			}
 			//S-2.3
 			else if (counter[kOK] == 0) {
+				return;
+				profiler_->count("S-2.3");
+
 				//将自己位于一个区域的顶点旋转到首部
 				int rot = (o1 == o2 ? 2 : (o1 == o3 ? 1 : 0));
 				std::rotate(tri_index.begin(), tri_index.begin() + rot, tri_index.end());
@@ -229,7 +244,9 @@ private:
 			}
 		}
 		else if (max_count == 1) {
+			return;
 			//S - 3.1
+			profiler_->count("S-3.1");
 
 			//将kOK的顶点旋转到首部
 			int rot = (o1 == kOK ? 0 : (o2 == kOK ? 1 : 2));
@@ -265,8 +282,8 @@ private:
 	std::vector<short> oris_;
 	std::vector<float> neards_;
 	std::vector<float> fards_;
-	float near_, far_;
 	PrimitiveList<V> oprims_;
+	Profiler* profiler_;
 };
 
 

@@ -89,7 +89,7 @@ namespace preset_std {
 		void process(const UniformList& u, Vertex& v) {
 			v.varyings.uv = v.attribs.uv;
 
-			v.varyings.normal = u.model_trsf.transform(v.attribs.normal.xyz0()).xyz();
+			v.varyings.normal = u.model_trsf.transform(v.attribs.normal.xyzw(0.0f)).xyz();
 
 			v.varyings.light_dir = u.light_pos - v.pos.xyz();
 
@@ -123,11 +123,6 @@ namespace preset_std {
 			Clamp(c.x, 0.0f, 1.0f);
 			Clamp(c.y, 0.0f, 1.0f);
 			Clamp(c.z, 0.0f, 1.0f);
-
-			/*static Vector3f g_min_c(1.0f, 1.0f, 1.0f);
-			if (Length3(c) <= Length3(g_min_c)) {
-				g_min_c = c;
-			}*/
 
 			f.c.set(c.x, c.y, c.z, 1.0f);
 		}
