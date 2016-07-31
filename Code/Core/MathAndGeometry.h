@@ -368,6 +368,9 @@ inline Matrix44<S> operator*(const Matrix44<S>& m1, S t) {
 }
 
 
+typedef Vector2<int> Vector2i;
+typedef Vector3<int> Vector3i;
+typedef Vector4<int> Vector4i;
 typedef Vector2<float> Vector2f;
 typedef Vector3<float> Vector3f;
 typedef Vector4<float> Vector4f;
@@ -380,6 +383,12 @@ typedef Matrix44<float> Matrix44f;
 template<class T>
 inline T Clamp(T val, T low, T high) {
 	return val < low ? low : (high < val ? high : val);
+}
+
+
+template<class S>
+inline S Lerp(S v1, S v2, float t) {
+	return v1 + (v2 - v1) * t;
 }
 
 

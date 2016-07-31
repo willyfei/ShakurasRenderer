@@ -8,13 +8,13 @@ SHAKURAS_BEGIN;
 template<class VL>
 class Fragment {
 public:
-	Fragment() : x(0), y(0), z(1.0f), draw(true) {}
+	Fragment() : x(0), y(0), z(1.0f), weight(0.0f) {}
 
 public:
 	int x, y;
 	float z;
 	VL varyings;
-	bool draw;
+	float weight;
 	Vector4f c;
 };
 

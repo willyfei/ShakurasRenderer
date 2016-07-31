@@ -12,120 +12,19 @@
 SHAKURAS_BEGIN;
 
 
-class Edge {
-public:
-	Edge() {}
-	Edge(const Vector3f& vv, const Vector3f& vv1, const Vector3f& vv2) : v(vv), v1(vv1), v2(vv2) {}
-
-public:
-	void interpY(float y) {
-		float t = (y - v1.y) / (v2.y - v1.y);
-		v = v1 + (v2 - v1) * t;
-	}
-
-public:
-	Vector3f v, v1, v2;
+struct Edge {
+	Vector3f v1, v2;
 };
 
 
-class Trapezoid {
-public:
-	bool interpY(float y) {
-		left.interpY(y);
-		right.interpY(y);
-		return top <= y && y <= bottom;
-	}
+inline Vector3f Lerp(const Edge& edge, float y) {
+	return edge.v1 + (edge.v2 - edge.v1) * ((y - edge.v1.y) / (edge.v2.y - edge.v1.y));
+}
 
-public:
+
+struct Trapezoid {
 	float top, bottom;
 	Edge left, right;
-};
-
-
-class Scanline {
-public:
-	void initialize(Trapezoid& trap, int yy) {
-		draw = trap.interpY((float)yy + 0.5f);
-
-		float width = trap.right.v.x - trap.left.v.x;
-		x = (int)(trap.left.v.x + 0.5f);
-		w = (int)(trap.right.v.x + 0.5f) - x;
-		y = yy;
-		v = trap.left.v;
-		if (trap.left.v.x >= trap.right.v.x) {
-			w = 0;
-		}
-		step = (trap.right.v - trap.left.v) / width;
-	}
-
-	void moveX(int x1) {
-		v = v + step * (float)(x1 - x);
-	}
-
-	void next() {
-		v = v + step;
-	}
-
-public:
-	Vector3f v, step;
-	int x, y, w;
-	bool draw;
-};
-
-
-class Scanline22 {
-public:
-	void initialize(Trapezoid& trap, int yy) {
-		s0.initialize(trap, yy);
-		s1.initialize(trap, yy + 1);
-
-		int xb = xbegin();
-		s0.moveX(xb);
-		s1.moveX(xb);
-	}
-
-	inline int xbegin() const {
-		if (s0.draw && s1.draw) {
-			return (std::min)(s0.x, s1.x);
-		}
-		else if (s0.draw) {
-			return s0.x;
-		}
-		else if (s1.draw) {
-			return s1.x;
-		}
-		return -1;
-	}
-
-	inline int xwidth() const {
-		if (s0.draw && s1.draw) {
-			int s = (std::min)(s0.x, s1.x);
-			int e = (std::max)(s0.x + s0.w, s1.x + s1.w);
-			return e - s;
-		}
-		else if (s0.draw) {
-			return s0.w;
-		}
-		else if (s1.draw) {
-			return s1.w;
-		}
-		return -1;
-	}
-
-	inline bool draw0(int x) const {
-		return s0.draw && s0.x <= x && x < s0.x + s0.w;
-	}
-	inline bool draw1(int x) const {
-		return s1.draw && s1.x <= x && x < s1.x + s1.w;
-	}
-
-	void next() {
-		s0.next();
-		s1.next();
-	}
-
-public:
-	Scanline s0, s1;
 };
 
 
@@ -217,6 +116,96 @@ int SpliteTrapezoid(const V& v0, const V& v1, const V& v2, std::vector<Trapezoid
 }
 
 
+//每个像素一个片元，每个片元一个采样点
+template<class F>
+class TrapTraversalStd {
+public:
+	void initialize(const Trapezoid& trap, int width, int height, std::vector<std::array<F, 4> >& output) {
+		trap_ = &trap;
+		width_ = width;
+		height_ = height;
+		output_ = &output;
+	}
+
+	void process() {
+		for (int i = (int)trap_->top; i <= (int)(trap_->bottom); i += 2) {
+			scan(i);
+		}
+	}
+
+private:
+	struct RangeLine {
+		Vector3f left, right;
+		int xb, xe;
+		bool visible;
+	};
+
+	void scan(int y0) {
+		float yf0 = y0 + 0.5f;
+		float yf1 = y0 + 1.5f;
+
+		RangeLine rl0, rl1;
+
+		rl0.visible = (trap_->top <= yf0 && yf0 <= trap_->bottom);
+		rl1.visible = (trap_->top <= yf1 && yf1 <= trap_->bottom);
+
+		rl0.left = Lerp(trap_->left, yf0);
+		rl0.right = Lerp(trap_->right, yf0);
+		rl1.left = Lerp(trap_->left, yf1);
+		rl1.right = Lerp(trap_->right, yf1);
+
+		rl0.xb = (std::max)(0, (int)rl0.left.x);
+		rl0.xe = (std::min)(width_ - 1, (int)rl0.right.x);
+		rl1.xb = (std::max)(0, (int)rl1.left.x);
+		rl1.xe = (std::min)(width_ - 1, (int)rl1.right.x);
+
+		int xb = 0, xe = 0;
+		if (rl0.visible && rl1.visible) {
+			xb = (std::min)(rl0.xb, rl1.xb);
+			xe = (std::min)(rl0.xe, rl1.xe);
+		}
+		else if (rl0.visible) {
+			xb = rl0.xb;
+			xe = rl0.xe;
+		}
+		else if (rl1.visible) {
+			xb = rl1.xb;
+			xe = rl1.xe;
+		}
+		else {
+			return;
+		}
+
+		for (int i = xb; i <= xe; i += 2) {
+			float xf0 = i + 0.5f;
+			float xf1 = i + 1.5f;
+
+			//2, 3
+			//0, 1
+			std::array<F, 4> tile;
+			fragAssign(xf0, yf0, rl0, tile[0]);
+			fragAssign(xf1, yf0, rl0, tile[1]);
+			fragAssign(xf0, yf1, rl1, tile[2]);
+			fragAssign(xf1, yf1, rl1, tile[3]);
+
+			output_->push_back(tile);
+		}
+	}
+
+	void fragAssign(float xf, float yf, const RangeLine& rl, F& frag) {
+		frag.x = (int)xf;
+		frag.y = (int)yf;
+		frag.z = Lerp(rl.left.z, rl.right.z, (xf - rl.left.x) / (rl.right.x - rl.left.x));
+		frag.weight = (rl.visible && (rl.xb <= frag.x && frag.x <= rl.xe) ? 1.0f : 0.0f);
+	}
+
+public:
+	const Trapezoid* trap_;
+	int width_, height_;
+	std::vector<std::array<F, 4> >* output_;
+};
+
+
 template<class UL, class F, class FS>
 class TileShader {
 public:
@@ -224,7 +213,7 @@ public:
 		sampler_.ddx_ = TexCoord(tile[1].varyings) - TexCoord(tile[0].varyings);
 		sampler_.ddy_ = TexCoord(tile[2].varyings) - TexCoord(tile[0].varyings);
 		for (int i = 0; i != 4; i++) {
-			if (tile[i].draw) {
+			if (0.0f < tile[i].weight) {
 				fragshader_.process(u, sampler_, tile[i]);
 				profiler->count("Frag-Sharder Excuted", 1);
 			}
@@ -252,15 +241,13 @@ public:
 		ddy_ = (e01 * e02.pos.x - e02 * e01.pos.x) * inv_area;
 	}
 
-	F lerp(int x, int y, float rhw) const {
-		F frag;
-		frag.x = x;
-		frag.y = y;
+	void lerp(F& frag) const {
+		float fx = frag.x + 0.5f;
+		float fy = frag.y + 0.5f;
+		float rhw = frag.z;
 		if (rhw == 0.0f) rhw = 0.000001f;
-		frag.varyings = (v0_.varyings + ddx_.varyings * (x - v0_.pos.x) + ddy_.varyings * (y - v0_.pos.y)) / rhw;
+		frag.varyings = (v0_.varyings + ddx_.varyings * (fx - v0_.pos.x) + ddy_.varyings * (fy - v0_.pos.y)) / rhw;
 		frag.z = rhw;
-
-		return frag;
 	}
 
 private:
@@ -337,7 +324,7 @@ private:
 		}
 	}
 
-	inline bool isPixelCoord(int x, int y) {
+	/*inline bool isPixelCoord(int x, int y) {
 		return 0 <= x && x < width_ && 0 <= y && y < height_;
 	}
 
@@ -387,10 +374,30 @@ private:
 				break;
 			}
 		}
-	}
+	}*/
 
 	void drawTrapezoid(const UL& u, const LerpDerivative<V, F>& lerpd, Trapezoid& trap) {
-		Scanline22 scanline;
+		std::vector<std::array<F, 4> > tiles;
+
+		TrapTraversalStd<F> trav;
+		trav.initialize(trap, width_, height_, tiles);
+		trav.process();
+
+		TileShader<UL, F, FS> tileshader;
+		for (auto i = tiles.begin(); i != tiles.end(); i++) {
+			lerpd.lerp((*i)[0]);
+			lerpd.lerp((*i)[1]);
+			lerpd.lerp((*i)[2]);
+			lerpd.lerp((*i)[3]);
+
+			profiler_->count("Frag Count", 4);
+			tileshader.process(u, *i, profiler_);
+
+			//merging
+			merge(*i);
+		}
+
+		/*Scanline22 scanline;
 		int j, top, bottom;
 		top = (int)(trap.top + 0.5f);
 		bottom = (int)(trap.bottom + 0.5f);
@@ -401,6 +408,16 @@ private:
 			}
 			if (j >= height_) {
 				break;
+			}
+		}*/
+	}
+
+	void merge(const std::array<F, 4>& tile) {
+		for (size_t i = 0; i != 4; i++) {
+			const F& frag = tile[i];
+			if (frag.weight != 0.0f && zbuffer_[frag.y][frag.x] <= frag.z) {
+				zbuffer_[frag.y][frag.x] = frag.z;
+				framebuffer_[frag.y][frag.x] = IRgba(frag.c);
 			}
 		}
 	}
