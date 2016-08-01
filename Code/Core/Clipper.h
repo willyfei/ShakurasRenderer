@@ -158,7 +158,6 @@ private:
 		if (max_count == 3) {
 			//S-1.1
 			if (counter[kOK] == 3) {
-				profiler_->count("S-1.1");
 				outputTriangle(v1, v2, v3);
 			}
 
@@ -168,8 +167,6 @@ private:
 		else if (max_count == 2) {
 			//S-2.1
 			if (counter[kOK] == 1) {
-				profiler_->count("S-2.1");
-
 				//将kOK的顶点旋转到首部
 				int rot = (o1 == kOK ? 0 : (o2 == kOK ? 1 : 2));
 				std::rotate(tri_index.begin(), tri_index.begin() + rot, tri_index.end());
@@ -188,8 +185,6 @@ private:
 			}
 			//S-2.2
 			else if (counter[kOK] == 2) {
-				profiler_->count("S-2.2");
-
 				//将非kOK的顶点旋转到首部
 				int rot = (o1 != kOK ? 0 : (o2 != kOK ? 1 : 2));
 				std::rotate(tri_index.begin(), tri_index.begin() + rot, tri_index.end());
@@ -212,8 +207,6 @@ private:
 			}
 			//S-2.3
 			else if (counter[kOK] == 0) {
-				profiler_->count("S-2.3");
-
 				//将自己位于一个区域的顶点旋转到首部
 				int rot = (o1 == o2 ? 2 : (o1 == o3 ? 1 : 0));
 				std::rotate(tri_index.begin(), tri_index.begin() + rot, tri_index.end());
@@ -241,8 +234,6 @@ private:
 		}
 		else if (max_count == 1) {
 			//S - 3.1
-			profiler_->count("S-3.1");
-
 			//将kOK的顶点旋转到首部
 			int rot = (o1 == kOK ? 0 : (o2 == kOK ? 1 : 2));
 			std::rotate(tri_index.begin(), tri_index.begin() + rot, tri_index.end());

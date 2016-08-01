@@ -51,7 +51,7 @@ namespace example_sponza {
 			Vector2f uv = f.varyings.uv;
 			Vector3f diff_color(1.0f, 1.0f, 1.0f);//Ä¬ÈÏ°×É«
 			if (u.texture) {
-				diff_color = sampler.surfaceBilinear(uv.x, uv.y, u.texture->level(0), RepeatAddr);
+				diff_color = sampler.mipmapTrilinear(uv.x, uv.y, *u.texture, RepeatAddr);
 			}
 
 			float illum_diffuse = Clamp(DotProduct3(light_dir, norm), 0.0f, 1.0f);
@@ -110,6 +110,7 @@ namespace example_sponza {
 			}
 
 			step_ = 0;
+			move_ = 0;
 
 			viewer_ = viewer;
 		}
@@ -117,6 +118,8 @@ namespace example_sponza {
 		void process(std::vector<DrawCall>& cmds) {
 			if (viewer_->testUserMessage(kUMUp)) step_++;
 			if (viewer_->testUserMessage(kUMDown)) step_--;
+			if (viewer_->testUserMessage(kUMLeft)) step_++;
+			if (viewer_->testUserMessage(kUMRight)) step_--;
 
 			float xpos = -30.0f + fmodf(0.625f * step_, 66.0f);
 			float ypos = 10.0f + fmodf(0.5f * step_, 40.0f);
@@ -143,7 +146,7 @@ namespace example_sponza {
 		WinViewerPtr viewer_;
 		Matrix44f projtrsf_;
 		std::vector<DrawCall> outputs_;
-		int step_;
+		int step_, move_;
 	};
 
 	typedef shakuras::GraphicPipeline<DrawCall, AppStage, GeomStage, RasStage> Pipeline;
