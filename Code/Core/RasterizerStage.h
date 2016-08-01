@@ -154,15 +154,15 @@ private:
 		rl1.left = Lerp(trap_->left, yf1);
 		rl1.right = Lerp(trap_->right, yf1);
 
-		rl0.xb = (std::max)(0, (int)rl0.left.x);
-		rl0.xe = (std::min)(width_ - 1, (int)rl0.right.x);
-		rl1.xb = (std::max)(0, (int)rl1.left.x);
-		rl1.xe = (std::min)(width_ - 1, (int)rl1.right.x);
+		rl0.xb = (std::max)(0, (int)(rl0.left.x + 0.5f));
+		rl0.xe = (std::min)(width_, (int)(rl0.right.x + 0.5f));
+		rl1.xb = (std::max)(0, (int)(rl1.left.x + 0.5f));
+		rl1.xe = (std::min)(width_, (int)(rl1.right.x + 0.5f));
 
 		int xb = 0, xe = 0;
 		if (rl0.visible && rl1.visible) {
 			xb = (std::min)(rl0.xb, rl1.xb);
-			xe = (std::min)(rl0.xe, rl1.xe);
+			xe = (std::max)(rl0.xe, rl1.xe);
 		}
 		else if (rl0.visible) {
 			xb = rl0.xb;
@@ -176,7 +176,7 @@ private:
 			return;
 		}
 
-		for (int i = xb; i <= xe; i += 2) {
+		for (int i = xb; i < xe; i += 2) {
 			float xf0 = i + 0.5f;
 			float xf1 = i + 1.5f;
 
@@ -196,7 +196,7 @@ private:
 		frag.x = (int)xf;
 		frag.y = (int)yf;
 		frag.z = Lerp(rl.left.z, rl.right.z, (xf - rl.left.x) / (rl.right.x - rl.left.x));
-		frag.weight = (rl.visible && (rl.xb <= frag.x && frag.x <= rl.xe) ? 1.0f : 0.0f);
+		frag.weight = (rl.visible && (rl.xb <= frag.x && frag.x < rl.xe) ? 1.0f : 0.0f);
 	}
 
 public:
