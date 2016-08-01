@@ -121,13 +121,14 @@ int SpliteTrapezoid(const V& v0, const V& v1, const V& v2, std::vector<Trapezoid
 template<class F>
 class TrapTraversal {
 public:
-	void initialize(const Trapezoid& trap, int width, int height, std::vector<std::array<F, 4> >& output) {
+	TrapTraversal(const Trapezoid& trap, int width, int height, std::vector<std::array<F, 4> >& output) {
 		trap_ = &trap;
 		width_ = width;
 		height_ = height;
 		output_ = &output;
 	}
 
+public:
 	void process() {
 		for (int i = (int)trap_->top; i <= (int)(trap_->bottom); i += 2) {
 			scan(i);
@@ -327,9 +328,7 @@ private:
 	void drawTrapezoid(const UL& u, const LerpDerivative<V, F>& lerpd, Trapezoid& trap) {
 		std::vector<std::array<F, 4> > tiles;
 
-		TrapTraversal<F> trav;
-		trav.initialize(trap, width_, height_, tiles);
-		trav.process();
+		TrapTraversal<F>(trap, width_, height_, tiles).process();
 
 		profiler_->count("Frag Count", (int)(4 * tiles.size()));
 		for (auto i = tiles.begin(); i != tiles.end(); i++) {
