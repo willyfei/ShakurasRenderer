@@ -2,6 +2,7 @@
 #include "MathAndGeometry.h"
 #include "Clipper.h"
 #include "Profiler.h"
+#include <ppl.h>
 
 
 SHAKURAS_BEGIN;
@@ -20,13 +21,13 @@ public:
 	void process(DrawCall<UL, V>& call) {
 		profiler_->count("Geo-Triangle Count", (int)call.prims.tris_.size());
 
-		VS vertshader;
-
 		//vertex sharding
-		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
-			vertshader.process(call.uniforms, *i);
-			profiler_->count("Vert-Sharder Excuted", 1);
-		}
+		auto vert_sharding = [&](V& vert) {
+			VS().process(call.uniforms, vert);
+		};
+
+		profiler_->count("Vert-Sharder Excuted", (int)call.prims.verts_.size());
+		Concurrency::parallel_for_each(call.prims.verts_.begin(), call.prims.verts_.end(), vert_sharding);
 
 		//geometry sharding£¨Œ¥ µœ÷
 

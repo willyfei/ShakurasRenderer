@@ -342,8 +342,8 @@ private:
 		}
 
 		//fragment lerp
-		//fragment sharder
-		auto lerp_and_sharder = [&](std::array<F, 4>& tile) {
+		//fragment sharding
+		auto frag_lerp_and_sharding = [&](std::array<F, 4>& tile) {
 			lerpd.lerp(tile[0]);
 			lerpd.lerp(tile[1]);
 			lerpd.lerp(tile[2]);
@@ -352,7 +352,7 @@ private:
 			TileShader<UL, F, FS>().process(u, tile);
 		};
 
-		Concurrency::parallel_for_each(tiles.begin(), tiles.end(), lerp_and_sharder);
+		Concurrency::parallel_for_each(tiles.begin(), tiles.end(), frag_lerp_and_sharding);
 
 		//merging
 		for (auto i = tiles.begin(); i != tiles.end(); i++) {
