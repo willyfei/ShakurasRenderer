@@ -143,13 +143,14 @@ private:
 	};
 
 	void scan(int y0) {
+		int y1 = y0 + 1;
 		float yf0 = y0 + 0.5f;
 		float yf1 = y0 + 1.5f;
 
 		RangeLine rl0, rl1;
 
-		rl0.visible = (trap_->top <= yf0 && yf0 <= trap_->bottom);
-		rl1.visible = (trap_->top <= yf1 && yf1 <= trap_->bottom);
+		rl0.visible = (trap_->top <= yf0 && yf0 <= trap_->bottom && 0 <= y0 && y0 < height_);
+		rl1.visible = (trap_->top <= yf1 && yf1 <= trap_->bottom && 0 <= y1 && y1 < height_);
 
 		rl0.left = Lerp(trap_->left, yf0);
 		rl0.right = Lerp(trap_->right, yf0);

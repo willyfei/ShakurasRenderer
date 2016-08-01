@@ -22,27 +22,25 @@ public:
 		profiler_->count("Geo-Triangle Count", (int)call.prims.tris_.size());
 
 		//vertex sharding
-		auto vert_sharding = [&](V& vert) {
+		//geometry sharding，未实现
+		//projection transform
+		auto vert_geom_sharding_and_proj = [&](V& vert) {
 			VS().process(call.uniforms, vert);
+			vert.pos = call.proj_trsf.transform(vert.pos);
 		};
 
 		profiler_->count("Vert-Sharder Excuted", (int)call.prims.verts_.size());
-		Concurrency::parallel_for_each(call.prims.verts_.begin(), call.prims.verts_.end(), vert_sharding);
-
-		//geometry sharding，未实现
-
-		//projection transform
-		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
-			i->pos = call.proj_trsf.transform(i->pos);
-		}
+		Concurrency::parallel_for_each(call.prims.verts_.begin(), call.prims.verts_.end(), vert_geom_sharding_and_proj);
 
 		//cliping
 		Clipper<V>(call.prims, *profiler_, refuse_back_).process();
 
 		//screen mapping
-		for (auto i = call.prims.verts_.begin(); i != call.prims.verts_.end(); i++) {
-			screenMapping(i->pos);
-		}
+		auto screen_mapping = [&](V& vert) {
+			screenMapping(vert.pos);
+		};
+		Concurrency::parallel_for_each(call.prims.verts_.begin(), call.prims.verts_.end(), screen_mapping);
+
 	}
 
 	void refuseBack(bool rb) {
