@@ -7,6 +7,7 @@
 #include "Profiler.h"
 #include <vector>
 #include <array>
+#include <ppl.h>
 
 
 SHAKURAS_BEGIN;
@@ -118,7 +119,7 @@ int SpliteTrapezoid(const V& v0, const V& v1, const V& v2, std::vector<Trapezoid
 
 //每个像素一个片元，每个片元一个采样点
 template<class F>
-class TrapTraversalStd {
+class TrapTraversal {
 public:
 	void initialize(const Trapezoid& trap, int width, int height, std::vector<std::array<F, 4> >& output) {
 		trap_ = &trap;
@@ -209,13 +210,12 @@ public:
 template<class UL, class F, class FS>
 class TileShader {
 public:
-	void process(const UL& u, std::array<F, 4>& tile, Profiler* profiler) {
+	void process(const UL& u, std::array<F, 4>& tile) {
 		sampler_.ddx_ = TexCoord(tile[1].varyings) - TexCoord(tile[0].varyings);
 		sampler_.ddy_ = TexCoord(tile[2].varyings) - TexCoord(tile[0].varyings);
 		for (int i = 0; i != 4; i++) {
 			if (0.0f < tile[i].weight) {
 				fragshader_.process(u, sampler_, tile[i]);
-				profiler->count("Frag-Sharder Excuted", 1);
 			}
 		}
 	}
@@ -324,92 +324,40 @@ private:
 		}
 	}
 
-	/*inline bool isPixelCoord(int x, int y) {
-		return 0 <= x && x < width_ && 0 <= y && y < height_;
-	}
-
-	void drawScanline(const UL& u, const LerpDerivative<V, F>& lerpd, Scanline22& s22) {
-		int x = s22.xbegin();
-		int w = s22.xwidth();
-		TileShader<UL, F, FS> tileshader;
-
-		for (; w > 0; x += 2, w -= 2) {
-			if (0 <= x && x < width_) {
-				// 2, 3
-				// 0, 1
-				std::array<F, 4> tile;
-				tile[0] = lerpd.lerp(x, s22.s0.y, s22.s0.v.z);
-				tile[0].draw = s22.draw0(x) && isPixelCoord(x, s22.s0.y);
-				tile[2] = lerpd.lerp(x, s22.s1.y, s22.s1.v.z);
-				tile[2].draw = s22.draw1(x) && isPixelCoord(x, s22.s1.y);
-
-				s22.next();
-
-				tile[1] = lerpd.lerp(x + 1, s22.s0.y, s22.s0.v.z);
-				tile[1].draw = s22.draw0(x + 1) && isPixelCoord(x + 1, s22.s0.y);
-				tile[3] = lerpd.lerp(x + 1, s22.s1.y, s22.s1.v.z);
-				tile[3].draw = s22.draw1(x + 1) && isPixelCoord(x + 1, s22.s1.y);
-
-				s22.next();
-
-				//fragment shader
-				profiler_->count("Frag Count", 4);
-				tileshader.process(u, tile, profiler_);
-
-				//merging
-				for (size_t i = 0; i != 4; i++) {
-					const F& frag = tile[i];
-					if (frag.draw && frag.z > zbuffer_[frag.y][frag.x]) {
-						zbuffer_[frag.y][frag.x] = frag.z;
-						framebuffer_[frag.y][frag.x] = IRgba(frag.c);
-					}
-				}
-			}
-			else {
-				s22.next();
-				s22.next();
-			}
-
-			if (x >= width_) {
-				break;
-			}
-		}
-	}*/
-
 	void drawTrapezoid(const UL& u, const LerpDerivative<V, F>& lerpd, Trapezoid& trap) {
 		std::vector<std::array<F, 4> > tiles;
 
-		TrapTraversalStd<F> trav;
+		TrapTraversal<F> trav;
 		trav.initialize(trap, width_, height_, tiles);
 		trav.process();
 
-		TileShader<UL, F, FS> tileshader;
+		profiler_->count("Frag Count", (int)(4 * tiles.size()));
 		for (auto i = tiles.begin(); i != tiles.end(); i++) {
-			lerpd.lerp((*i)[0]);
-			lerpd.lerp((*i)[1]);
-			lerpd.lerp((*i)[2]);
-			lerpd.lerp((*i)[3]);
-
-			profiler_->count("Frag Count", 4);
-			tileshader.process(u, *i, profiler_);
-
-			//merging
-			merge(*i);
+			int incr = 0;
+			incr += (0.0f < (*i)[0].weight ? 1 : 0);
+			incr += (0.0f < (*i)[1].weight ? 1 : 0);
+			incr += (0.0f < (*i)[2].weight ? 1 : 0);
+			incr += (0.0f < (*i)[3].weight ? 1 : 0);
+			profiler_->count("Frag-Sharder Excuted", incr);
 		}
 
-		/*Scanline22 scanline;
-		int j, top, bottom;
-		top = (int)(trap.top + 0.5f);
-		bottom = (int)(trap.bottom + 0.5f);
-		for (j = top; j < bottom; j += 2) {
-			if (j >= 0 && j < height_) {
-				scanline.initialize(trap, j);
-				drawScanline(u, lerpd, scanline);
-			}
-			if (j >= height_) {
-				break;
-			}
-		}*/
+		//fragment lerp
+		//fragment sharder
+		auto lerp_and_sharder = [&](std::array<F, 4>& tile) {
+			lerpd.lerp(tile[0]);
+			lerpd.lerp(tile[1]);
+			lerpd.lerp(tile[2]);
+			lerpd.lerp(tile[3]);
+
+			TileShader<UL, F, FS>().process(u, tile);
+		};
+
+		Concurrency::parallel_for_each(tiles.begin(), tiles.end(), lerp_and_sharder);
+
+		//merging
+		for (auto i = tiles.begin(); i != tiles.end(); i++) {
+			merge(*i);
+		}
 	}
 
 	void merge(const std::array<F, 4>& tile) {
