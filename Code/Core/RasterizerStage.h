@@ -236,6 +236,7 @@ public:
 		V e02 = v2 - v0;
 
 		float area = e02.pos.x * e01.pos.y - e01.pos.x * e02.pos.y;
+		if (area == 0.0f) area = 0.000001f;
 		float inv_area = 1.0f / area;
 
 		v0_ = v0;

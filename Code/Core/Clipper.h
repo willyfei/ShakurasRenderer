@@ -30,7 +30,7 @@ inline bool IsCounterClockwise(const Vector4f& pos0, const Vector4f& pos1, const
 	};
 
 	float area = CrossProduct2(pv_2d[2] - pv_2d[0], pv_2d[1] - pv_2d[0]);
-	return area >= 0.0f;
+	return area > 0.0f;
 }
 
 

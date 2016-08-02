@@ -101,7 +101,7 @@ namespace example_sponza {
 					cmd.prims.tris_.push_back({ mesh.tris[ii], mesh.tris[ii + 1], mesh.tris[ii + 2] });
 				}
 
-				projtrsf_ = Matrix44f::Perspective(kGSPI * 0.5f, w / h, 0.1f, 1000.0f);//投影变换
+				projtrsf_ = Matrix44f::Perspective(kGSPI * 0.5f, w / h, 5.0f, 1000.0f);//投影变换
 				cmd.proj_trsf.reset();
 				cmd.uniforms.texture = mesh.mtl.tex;
 				cmd.uniforms.ambient = mesh.mtl.ambient;
