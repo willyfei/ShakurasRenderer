@@ -128,15 +128,11 @@ Vector3f TrilinearSample(float u, float v, const Vector2f& ddx, const Vector2f& 
 	lvf = Clamp(lvf, 0.0f, (float)mipmap.levelCount() - 1);
 	lvc = Clamp(lvc, 0.0f, (float)mipmap.levelCount() - 1);
 
-	if (lvf == lvc) {
-		return BilinearSample(u, v, mipmap.level((int)lvf), addressing);
-	}
-
 	Vector3f cf = BilinearSample(u, v, mipmap.level((int)lvf), addressing);
 	Vector3f cc = BilinearSample(u, v, mipmap.level((int)lvc), addressing);
 
 	float t = (lv - lvf) / (lvc - lvf);
-	return cc + (cf - cc) * t;
+	return cf + (cc - cf) * t;
 }
 
 
