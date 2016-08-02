@@ -28,14 +28,16 @@ public:
 
 			for (int x = 0; x != next_surface->width(); x++) {
 				float u = (float)x;
-				if (1 < next_surface->width()) u /= (next_surface->width() - 1);
-
-				for (int y = 0; y != next_surface->height(); y++) {
-					float v = (float)y;
-					if (1 < next_surface->height()) v /= (next_surface->height() - 1);
-
-					Vector3f c = BilinearSample(u, v, *surface, ClampAddr);
-					next_surface->set(x, y, c);
+				if (1 < next_surface->width()) {
+					u /= (next_surface->width() - 1);
+					for (int y = 0; y != next_surface->height(); y++) {
+						float v = (float)y;
+						if (1 < next_surface->height()) {
+							v /= (next_surface->height() - 1);
+							Vector3f c = BilinearSample(u, v, *surface, ClampAddr);
+							next_surface->set(x, y, c);
+						}
+					}
 				}
 			}
 

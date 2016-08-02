@@ -84,13 +84,13 @@ Vector3f BilinearSample(float u, float v, const S& surface, AF addressing) {
 	int fx = (int)u, fy = (int)v;
 
 	int cx = fx + 1, cy = fy + 1;
-	cx = Clamp(cx, 0, surface.width() - 1);
-	cy = Clamp(cy, 0, surface.height() - 1);
+	int cx_mod = cx % surface.width();
+	int cy_mod = cy % surface.height();
 
 	Vector3f lbc = surface.get(fx, fy);//左下
-	Vector3f rbc = surface.get(cx, fy);//右下
-	Vector3f ltc = surface.get(fx, cy);//左上
-	Vector3f rtc = surface.get(cx, cy);//右上
+	Vector3f rbc = surface.get(cx_mod, fy);//右下
+	Vector3f ltc = surface.get(fx, cy_mod);//左上
+	Vector3f rtc = surface.get(cx_mod, cy_mod);//右上
 
 	//u方向插值
 	float it = (cx != fx ? (u - fx) / (cx - fx) : 0.0f);
