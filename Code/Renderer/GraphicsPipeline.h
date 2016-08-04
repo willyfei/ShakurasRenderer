@@ -6,7 +6,7 @@ SHAKURAS_BEGIN;
 
 
 template<class CALL, class AS, class GS, class RS>
-class GraphicPipeline {
+class GraphicsPipeline {
 public:
 	template<class VPTR>
 	void initialize(VPTR viewer) {

@@ -5,7 +5,7 @@
 #include "DrawCall.h"
 #include "GeometryStage.h"
 #include "RasterizerStage.h"
-#include "../GraphicPipeline.h"
+#include "../GraphicsPipeline.h"
 #include "../MathAndGeometry.h"
 
 

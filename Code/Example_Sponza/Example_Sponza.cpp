@@ -149,7 +149,7 @@ namespace example_sponza {
 		int step_, move_;
 	};
 
-	typedef shakuras::GraphicPipeline<DrawCall, AppStage, GeomStage, RasStage> Pipeline;
+	typedef shakuras::GraphicsPipeline<DrawCall, AppStage, GeomStage, RasStage> Pipeline;
 }
 
 

@@ -125,7 +125,7 @@ namespace example_cube {
 		float pos_;
 	};
 
-	typedef GraphicPipeline<preset_std::DrawCall, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
+	typedef GraphicsPipeline<preset_std::DrawCall, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
 }
 
 

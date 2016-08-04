@@ -9,6 +9,13 @@
 #define SHAKURAS_END }
 
 
+#ifdef _RENDERER_DLL
+#    define RENDERER_DLL   __declspec(dllexport)
+#else
+#    define RENDERER_DLL   __declspec(dllimport)
+#endif
+
+
 SHAKURAS_BEGIN;
 
 

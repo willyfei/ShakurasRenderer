@@ -86,7 +86,7 @@ namespace example_cup {
 		float pos_;
 	};
 
-	typedef GraphicPipeline<preset_std::DrawCall, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
+	typedef GraphicsPipeline<preset_std::DrawCall, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
 }
 
 
