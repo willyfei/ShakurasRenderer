@@ -10,7 +10,7 @@
 using namespace shakuras;
 
 
-namespace example_cup {
+namespace soft_cup {
 
 	class AppStage {
 	public:
@@ -101,7 +101,7 @@ int main()
 		return -1;
 	}
 
-	example_cup::Pipeline pipeline;
+	soft_cup::Pipeline pipeline;
 	pipeline.initialize(viewer);
 
 	while (!viewer->testUserMessage(kUMEsc) && !viewer->testUserMessage(kUMClose)) {

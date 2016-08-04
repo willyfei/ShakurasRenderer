@@ -10,7 +10,7 @@
 using namespace shakuras;
 
 
-namespace example_cube {
+namespace soft_cube {
 
 	void GenerateCube(phong::PrimitiveList& prims) {
 		static phong::Vertex mesh[8] = {
@@ -140,7 +140,7 @@ int main()
 		return -1;
 	}
 
-	example_cube::Pipeline pipeline;
+	soft_cube::Pipeline pipeline;
 	pipeline.initialize(viewer);
 
 	while (!viewer->testUserMessage(kUMEsc) && !viewer->testUserMessage(kUMClose)) {

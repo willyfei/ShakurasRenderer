@@ -10,7 +10,7 @@
 using namespace shakuras;
 
 
-namespace example_sponza {
+namespace soft_sponza {
 
 	struct UniformList {
 		MipmapPtr texture;
@@ -164,7 +164,7 @@ int main()
 		return -1;
 	}
 
-	example_sponza::Pipeline pipeline;
+	soft_sponza::Pipeline pipeline;
 	pipeline.initialize(viewer);
 	pipeline.geomstage_.refuseBack(false);
 
