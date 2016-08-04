@@ -14,7 +14,7 @@ SHAKURAS_BEGIN;
 
 //一层mipmap纹理
 //Phong着色
-namespace preset_std {
+namespace phong {
 
 	struct UniformList {
 		MipmapPtr texture;
@@ -135,7 +135,7 @@ namespace preset_std {
 
 
 template<>
-inline Vector2f TexCoord<preset_std::VaryingList>(const preset_std::VaryingList& v) {
+inline Vector2f TexCoord<phong::VaryingList>(const phong::VaryingList& v) {
 	return v.uv;
 }
 

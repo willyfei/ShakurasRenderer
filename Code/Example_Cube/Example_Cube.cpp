@@ -12,8 +12,8 @@ using namespace shakuras;
 
 namespace example_cube {
 
-	void GenerateCube(preset_std::PrimitiveList& prims) {
-		static preset_std::Vertex mesh[8] = {
+	void GenerateCube(phong::PrimitiveList& prims) {
+		static phong::Vertex mesh[8] = {
 			{ { -1, -1, -1, 1 } },
 			{ { 1, -1, -1, 1 } },
 			{ { 1, 1, -1, 1 } },
@@ -25,7 +25,7 @@ namespace example_cube {
 		};
 
 		auto draw_plane = [&](int a, int b, int c, int d) {
-			preset_std::Vertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
+			phong::Vertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
 
 			p1.attribs.uv.set(0, 0);
 			p2.attribs.uv.set(0, 1);
@@ -85,7 +85,7 @@ namespace example_cube {
 			viewer_ = viewer;
 		}
 
-		void process(std::vector<preset_std::DrawCall>& cmds) {
+		void process(std::vector<phong::DrawCall>& cmds) {
 			if (viewer_->testUserMessage(kUMSpace)) {
 				if (++nspace_ == 1) {
 					itex_ = (itex_ + 1) % texlist_.size();
@@ -117,7 +117,7 @@ namespace example_cube {
 
 	private:
 		WinViewerPtr viewer_;
-		preset_std::DrawCall output_;
+		phong::DrawCall output_;
 		std::vector<MipmapPtr> texlist_;
 		int itex_;
 		int nspace_;
@@ -125,7 +125,7 @@ namespace example_cube {
 		float pos_;
 	};
 
-	typedef GraphicsPipeline<preset_std::DrawCall, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
+	typedef GraphicsPipeline<phong::DrawCall, AppStage, phong::GeomStage, phong::RasStage> Pipeline;
 }
 
 

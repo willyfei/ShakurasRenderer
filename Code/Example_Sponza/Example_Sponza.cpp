@@ -24,7 +24,7 @@ namespace example_sponza {
 
 	class VertexShader {
 	public:
-		void process(const UniformList& u, preset_std::Vertex& v) {
+		void process(const UniformList& u, phong::Vertex& v) {
 			v.varyings.normal = v.attribs.normal;
 
 			v.varyings.eye_dir = u.eye_pos - v.pos.xyz();
@@ -40,7 +40,7 @@ namespace example_sponza {
 
 	class FragmentShader {
 	public:
-		void process(const UniformList& u, Sampler& sampler, preset_std::Fragment& f) {
+		void process(const UniformList& u, Sampler& sampler, phong::Fragment& f) {
 			Vector3f norm = f.varyings.normal;
 			Vector3f eye_dir = f.varyings.eye_dir;
 			Vector3f light_dir = f.varyings.light_dir;
@@ -65,11 +65,11 @@ namespace example_sponza {
 		}
 	};
 
-	typedef shakuras::DrawCall<UniformList, preset_std::Vertex> DrawCall;
+	typedef shakuras::DrawCall<UniformList, phong::Vertex> DrawCall;
 
-	typedef shakuras::GeometryStage<UniformList, preset_std::Vertex, VertexShader> GeomStage;
+	typedef shakuras::GeometryStage<UniformList, phong::Vertex, VertexShader> GeomStage;
 
-	typedef shakuras::RasterizerStage<UniformList, preset_std::Vertex, preset_std::Fragment, FragmentShader> RasStage;
+	typedef shakuras::RasterizerStage<UniformList, phong::Vertex, phong::Fragment, FragmentShader> RasStage;
 
 	class AppStage {
 	public:
@@ -90,7 +90,7 @@ namespace example_sponza {
 				cmd.prims.verts_.resize(mesh.verts.size());
 				for (size_t ii = 0; ii != mesh.verts.size(); ii++) {
 					const ObjVert& objv = mesh.verts[ii];
-					preset_std::Vertex& v = cmd.prims.verts_[ii];
+					phong::Vertex& v = cmd.prims.verts_[ii];
 
 					v.pos.set(objv.pos.x, objv.pos.y, objv.pos.z, 1.0f);
 					v.attribs.uv = objv.uv;

@@ -26,12 +26,12 @@ namespace example_cup {
 
 			for (size_t i = 0; i != meshs.size(); i++) {
 				const ObjMesh& mesh = meshs[i];
-				preset_std::DrawCall& cmd = outputs_[i];
+				phong::DrawCall& cmd = outputs_[i];
 
 				cmd.prims.verts_.resize(mesh.verts.size());
 				for (size_t ii = 0; ii != mesh.verts.size(); ii++) {
 					const ObjVert& objv = mesh.verts[ii];
-					preset_std::Vertex& v = cmd.prims.verts_[ii];
+					phong::Vertex& v = cmd.prims.verts_[ii];
 
 					v.pos.set(objv.pos.x, objv.pos.y, objv.pos.z, 1.0f);
 					v.attribs.uv = objv.uv;
@@ -55,7 +55,7 @@ namespace example_cup {
 			viewer_ = viewer;
 		}
 
-		void process(std::vector<preset_std::DrawCall>& cmds) {
+		void process(std::vector<phong::DrawCall>& cmds) {
 			if (viewer_->testUserMessage(kUMUp)) pos_ += 0.04f;
 			if (viewer_->testUserMessage(kUMDown)) pos_ -= 0.04f;
 			if (viewer_->testUserMessage(kUMLeft)) alpha_ -= 0.02f;
@@ -69,7 +69,7 @@ namespace example_cup {
 			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
 
 			for (size_t i = 0; i != outputs_.size(); i++) {
-				preset_std::DrawCall& cmd = outputs_[i];
+				phong::DrawCall& cmd = outputs_[i];
 				cmd.uniforms.model_trsf = modeltrsf;//模型变换
 				cmd.uniforms.mv_trsf = modeltrsf * viewtrsf;//模型*视图变换
 				cmd.uniforms.eye_pos = eye_pos;//相机位置
@@ -81,12 +81,12 @@ namespace example_cup {
 
 	private:
 		WinViewerPtr viewer_;
-		std::vector<preset_std::DrawCall> outputs_;
+		std::vector<phong::DrawCall> outputs_;
 		float alpha_;
 		float pos_;
 	};
 
-	typedef GraphicsPipeline<preset_std::DrawCall, AppStage, preset_std::GeomStage, preset_std::RasStage> Pipeline;
+	typedef GraphicsPipeline<phong::DrawCall, AppStage, phong::GeomStage, phong::RasStage> Pipeline;
 }
 
 
