@@ -1,7 +1,7 @@
 #pragma once
-#include "MathAndGeometry.h"
 #include "Primitive.h"
-#include "Profiler.h"
+#include "../MathAndGeometry.h"
+#include "../Profiler.h"
 #include <algorithm>
 #include <array>
 

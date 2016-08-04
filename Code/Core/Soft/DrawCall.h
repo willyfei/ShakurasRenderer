@@ -1,7 +1,6 @@
 #pragma once
-#include "Utility.h"
-#include "MathAndGeometry.h"
 #include "Primitive.h"
+#include "../MathAndGeometry.h"
 #include <vector>
 
 

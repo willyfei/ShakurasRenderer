@@ -1,8 +1,8 @@
 #pragma once
 #include "ResUtility.h"
 #include "Core/MathAndGeometry.h"
-#include "Core/Mipmap.h"
-#include "Core/Surface.h"
+#include "Core/Soft/Mipmap.h"
+#include "Core/Soft/Surface.h"
 #include <vector>
 #include <string>
 

@@ -27,22 +27,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Code\Core\Clipper.h" />
     <ClInclude Include="..\..\..\Code\Core\Color.h" />
-    <ClInclude Include="..\..\..\Code\Core\DrawCall.h" />
-    <ClInclude Include="..\..\..\Code\Core\Fragment.h" />
-    <ClInclude Include="..\..\..\Code\Core\GeometryStage.h" />
     <ClInclude Include="..\..\..\Code\Core\GraphicPipeline.h" />
     <ClInclude Include="..\..\..\Code\Core\MathAndGeometry.h" />
-    <ClInclude Include="..\..\..\Code\Core\Mipmap.h" />
-    <ClInclude Include="..\..\..\Code\Core\Preset.h" />
-    <ClInclude Include="..\..\..\Code\Core\Primitive.h" />
     <ClInclude Include="..\..\..\Code\Core\Profiler.h" />
-    <ClInclude Include="..\..\..\Code\Core\RasterizerStage.h" />
-    <ClInclude Include="..\..\..\Code\Core\Sampler.h" />
-    <ClInclude Include="..\..\..\Code\Core\Surface.h" />
+    <ClInclude Include="..\..\..\Code\Core\Soft\Clipper.h" />
+    <ClInclude Include="..\..\..\Code\Core\Soft\DrawCall.h" />
+    <ClInclude Include="..\..\..\Code\Core\Soft\Fragment.h" />
+    <ClInclude Include="..\..\..\Code\Core\Soft\GeometryStage.h" />
+    <ClInclude Include="..\..\..\Code\Core\Soft\Mipmap.h" />
+    <ClInclude Include="..\..\..\Code\Core\Soft\Preset.h" />
+    <ClInclude Include="..\..\..\Code\Core\Soft\Primitive.h" />
+    <ClInclude Include="..\..\..\Code\Core\Soft\RasterizerStage.h" />
+    <ClInclude Include="..\..\..\Code\Core\Soft\Sampler.h" />
+    <ClInclude Include="..\..\..\Code\Core\Soft\Surface.h" />
+    <ClInclude Include="..\..\..\Code\Core\Soft\Vertex.h" />
     <ClInclude Include="..\..\..\Code\Core\Utility.h" />
-    <ClInclude Include="..\..\..\Code\Core\Vertex.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{658F1D21-D7D5-463A-8430-7F60E2E610CA}</ProjectGuid>

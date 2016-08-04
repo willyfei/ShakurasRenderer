@@ -1,6 +1,6 @@
 #pragma once
-#include "MathAndGeometry.h"
-#include "Color.h"
+#include "../MathAndGeometry.h"
+#include "../Color.h"
 #include <vector>
 #include <math.h>
 #include <assert.h>

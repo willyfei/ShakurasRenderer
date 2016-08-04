@@ -1,12 +1,12 @@
 #pragma once
-#include "MathAndGeometry.h"
 #include "Mipmap.h"
 #include "Vertex.h"
 #include "Fragment.h"
 #include "DrawCall.h"
 #include "GeometryStage.h"
 #include "RasterizerStage.h"
-#include "GraphicPipeline.h"
+#include "../GraphicPipeline.h"
+#include "../MathAndGeometry.h"
 
 
 SHAKURAS_BEGIN;

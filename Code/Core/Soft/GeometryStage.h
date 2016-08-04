@@ -1,7 +1,6 @@
 #pragma once
-#include "MathAndGeometry.h"
 #include "Clipper.h"
-#include "Profiler.h"
+#include "../Profiler.h"
 #include <ppl.h>
 
 

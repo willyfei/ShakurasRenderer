@@ -1,10 +1,10 @@
 #pragma once
-#include "MathAndGeometry.h"
 #include "GeometryStage.h"
 #include "Vertex.h"
-#include "Color.h"
 #include "Sampler.h"
-#include "Profiler.h"
+#include "../MathAndGeometry.h"
+#include "../Color.h"
+#include "../Profiler.h"
 #include <vector>
 #include <array>
 #include <ppl.h>

@@ -1,9 +1,9 @@
 #pragma once
 #include "ResUtility.h"
 #include "Core/MathAndGeometry.h"
-#include "Core/Vertex.h"
-#include "Core/Fragment.h"
-#include "Core/Surface.h"
+#include "Core/Soft/Vertex.h"
+#include "Core/Soft/Fragment.h"
+#include "Core/Soft/Surface.h"
 #include <vector>
 #include <array>
 
