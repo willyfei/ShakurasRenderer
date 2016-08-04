@@ -7,7 +7,7 @@
 using namespace shakuras;
 
 
-SurfacePtr GridSurface() {
+SoftSurfacePtr GridSurface() {
 	static uint32_t pixels[256][256];
 	int i, j;
 	for (j = 0; j < 256; j++) {
@@ -17,14 +17,14 @@ SurfacePtr GridSurface() {
 		}
 	}
 
-	SurfacePtr tex = std::make_shared<Surface>();
+	SoftSurfacePtr tex = std::make_shared<SoftSurface>();
 	tex->reset(256, 256, &(pixels[0][0]));
 
 	return tex;
 }
 
 
-SurfacePtr LoadSurface(std::string filepath, bool isrelpath) {
+SoftSurfacePtr LoadSurface(std::string filepath, bool isrelpath) {
 	if (isrelpath) {
 		filepath = _FSPFX absolute(filepath, ResourceDir()).string();
 	}
@@ -43,7 +43,7 @@ SurfacePtr LoadSurface(std::string filepath, bool isrelpath) {
 		}
 	}
 
-	SurfacePtr tex = std::make_shared<Surface>();
+	SoftSurfacePtr tex = std::make_shared<SoftSurface>();
 	tex->reset(x, y, (uint32_t*)data);
 
 	stbi_image_free(data);

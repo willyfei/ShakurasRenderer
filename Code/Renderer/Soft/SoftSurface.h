@@ -25,9 +25,9 @@ inline void RepeatAddr(float& u, float& v) {
 }
 
 
-class Surface {
+class SoftSurface {
 public:
-	Surface() {}
+	SoftSurface() {}
 
 public:
 	void reset(int ww, int hh, const uint32_t* data) {
@@ -57,7 +57,7 @@ private:
 };
 
 
-SHAKURAS_SHARED_PTR(Surface);
+SHAKURAS_SHARED_PTR(SoftSurface);
 
 
 template<class S, typename AF>

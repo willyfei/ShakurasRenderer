@@ -1,9 +1,9 @@
 #pragma once
 #include "ResUtility.h"
 #include "Renderer/MathAndGeometry.h"
-#include "Renderer/Soft/Vertex.h"
-#include "Renderer/Soft/Fragment.h"
-#include "Renderer/Soft/Surface.h"
+#include "Renderer/Soft/SoftVertex.h"
+#include "Renderer/Soft/SoftFragment.h"
+#include "Renderer/Soft/SoftSurface.h"
 #include <vector>
 #include <array>
 
@@ -13,8 +13,8 @@
 
 
 //texture×ÊÔ´
-RESPARSER_DLL shakuras::SurfacePtr GridSurface();
-RESPARSER_DLL shakuras::SurfacePtr LoadSurface(std::string filepath, bool isrelpath = true);
+RESPARSER_DLL shakuras::SoftSurfacePtr GridSurface();
+RESPARSER_DLL shakuras::SoftSurfacePtr LoadSurface(std::string filepath, bool isrelpath = true);
 
 
 #pragma warning(pop) 

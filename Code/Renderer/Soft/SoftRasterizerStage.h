@@ -1,7 +1,7 @@
 #pragma once
-#include "GeometryStage.h"
-#include "Vertex.h"
-#include "Sampler.h"
+#include "SoftGeometryStage.h"
+#include "SoftVertex.h"
+#include "SoftSampler.h"
 #include "../MathAndGeometry.h"
 #include "../Color.h"
 #include "../Profiler.h"
@@ -223,7 +223,7 @@ public:
 	}
 
 public:
-	Sampler sampler_;
+	SoftSampler sampler_;
 	FS fragshader_;
 };
 
@@ -259,7 +259,7 @@ private:
 
 
 template<class UL, class V, class F, class FS>
-class RasterizerStage {
+class SoftRasterizerStage {
 public:
 	void initialize(int ww, int hh, void* fb, Profiler& profiler) {
 		width_ = ww;
@@ -279,7 +279,7 @@ public:
 		}
 	}
 
-	void process(DrawCall<UL, V>& call) {
+	void process(SoftDrawCall<UL, V>& call) {
 		profiler_->count("Ras-Triangle Count", (int)call.prims.tris_.size());
 		
 		//triangle setup, Ê¡ÂÔ

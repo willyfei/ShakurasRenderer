@@ -7,10 +7,10 @@ SHAKURAS_BEGIN;
 
 
 template<class A, class V>
-class Vertex {
+class SoftVertex {
 public:
-	Vertex() : rhw(1.0f) {}
-	Vertex(const Vector4f& ppos)
+	SoftVertex() : rhw(1.0f) {}
+	SoftVertex(const Vector4f& ppos)
 		: pos(ppos) {}
 
 public:
@@ -28,8 +28,8 @@ public:
 
 
 template<class A, class V>
-inline Vertex<A, V> operator+(const Vertex<A, V>& v1, const Vertex<A, V>& v2) {
-	Vertex<A, V> v3;
+inline SoftVertex<A, V> operator+(const SoftVertex<A, V>& v1, const SoftVertex<A, V>& v2) {
+	SoftVertex<A, V> v3;
 	v3.pos = v1.pos + v2.pos;
 	v3.varyings = v1.varyings + v2.varyings;
 	v3.rhw = v1.rhw + v2.rhw;
@@ -37,8 +37,8 @@ inline Vertex<A, V> operator+(const Vertex<A, V>& v1, const Vertex<A, V>& v2) {
 }
 
 template<class A, class V>
-inline Vertex<A, V> operator-(const Vertex<A, V>& v1, const Vertex<A, V>& v2) {
-	Vertex<A, V> v3;
+inline SoftVertex<A, V> operator-(const SoftVertex<A, V>& v1, const SoftVertex<A, V>& v2) {
+	SoftVertex<A, V> v3;
 	v3.pos = v1.pos - v2.pos;
 	v3.varyings = v1.varyings - v2.varyings;
 	v3.rhw = v1.rhw - v2.rhw;
@@ -46,8 +46,8 @@ inline Vertex<A, V> operator-(const Vertex<A, V>& v1, const Vertex<A, V>& v2) {
 }
 
 template<class A, class V>
-inline Vertex<A, V> operator*(const Vertex<A, V>& v1, float t) {
-	Vertex<A, V> v3;
+inline SoftVertex<A, V> operator*(const SoftVertex<A, V>& v1, float t) {
+	SoftVertex<A, V> v3;
 	v3.pos = v1.pos * t;
 	v3.varyings = v1.varyings * t;
 	v3.rhw = v1.rhw * t;
@@ -55,8 +55,8 @@ inline Vertex<A, V> operator*(const Vertex<A, V>& v1, float t) {
 }
 
 template<class A, class V>
-inline Vertex<A, V> operator/(const Vertex<A, V>& v1, float d) {
-	Vertex<A, V> v3;
+inline SoftVertex<A, V> operator/(const SoftVertex<A, V>& v1, float d) {
+	SoftVertex<A, V> v3;
 	float t = 1.0f / d;
 	v3.pos = v1.pos * t;
 	v3.varyings = v1.varyings * t;

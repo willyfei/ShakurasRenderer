@@ -1,7 +1,7 @@
 // Example_Sponza.cpp : 定义控制台应用程序的入口点。
 //
 
-#include "Renderer\Soft\Preset.h"
+#include "Renderer\Soft\SoftPreset.h"
 #include "ResourceParser\SurfaceParser.h"
 #include "PlatformSpec\WinViewer.h"
 #include "ResourceParser\ObjParser.h"
@@ -13,7 +13,7 @@ using namespace shakuras;
 namespace soft_sponza {
 
 	struct UniformList {
-		MipmapPtr texture;
+		SoftMipmapPtr texture;
 		Vector3f ambient;
 		Vector3f diffuse;
 		Vector3f specular;
@@ -40,7 +40,7 @@ namespace soft_sponza {
 
 	class FragmentShader {
 	public:
-		void process(const UniformList& u, Sampler& sampler, phong::Fragment& f) {
+		void process(const UniformList& u, SoftSampler& sampler, phong::Fragment& f) {
 			Vector3f norm = f.varyings.normal;
 			Vector3f eye_dir = f.varyings.eye_dir;
 			Vector3f light_dir = f.varyings.light_dir;
@@ -65,11 +65,11 @@ namespace soft_sponza {
 		}
 	};
 
-	typedef shakuras::DrawCall<UniformList, phong::Vertex> DrawCall;
+	typedef shakuras::SoftDrawCall<UniformList, phong::Vertex> DrawCall;
 
-	typedef shakuras::GeometryStage<UniformList, phong::Vertex, VertexShader> GeomStage;
+	typedef shakuras::SoftGeometryStage<UniformList, phong::Vertex, VertexShader> GeomStage;
 
-	typedef shakuras::RasterizerStage<UniformList, phong::Vertex, phong::Fragment, FragmentShader> RasStage;
+	typedef shakuras::SoftRasterizerStage<UniformList, phong::Vertex, phong::Fragment, FragmentShader> RasStage;
 
 	class AppStage {
 	public:

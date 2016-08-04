@@ -1,8 +1,8 @@
 #pragma once
 #include "ResUtility.h"
 #include "Renderer/MathAndGeometry.h"
-#include "Renderer/Soft/Mipmap.h"
-#include "Renderer/Soft/Surface.h"
+#include "Renderer/Soft/SoftMipmap.h"
+#include "Renderer/Soft/SoftSurface.h"
 #include <vector>
 #include <string>
 
@@ -22,7 +22,7 @@ public:
 
 	std::string name;
 
-	shakuras::MipmapPtr tex;
+	shakuras::SoftMipmapPtr tex;
 	shakuras::Vector3f ambient;
 	shakuras::Vector3f diffuse;
 	shakuras::Vector3f specular;

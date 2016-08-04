@@ -1,10 +1,10 @@
 #pragma once
-#include "Mipmap.h"
-#include "Vertex.h"
-#include "Fragment.h"
-#include "DrawCall.h"
-#include "GeometryStage.h"
-#include "RasterizerStage.h"
+#include "SoftMipmap.h"
+#include "SoftVertex.h"
+#include "SoftFragment.h"
+#include "SoftDrawCall.h"
+#include "SoftGeometryStage.h"
+#include "SoftRasterizerStage.h"
 #include "../GraphicsPipeline.h"
 #include "../MathAndGeometry.h"
 
@@ -17,7 +17,7 @@ SHAKURAS_BEGIN;
 namespace phong {
 
 	struct UniformList {
-		MipmapPtr texture;
+		SoftMipmapPtr texture;
 		Vector3f ambient;
 		Vector3f diffuse;
 		Vector3f specular;
@@ -76,13 +76,13 @@ namespace phong {
 		return v3;
 	}
 
-	typedef shakuras::Vertex<AttribList, VaryingList> Vertex;
+	typedef shakuras::SoftVertex<AttribList, VaryingList> Vertex;
 
-	typedef shakuras::Fragment<VaryingList> Fragment;
+	typedef shakuras::SoftFragment<VaryingList> Fragment;
 
-	typedef shakuras::DrawCall<UniformList, Vertex> DrawCall;
+	typedef shakuras::SoftDrawCall<UniformList, Vertex> DrawCall;
 
-	typedef shakuras::PrimitiveList<Vertex> PrimitiveList;
+	typedef shakuras::SoftPrimitiveList<Vertex> PrimitiveList;
 
 	class VertexShader {
 	public:
@@ -101,7 +101,7 @@ namespace phong {
 
 	class FragmentShader {
 	public:
-		void process(const UniformList& u, Sampler& sampler, Fragment& f) {
+		void process(const UniformList& u, SoftSampler& sampler, Fragment& f) {
 			Vector3f norm = f.varyings.normal;
 			Vector3f light_dir = f.varyings.light_dir;
 			Vector3f eye_dir = f.varyings.eye_dir;
@@ -128,9 +128,9 @@ namespace phong {
 		}
 	};
 
-	typedef GeometryStage<UniformList, Vertex, VertexShader> GeomStage;
+	typedef SoftGeometryStage<UniformList, Vertex, VertexShader> GeomStage;
 
-	typedef RasterizerStage<UniformList, Vertex, Fragment, FragmentShader> RasStage;
+	typedef SoftRasterizerStage<UniformList, Vertex, Fragment, FragmentShader> RasStage;
 }
 
 

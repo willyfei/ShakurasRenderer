@@ -1,13 +1,13 @@
 #pragma once
-#include "Surface.h"
-#include "Mipmap.h"
+#include "SoftSurface.h"
+#include "SoftMipmap.h"
 #include "../MathAndGeometry.h"
 
 
 SHAKURAS_BEGIN;
 
 
-class Sampler {
+class SoftSampler {
 public:
 	template<class S, typename AF>
 	Vector3f surfaceNearest(float u, float v, const S& surface, AF addressing) {

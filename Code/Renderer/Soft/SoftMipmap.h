@@ -1,17 +1,17 @@
 #pragma once
-#include "Surface.h"
+#include "SoftSurface.h"
 #include <vector>
 
 
 SHAKURAS_BEGIN;
 
 
-class Mipmap {
+class SoftMipmap {
 public:
-	Mipmap() {}
+	SoftMipmap() {}
 
 public:
-	void reset(SurfacePtr surface) {
+	void reset(SoftSurfacePtr surface) {
 		surfaces_.clear();
 
 		if (!surface) {
@@ -23,7 +23,7 @@ public:
 		int w = (surface->width() + 1) / 2;
 		int h = (surface->height() + 1) / 2;
 		while (w > 1 || h > 1) {
-			SurfacePtr next_surface = std::make_shared<Surface>();
+			SoftSurfacePtr next_surface = std::make_shared<SoftSurface>();
 			next_surface->reset(w, h, nullptr);
 
 			for (int x = 0; x != w; x++) {
@@ -50,7 +50,7 @@ public:
 	}
 
 	inline int levelCount() const { return (int)surfaces_.size(); }
-	inline const Surface& level(int l) const  {
+	inline const SoftSurface& level(int l) const  {
 		if (l < 0) {
 			return *surfaces_.front();
 		}
@@ -61,19 +61,19 @@ public:
 	}
 
 private:
-	std::vector<SurfacePtr> surfaces_;
+	std::vector<SoftSurfacePtr> surfaces_;
 };
 
 
-SHAKURAS_SHARED_PTR(Mipmap);
+SHAKURAS_SHARED_PTR(SoftMipmap);
 
 
-inline MipmapPtr CreateMipmap(SurfacePtr surface) {
+inline SoftMipmapPtr CreateMipmap(SoftSurfacePtr surface) {
 	if (!surface) { 
 		return nullptr;
 	}
 
-	MipmapPtr mipmap = std::make_shared<Mipmap>();
+	SoftMipmapPtr mipmap = std::make_shared<SoftMipmap>();
 	mipmap->reset(surface);
 
 	return mipmap;

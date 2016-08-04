@@ -6,9 +6,9 @@ SHAKURAS_BEGIN;
 
 
 template<class VL>
-class Fragment {
+class SoftFragment {
 public:
-	Fragment() : x(0), y(0), z(1.0f), weight(0.0f) {}
+	SoftFragment() : x(0), y(0), z(1.0f), weight(0.0f) {}
 
 public:
 	int x, y;

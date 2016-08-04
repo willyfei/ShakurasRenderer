@@ -1,5 +1,5 @@
 #pragma once
-#include "Clipper.h"
+#include "SoftClipper.h"
 #include "../Profiler.h"
 #include <ppl.h>
 
@@ -8,7 +8,7 @@ SHAKURAS_BEGIN;
 
 
 template<class UL, class V, class VS>
-class GeometryStage {
+class SoftGeometryStage {
 public:
 	void initialize(float w, float h, Profiler& profiler) {
 		width_ = w;
@@ -17,7 +17,7 @@ public:
 		refuse_back_ = true;
 	}
 
-	void process(DrawCall<UL, V>& call) {
+	void process(SoftDrawCall<UL, V>& call) {
 		profiler_->count("Geo-Triangle Count", (int)call.prims.tris_.size());
 
 		//vertex sharding
@@ -32,7 +32,7 @@ public:
 		Concurrency::parallel_for_each(call.prims.verts_.begin(), call.prims.verts_.end(), vert_geom_sharding_and_proj);
 
 		//cliping
-		Clipper<V>(call.prims, *profiler_, refuse_back_).process();
+		SoftClipper<V>(call.prims, *profiler_, refuse_back_).process();
 
 		//screen mapping
 		auto screen_mapping = [&](V& vert) {

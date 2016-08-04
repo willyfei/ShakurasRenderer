@@ -1,5 +1,5 @@
 #pragma once
-#include "Primitive.h"
+#include "SoftPrimitiveList.h"
 #include "../MathAndGeometry.h"
 #include "../Profiler.h"
 #include <algorithm>
@@ -50,9 +50,9 @@ inline V SignedDistanceLerp(const V& v1, const V& v2, float d1, float d2) {
 
 
 template<class V>
-class Clipper {
+class SoftClipper {
 public:
-	Clipper(PrimitiveList<V>& prims, Profiler& profiler, bool refuse_back) {
+	SoftClipper(SoftPrimitiveList<V>& prims, Profiler& profiler, bool refuse_back) {
 		iprims_ = &prims;
 		profiler_ = &profiler;
 		refuse_back_ = refuse_back;
@@ -268,11 +268,11 @@ private:
 	}
 
 private:
-	PrimitiveList<V>* iprims_;
+	SoftPrimitiveList<V>* iprims_;
 	std::vector<short> oris_;
 	std::vector<float> neards_;
 	std::vector<float> fards_;
-	PrimitiveList<V> oprims_;
+	SoftPrimitiveList<V> oprims_;
 	Profiler* profiler_;
 	bool refuse_back_;
 };

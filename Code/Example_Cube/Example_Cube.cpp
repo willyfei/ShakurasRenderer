@@ -2,7 +2,7 @@
 //
 
 #include <vector>
-#include "Renderer\Soft\Preset.h"
+#include "Renderer\Soft\SoftPreset.h"
 #include "ResourceParser\SurfaceParser.h"
 #include "PlatformSpec\WinViewer.h"
 
@@ -118,7 +118,7 @@ namespace soft_cube {
 	private:
 		WinViewerPtr viewer_;
 		phong::DrawCall output_;
-		std::vector<MipmapPtr> texlist_;
+		std::vector<SoftMipmapPtr> texlist_;
 		int itex_;
 		int nspace_;
 		float alpha_;

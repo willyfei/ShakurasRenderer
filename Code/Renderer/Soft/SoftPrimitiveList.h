@@ -7,19 +7,19 @@ SHAKURAS_BEGIN;
 
 
 template<class V> 
-class PrimitiveList {
+class SoftPrimitiveList {
 public:
 	void clear() {
 		verts_.clear();
 		tris_.clear();
 	}
 
-	void swap(PrimitiveList<V>& src) {
+	void swap(SoftPrimitiveList<V>& src) {
 		std::swap(verts_, src.verts_);
 		std::swap(tris_, src.tris_);
 	}
 
-	void merge(const PrimitiveList<V>& src) {
+	void merge(const SoftPrimitiveList<V>& src) {
 		verts_.reserve(verts_.size() + src.verts_.size());
 		tris_.reserve(tris_.size() + src.tris_.size());
 
