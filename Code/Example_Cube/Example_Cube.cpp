@@ -2,7 +2,7 @@
 //
 
 #include <vector>
-#include "Core\Soft\Preset.h"
+#include "Renderer\Soft\Preset.h"
 #include "ResourceParser\SurfaceParser.h"
 #include "PlatformSpec\WinViewer.h"
 
