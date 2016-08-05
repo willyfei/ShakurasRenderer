@@ -87,7 +87,7 @@ namespace soft_cup {
 		float pos_;
 	};
 
-	typedef Application<phong::DrawCall, AppStage, phong::RenderStage> Application;
+	typedef shakuras::Application<phong::DrawCall, AppStage, phong::RenderStage> Application;
 }
 
 
