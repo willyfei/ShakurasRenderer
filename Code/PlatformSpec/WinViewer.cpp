@@ -124,6 +124,10 @@ void* WinViewer::frameBuffer() {
 	return screen_fb;
 }
 
+HDC WinViewer::hdc() {
+	return screen_dc;
+}
+
 int WinViewer::width() {
 	return screen_w;
 }

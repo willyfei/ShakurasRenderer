@@ -43,6 +43,8 @@ public:
 
 	void* frameBuffer();
 
+	HDC hdc();
+
 	int width();
 
 	int height();

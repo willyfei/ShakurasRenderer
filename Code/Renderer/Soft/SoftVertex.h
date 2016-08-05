@@ -1,6 +1,5 @@
 #pragma once
 #include "../MathAndGeometry.h"
-#include <array>
 
 
 SHAKURAS_BEGIN;
