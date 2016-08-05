@@ -2,6 +2,7 @@
 //
 
 #include "Renderer\Soft\SoftPreset.h"
+#include "Renderer\Application.h"
 #include "ResourceParser\SurfaceParser.h"
 #include "PlatformSpec\WinViewer.h"
 #include "ResourceParser\ObjParser.h"
@@ -149,7 +150,9 @@ namespace soft_sponza {
 		int step_, move_;
 	};
 
-	typedef shakuras::GraphicsPipeline<DrawCall, AppStage, GeomStage, RasStage> Pipeline;
+	typedef shakuras::SoftRenderStage<DrawCall, GeomStage, RasStage> RenderStage;
+
+	typedef shakuras::Application<DrawCall, AppStage, RenderStage> Application;
 }
 
 
@@ -164,14 +167,14 @@ int main()
 		return -1;
 	}
 
-	soft_sponza::Pipeline pipeline;
-	pipeline.initialize(viewer);
-	pipeline.geomstage_.refuseBack(false);
+	soft_sponza::Application app;
+	app.initialize(viewer);
+	app.renstage_.geostage_.refuseBack(false);
 
 	while (!viewer->testUserMessage(kUMEsc) && !viewer->testUserMessage(kUMClose)) {
 		viewer->dispatch();
 
-		pipeline.process();
+		app.process();
 
 		viewer->update();
 		Sleep(1);

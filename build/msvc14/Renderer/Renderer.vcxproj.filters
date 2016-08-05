@@ -45,9 +45,6 @@
     <ClInclude Include="..\..\..\Code\Renderer\Utility.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Code\Renderer\GraphicsPipeline.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Code\Renderer\Soft\SoftDrawCall.h">
       <Filter>头文件\Soft</Filter>
     </ClInclude>
@@ -83,6 +80,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Code\Renderer\OpenGL\GlBatch.h">
       <Filter>头文件\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Code\Renderer\Soft\SoftRenderStage.h">
+      <Filter>头文件\Soft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Code\Renderer\Application.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

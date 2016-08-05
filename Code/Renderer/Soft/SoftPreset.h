@@ -5,7 +5,7 @@
 #include "SoftDrawCall.h"
 #include "SoftGeometryStage.h"
 #include "SoftRasterizerStage.h"
-#include "../GraphicsPipeline.h"
+#include "SoftRenderStage.h"
 #include "../MathAndGeometry.h"
 
 
@@ -131,6 +131,8 @@ namespace phong {
 	typedef SoftGeometryStage<UniformList, Vertex, VertexShader> GeomStage;
 
 	typedef SoftRasterizerStage<UniformList, Vertex, Fragment, FragmentShader> RasStage;
+
+	typedef SoftRenderStage<DrawCall, GeomStage, RasStage> RenderStage;
 }
 
 

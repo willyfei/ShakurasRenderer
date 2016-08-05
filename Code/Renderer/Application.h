@@ -5,14 +5,13 @@
 SHAKURAS_BEGIN;
 
 
-template<class CALL, class AS, class GS, class RS>
-class GraphicsPipeline {
+template<class CALL, class AS, class RS>
+class Application {
 public:
 	template<class VPTR>
 	void initialize(VPTR viewer) {
 		appstage_.initialize(viewer);
-		geomstage_.initialize((float)viewer->width(), (float)viewer->height(), profiler_);
-		rasstage_.initialize(viewer->width(), viewer->height(), viewer->frameBuffer(), profiler_);
+		renstage_.initialize(viewer, profiler_);
 	}
 
 	void process() {
@@ -21,19 +20,17 @@ public:
 		std::vector<CALL> calls;
 		appstage_.process(calls);
 
-		rasstage_.clean();
+		renstage_.clean();
 
 		for (auto i = calls.begin(); i != calls.end(); i++) {
-			geomstage_.process(*i);
-			rasstage_.process(*i);
+			renstage_.process(*i);
 		}
 	}
 
 public:
 	Profiler profiler_;
 	AS appstage_;
-	GS geomstage_;
-	RS rasstage_;
+	RS renstage_;
 };
 
 

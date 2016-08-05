@@ -2,6 +2,7 @@
 //
 
 #include "Renderer\Soft\SoftPreset.h"
+#include "Renderer\Application.h"
 #include "ResourceParser\SurfaceParser.h"
 #include "PlatformSpec\WinViewer.h"
 #include "ResourceParser\ObjParser.h"
@@ -86,7 +87,7 @@ namespace soft_cup {
 		float pos_;
 	};
 
-	typedef GraphicsPipeline<phong::DrawCall, AppStage, phong::GeomStage, phong::RasStage> Pipeline;
+	typedef Application<phong::DrawCall, AppStage, phong::RenderStage> Application;
 }
 
 
@@ -101,13 +102,13 @@ int main()
 		return -1;
 	}
 
-	soft_cup::Pipeline pipeline;
-	pipeline.initialize(viewer);
+	soft_cup::Application app;
+	app.initialize(viewer);
 
 	while (!viewer->testUserMessage(kUMEsc) && !viewer->testUserMessage(kUMClose)) {
 		viewer->dispatch();
 
-		pipeline.process();
+		app.process();
 
 		viewer->update();
 		Sleep(1);

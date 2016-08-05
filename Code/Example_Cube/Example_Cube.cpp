@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Renderer\Soft\SoftPreset.h"
+#include "Renderer\Application.h"
 #include "ResourceParser\SurfaceParser.h"
 #include "PlatformSpec\WinViewer.h"
 
@@ -125,7 +126,7 @@ namespace soft_cube {
 		float pos_;
 	};
 
-	typedef GraphicsPipeline<phong::DrawCall, AppStage, phong::GeomStage, phong::RasStage> Pipeline;
+	typedef Application<phong::DrawCall, AppStage, phong::RenderStage> Application;
 }
 
 
@@ -140,13 +141,13 @@ int main()
 		return -1;
 	}
 
-	soft_cube::Pipeline pipeline;
-	pipeline.initialize(viewer);
+	soft_cube::Application app;
+	app.initialize(viewer);
 
 	while (!viewer->testUserMessage(kUMEsc) && !viewer->testUserMessage(kUMClose)) {
 		viewer->dispatch();
 
-		pipeline.process();
+		app.process();
 
 		viewer->update();
 		Sleep(1);

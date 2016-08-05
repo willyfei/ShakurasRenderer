@@ -91,7 +91,7 @@ void GlBatch::setAttribBuffer(const float* buffer, int index, int sizebyfloat) {
 
 
 void GlBatch::attribGrow(int index) {
-	while (attrib_buffers_.size() < index + 1) {
+	while ((int)attrib_buffers_.size() < index + 1) {
 		attrib_buffers_.push_back(0);
 		attib_sizebyfloats_.push_back(0);
 	}

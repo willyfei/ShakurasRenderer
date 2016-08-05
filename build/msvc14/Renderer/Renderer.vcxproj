@@ -252,7 +252,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Code\Renderer\Color.h" />
-    <ClInclude Include="..\..\..\Code\Renderer\GraphicsPipeline.h" />
+    <ClInclude Include="..\..\..\Code\Renderer\Application.h" />
     <ClInclude Include="..\..\..\Code\Renderer\MathAndGeometry.h" />
     <ClInclude Include="..\..\..\Code\Renderer\OpenGL\GlBatch.h" />
     <ClInclude Include="..\..\..\Code\Renderer\Profiler.h" />
@@ -264,6 +264,7 @@
     <ClInclude Include="..\..\..\Code\Renderer\Soft\SoftPreset.h" />
     <ClInclude Include="..\..\..\Code\Renderer\Soft\SoftPrimitiveList.h" />
     <ClInclude Include="..\..\..\Code\Renderer\Soft\SoftRasterizerStage.h" />
+    <ClInclude Include="..\..\..\Code\Renderer\Soft\SoftRenderStage.h" />
     <ClInclude Include="..\..\..\Code\Renderer\Soft\SoftSampler.h" />
     <ClInclude Include="..\..\..\Code\Renderer\Soft\SoftSurface.h" />
     <ClInclude Include="..\..\..\Code\Renderer\Soft\SoftVertex.h" />
