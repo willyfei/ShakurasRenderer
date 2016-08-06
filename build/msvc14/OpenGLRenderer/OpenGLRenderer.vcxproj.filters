@@ -27,6 +27,15 @@
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlBatch.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlRenderStage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlDrawCall.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlUniformList.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -39,6 +48,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlBatch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlUniformList.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlRenderStage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
