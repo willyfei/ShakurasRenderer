@@ -23,6 +23,7 @@ enum UserMessage {
 	kUMRight,
 	kUMEsc,
 	kUMSpace,
+
 	kUMClose
 };
 

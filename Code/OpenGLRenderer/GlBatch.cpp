@@ -62,6 +62,21 @@ GlBatch::GlBatch() {
 }
 
 
+GlBatch::~GlBatch() {
+	for (auto i = attrib_buffers_.begin(); i != attrib_buffers_.end(); i++) {
+		if (*i != 0) {
+			glDeleteBuffers(1, &(*i));
+		}
+	}
+
+	if (index_buffer_ != 0) {
+		glDeleteBuffers(1, &index_buffer_);
+	}
+
+	glDeleteVertexArrays(1, &vao_);
+}
+
+
 void GlBatch::begin(short cat, int vert_count, bool is_static) {
 	primtype_ = GetGlPrimtiveType(cat);
 	vertcount_ = vert_count;
@@ -125,7 +140,6 @@ void GlBatch::draw() {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
 
-	// Draw the triangles !
 	glDrawElements(
 		primtype_,
 		vertcount_,
