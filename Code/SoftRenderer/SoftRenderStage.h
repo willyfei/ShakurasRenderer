@@ -14,13 +14,13 @@ public:
 		rasstage_.initialize(viewer->width(), viewer->height(), viewer->frameBuffer(), profiler);
 	}
 
-	void clean() {
+	void process(std::vector<CALL>& calls) {
 		rasstage_.clean();
-	}
 
-	void process(CALL& call) {
-		geostage_.process(call);
-		rasstage_.process(call);
+		for (auto i = calls.begin(); i != calls.end(); i++) {
+			geostage_.process(*i);
+			rasstage_.process(*i);
+		}
 	}
 
 public:

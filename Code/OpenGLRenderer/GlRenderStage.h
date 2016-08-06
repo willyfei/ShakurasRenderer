@@ -17,19 +17,15 @@ public:
 		profiler_ = &profiler;
 		initContext(viewer->hdc());
 		initStaticState();
-		initProjection(viewer->width(), viewer->height());
 	}
 
 	void clean();
 
-	void process(GlDrawCall& call) {
-
-	}
+	void process(std::vector<GlDrawCall>& calls);
 
 private:
 	void initContext(HDC hdc);
 	void initStaticState();
-	void initProjection(int width, int height);
 
 private:
 	Profiler* profiler_;

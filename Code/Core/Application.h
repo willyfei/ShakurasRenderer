@@ -18,13 +18,10 @@ public:
 		ScopeProfiling prof(profiler_);
 
 		std::vector<CALL> calls;
+
 		appstage_.process(calls);
 
-		renstage_.clean();
-
-		for (auto i = calls.begin(); i != calls.end(); i++) {
-			renstage_.process(*i);
-		}
+		renstage_.process(calls);
 	}
 
 public:

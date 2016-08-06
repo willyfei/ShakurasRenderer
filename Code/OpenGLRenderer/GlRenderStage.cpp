@@ -67,10 +67,20 @@ void GlRenderStage::initStaticState() {
 }
 
 
-void GlRenderStage::initProjection(int width, int height) {
+void GlRenderStage::process(std::vector<GlDrawCall>& calls) {
 	GlContextBinding ctx(hdc_, hrc_);
 
+	clean();
 
+	auto draw_batch = [&](GlBatchPtr batch) {
+		if (batch) {
+			batch->draw();
+		}
+	};
+
+	for (auto i = calls.begin(); i != calls.end(); i++) {
+		std::for_each(i->batchs.begin(), i->batchs.end(), draw_batch);
+	}
 }
 
 
