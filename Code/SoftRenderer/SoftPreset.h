@@ -6,7 +6,7 @@
 #include "SoftGeometryStage.h"
 #include "SoftRasterizerStage.h"
 #include "SoftRenderStage.h"
-#include "../MathAndGeometry.h"
+#include "Core/MathAndGeometry.h"
 
 
 SHAKURAS_BEGIN;

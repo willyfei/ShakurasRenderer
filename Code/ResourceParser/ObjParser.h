@@ -1,8 +1,8 @@
 #pragma once
 #include "ResUtility.h"
-#include "Renderer/MathAndGeometry.h"
-#include "Renderer/Soft/SoftMipmap.h"
-#include "Renderer/Soft/SoftSurface.h"
+#include "Core/MathAndGeometry.h"
+#include "SoftRenderer/SoftMipmap.h"
+#include "SoftRenderer/SoftSurface.h"
 #include <vector>
 #include <string>
 

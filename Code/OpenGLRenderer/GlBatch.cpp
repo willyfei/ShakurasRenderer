@@ -104,9 +104,9 @@ void GlBatch::end() {
 		int sizebyfloat = attib_sizebyfloats_[i];
 
 		if (attrib_buffer != 0 && sizebyfloat != 0) {
-			glEnableVertexAttribArray(i);
+			glEnableVertexAttribArray((GLuint)i);
 			glBindBuffer(GL_ARRAY_BUFFER, attrib_buffer);
-			glVertexAttribPointer(i, sizebyfloat, GL_FLOAT, GL_FALSE, 0, 0);
+			glVertexAttribPointer((GLuint)i, sizebyfloat, GL_FLOAT, GL_FALSE, 0, 0);
 		}
 	};
 

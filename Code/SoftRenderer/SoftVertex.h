@@ -1,5 +1,5 @@
 #pragma once
-#include "../MathAndGeometry.h"
+#include "Core/MathAndGeometry.h"
 
 
 SHAKURAS_BEGIN;

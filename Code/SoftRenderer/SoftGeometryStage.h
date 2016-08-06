@@ -1,6 +1,6 @@
 #pragma once
 #include "SoftClipper.h"
-#include "../Profiler.h"
+#include "Core/Profiler.h"
 #include <ppl.h>
 
 

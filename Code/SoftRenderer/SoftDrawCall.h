@@ -1,6 +1,6 @@
 #pragma once
 #include "SoftPrimitiveList.h"
-#include "../MathAndGeometry.h"
+#include "Core/MathAndGeometry.h"
 #include <vector>
 
 

@@ -2,9 +2,9 @@
 #include "SoftGeometryStage.h"
 #include "SoftVertex.h"
 #include "SoftSampler.h"
-#include "../MathAndGeometry.h"
-#include "../Color.h"
-#include "../Profiler.h"
+#include "Core/MathAndGeometry.h"
+#include "Core/Color.h"
+#include "Core/Profiler.h"
 #include <vector>
 #include <array>
 #include <ppl.h>

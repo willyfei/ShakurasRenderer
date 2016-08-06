@@ -1,7 +1,7 @@
 #pragma once
 #include "SoftSurface.h"
 #include "SoftMipmap.h"
-#include "../MathAndGeometry.h"
+#include "Core/MathAndGeometry.h"
 
 
 SHAKURAS_BEGIN;

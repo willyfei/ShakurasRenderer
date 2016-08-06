@@ -1,7 +1,7 @@
 #pragma once
 #include "SoftPrimitiveList.h"
-#include "../MathAndGeometry.h"
-#include "../Profiler.h"
+#include "Core/MathAndGeometry.h"
+#include "Core/Profiler.h"
 #include <algorithm>
 #include <array>
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/MathAndGeometry.h"
+#include "Core/MathAndGeometry.h"
 #include <Windows.h>
 #include <tchar.h>
 #include <map>

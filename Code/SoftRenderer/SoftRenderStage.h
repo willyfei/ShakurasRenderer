@@ -1,5 +1,5 @@
 #pragma once
-#include "../Profiler.h"
+#include "Core/Profiler.h"
 
 
 SHAKURAS_BEGIN;

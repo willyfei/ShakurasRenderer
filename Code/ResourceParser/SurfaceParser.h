@@ -1,9 +1,9 @@
 #pragma once
 #include "ResUtility.h"
-#include "Renderer/MathAndGeometry.h"
-#include "Renderer/Soft/SoftVertex.h"
-#include "Renderer/Soft/SoftFragment.h"
-#include "Renderer/Soft/SoftSurface.h"
+#include "Core/MathAndGeometry.h"
+#include "SoftRenderer/SoftVertex.h"
+#include "SoftRenderer/SoftFragment.h"
+#include "SoftRenderer/SoftSurface.h"
 #include <vector>
 #include <array>
 

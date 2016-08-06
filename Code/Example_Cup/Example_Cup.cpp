@@ -1,8 +1,8 @@
 // Example_Cup.cpp : 定义控制台应用程序的入口点。
 //
 
-#include "Renderer\Soft\SoftPreset.h"
-#include "Renderer\Application.h"
+#include "SoftRenderer\SoftPreset.h"
+#include "Core\Application.h"
 #include "ResourceParser\SurfaceParser.h"
 #include "PlatformSpec\WinViewer.h"
 #include "ResourceParser\ObjParser.h"
