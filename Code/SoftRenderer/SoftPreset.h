@@ -14,7 +14,7 @@ SHAKURAS_BEGIN;
 
 //一层mipmap纹理
 //Phong着色
-namespace phong {
+namespace soft_phong {
 
 	struct UniformList {
 		SoftMipmapPtr texture;
@@ -137,7 +137,7 @@ namespace phong {
 
 
 template<>
-inline Vector2f TexCoord<phong::VaryingList>(const phong::VaryingList& v) {
+inline Vector2f TexCoord<soft_phong::VaryingList>(const soft_phong::VaryingList& v) {
 	return v.uv;
 }
 

@@ -1,4 +1,4 @@
-// Example_Cup.cpp : 定义控制台应用程序的入口点。
+// Example_Soft_Cup.cpp : 定义控制台应用程序的入口点。
 //
 
 #include "SoftRenderer\SoftPreset.h"
@@ -27,12 +27,12 @@ namespace soft_cup {
 
 			for (size_t i = 0; i != meshs.size(); i++) {
 				const ObjMesh& mesh = meshs[i];
-				phong::DrawCall& cmd = outputs_[i];
+				soft_phong::DrawCall& cmd = outputs_[i];
 
 				cmd.prims.verts_.resize(mesh.verts.size());
 				for (size_t ii = 0; ii != mesh.verts.size(); ii++) {
 					const ObjVert& objv = mesh.verts[ii];
-					phong::Vertex& v = cmd.prims.verts_[ii];
+					soft_phong::Vertex& v = cmd.prims.verts_[ii];
 
 					v.pos.set(objv.pos.x, objv.pos.y, objv.pos.z, 1.0f);
 					v.attribs.uv = objv.uv;
@@ -56,13 +56,13 @@ namespace soft_cup {
 			viewer_ = viewer;
 		}
 
-		void process(std::vector<phong::DrawCall>& cmds) {
+		void process(std::vector<soft_phong::DrawCall>& cmds) {
 			if (viewer_->testUserMessage(kUMUp)) pos_ += 0.04f;
 			if (viewer_->testUserMessage(kUMDown)) pos_ -= 0.04f;
 			if (viewer_->testUserMessage(kUMLeft)) alpha_ -= 0.02f;
 			if (viewer_->testUserMessage(kUMRight)) alpha_ += 0.02f;
 
-			Vector3f eye(0, - 3 - pos_, 1.0f), at(0, 0, 0), up(0, 0, 1);
+			Vector3f eye(0, -3 - pos_, 1.0f), at(0, 0, 0), up(0, 0, 1);
 			Vector3f eye_pos = eye;
 			Vector3f light_pos(-100.0f, -100.0f, 100.0f);
 
@@ -70,7 +70,7 @@ namespace soft_cup {
 			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
 
 			for (size_t i = 0; i != outputs_.size(); i++) {
-				phong::DrawCall& cmd = outputs_[i];
+				soft_phong::DrawCall& cmd = outputs_[i];
 				cmd.uniforms.model_trsf = modeltrsf;//模型变换
 				cmd.uniforms.mv_trsf = modeltrsf * viewtrsf;//模型*视图变换
 				cmd.uniforms.eye_pos = eye_pos;//相机位置
@@ -82,12 +82,12 @@ namespace soft_cup {
 
 	private:
 		WinViewerPtr viewer_;
-		std::vector<phong::DrawCall> outputs_;
+		std::vector<soft_phong::DrawCall> outputs_;
 		float alpha_;
 		float pos_;
 	};
 
-	typedef shakuras::Application<phong::DrawCall, AppStage, phong::RenderStage> Application;
+	typedef shakuras::Application<soft_phong::DrawCall, AppStage, soft_phong::RenderStage> Application;
 }
 
 

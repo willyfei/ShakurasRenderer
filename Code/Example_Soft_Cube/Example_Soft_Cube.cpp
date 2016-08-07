@@ -1,5 +1,6 @@
-// Example_Cube.cpp : 定义控制台应用程序的入口点。
+// Example_Soft_Cube.cpp : 定义控制台应用程序的入口点。
 //
+
 
 #include <vector>
 #include "SoftRenderer\SoftPreset.h"
@@ -13,8 +14,8 @@ using namespace shakuras;
 
 namespace soft_cube {
 
-	void GenerateCube(phong::PrimitiveList& prims) {
-		static phong::Vertex mesh[8] = {
+	void GenerateCube(soft_phong::PrimitiveList& prims) {
+		static soft_phong::Vertex mesh[8] = {
 			{ { -1, -1, -1, 1 } },
 			{ { 1, -1, -1, 1 } },
 			{ { 1, 1, -1, 1 } },
@@ -26,7 +27,7 @@ namespace soft_cube {
 		};
 
 		auto draw_plane = [&](int a, int b, int c, int d) {
-			phong::Vertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
+			soft_phong::Vertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
 
 			p1.attribs.uv.set(0, 0);
 			p2.attribs.uv.set(0, 1);
@@ -86,7 +87,7 @@ namespace soft_cube {
 			viewer_ = viewer;
 		}
 
-		void process(std::vector<phong::DrawCall>& cmds) {
+		void process(std::vector<soft_phong::DrawCall>& cmds) {
 			if (viewer_->testUserMessage(kUMSpace)) {
 				if (++nspace_ == 1) {
 					itex_ = (itex_ + 1) % texlist_.size();
@@ -100,13 +101,13 @@ namespace soft_cube {
 			if (viewer_->testUserMessage(kUMLeft)) alpha_ -= 0.02f;
 			if (viewer_->testUserMessage(kUMRight)) alpha_ += 0.02f;
 
-			Vector3f eye(0, - 3 - pos_, 2.0f), at(0, 0, 0), up(0, 0, 1);
+			Vector3f eye(0, -3 - pos_, 2.0f), at(0, 0, 0), up(0, 0, 1);
 			Vector3f eye_pos = eye;
 			Vector3f light_pos(-100.0f, -100.0f, 100.0f);
 
 			Matrix44f modeltrsf = Matrix44f::Rotate(0.0f, 0.0f, 1.0f, alpha_);
 			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
-			
+
 			output_.uniforms.texture = texlist_[itex_];//纹理
 			output_.uniforms.model_trsf = modeltrsf;//模型变换
 			output_.uniforms.mv_trsf = modeltrsf * viewtrsf;//模型*视图变换
@@ -118,7 +119,7 @@ namespace soft_cube {
 
 	private:
 		WinViewerPtr viewer_;
-		phong::DrawCall output_;
+		soft_phong::DrawCall output_;
 		std::vector<SoftMipmapPtr> texlist_;
 		int itex_;
 		int nspace_;
@@ -126,7 +127,7 @@ namespace soft_cube {
 		float pos_;
 	};
 
-	typedef shakuras::Application<phong::DrawCall, AppStage, phong::RenderStage> Application;
+	typedef shakuras::Application<soft_phong::DrawCall, AppStage, soft_phong::RenderStage> Application;
 }
 
 
@@ -153,6 +154,5 @@ int main()
 		Sleep(1);
 	}
 
-    return 0;
+	return 0;
 }
-

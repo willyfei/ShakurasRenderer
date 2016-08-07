@@ -1,4 +1,4 @@
-// Example_Sponza.cpp : 定义控制台应用程序的入口点。
+// Example_Soft_Sponza.cpp : 定义控制台应用程序的入口点。
 //
 
 #include "SoftRenderer\SoftPreset.h"
@@ -25,7 +25,7 @@ namespace soft_sponza {
 
 	class VertexShader {
 	public:
-		void process(const UniformList& u, phong::Vertex& v) {
+		void process(const UniformList& u, soft_phong::Vertex& v) {
 			v.varyings.normal = v.attribs.normal;
 
 			v.varyings.eye_dir = u.eye_pos - v.pos.xyz();
@@ -41,7 +41,7 @@ namespace soft_sponza {
 
 	class FragmentShader {
 	public:
-		void process(const UniformList& u, SoftSampler& sampler, phong::Fragment& f) {
+		void process(const UniformList& u, SoftSampler& sampler, soft_phong::Fragment& f) {
 			Vector3f norm = f.varyings.normal;
 			Vector3f eye_dir = f.varyings.eye_dir;
 			Vector3f light_dir = f.varyings.light_dir;
@@ -66,11 +66,11 @@ namespace soft_sponza {
 		}
 	};
 
-	typedef shakuras::SoftDrawCall<UniformList, phong::Vertex> DrawCall;
+	typedef shakuras::SoftDrawCall<UniformList, soft_phong::Vertex> DrawCall;
 
-	typedef shakuras::SoftGeometryStage<UniformList, phong::Vertex, VertexShader> GeomStage;
+	typedef shakuras::SoftGeometryStage<UniformList, soft_phong::Vertex, VertexShader> GeomStage;
 
-	typedef shakuras::SoftRasterizerStage<UniformList, phong::Vertex, phong::Fragment, FragmentShader> RasStage;
+	typedef shakuras::SoftRasterizerStage<UniformList, soft_phong::Vertex, soft_phong::Fragment, FragmentShader> RasStage;
 
 	class AppStage {
 	public:
@@ -91,7 +91,7 @@ namespace soft_sponza {
 				cmd.prims.verts_.resize(mesh.verts.size());
 				for (size_t ii = 0; ii != mesh.verts.size(); ii++) {
 					const ObjVert& objv = mesh.verts[ii];
-					phong::Vertex& v = cmd.prims.verts_[ii];
+					soft_phong::Vertex& v = cmd.prims.verts_[ii];
 
 					v.pos.set(objv.pos.x, objv.pos.y, objv.pos.z, 1.0f);
 					v.attribs.uv = objv.uv;
