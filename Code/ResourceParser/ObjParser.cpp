@@ -77,7 +77,7 @@ bool LoadObjMtl(std::vector<ObjMtl>& mtls, const std::string& mtl_file, _FSPFX p
 			full_path.concat("/");
 			full_path.concat(pmtl->tex_name);
 
-			pmtl->tex = CreateMipmap(LoadSurface(full_path.string(), false));
+			pmtl->tex = CreateSoftMipmap(LoadSurface(full_path.string(), false));
 		}
 		else {
 			// Unrecognized command

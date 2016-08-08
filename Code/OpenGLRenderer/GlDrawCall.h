@@ -1,13 +1,13 @@
 #pragma once
 #include "GlBatch.h"
-#include "GlUniformList.h"
+#include "GlProgram.h"
 
 
 SHAKURAS_BEGIN;
 
 
 struct GlDrawCall {
-	GlUniformList uniforms;
+	GlProgram program;
 	std::vector<GlBatchPtr> batchs;
 };
 

@@ -94,6 +94,26 @@ void GlBatch::setIndexBuffer(const unsigned short* buffer, int len) {
 }
 
 
+void GlBatch::setAttribBuffer1f(const float* buffer, int index) {
+	setAttribBuffer(buffer, index, 1);
+}
+
+
+void GlBatch::setAttribBuffer2f(const float* buffer, int index) {
+	setAttribBuffer(buffer, index, 2);
+}
+
+
+void GlBatch::setAttribBuffer3f(const float* buffer, int index) {
+	setAttribBuffer(buffer, index, 3);
+}
+
+
+void GlBatch::setAttribBuffer4f(const float* buffer, int index) {
+	setAttribBuffer(buffer, index, 4);
+}
+
+
 void GlBatch::setAttribBuffer(const float* buffer, int index, int sizebyfloat) {
 	attribGrow(index);
 

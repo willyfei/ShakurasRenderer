@@ -68,7 +68,7 @@ private:
 SHAKURAS_SHARED_PTR(SoftMipmap);
 
 
-inline SoftMipmapPtr CreateMipmap(SoftSurfacePtr surface) {
+inline SoftMipmapPtr CreateSoftMipmap(SoftSurfacePtr surface) {
 	if (!surface) { 
 		return nullptr;
 	}

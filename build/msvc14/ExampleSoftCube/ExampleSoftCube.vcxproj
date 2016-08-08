@@ -27,10 +27,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5ECD7055-D529-4199-A930-DB94D9ADA00D}</ProjectGuid>
+    <ProjectGuid>{F8A3B3B4-F0BC-47A3-84BB-B7997004264B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Example_Soft_Cup</RootNamespace>
+    <RootNamespace>Example_Soft_Cube</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>ExampleSoftCube</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -249,7 +250,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Code\Example_Soft_Cup\Example_Soft_Cup.cpp" />
+    <ClCompile Include="..\..\..\Code\ExampleSoftCube\ExampleSoftCube.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

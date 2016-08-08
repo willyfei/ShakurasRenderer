@@ -38,7 +38,10 @@ public:
 
 	void setIndexBuffer(const unsigned short* buffer, int len);
 
-	void setAttribBuffer(const float* buffer, int index, int size);
+	void setAttribBuffer1f(const float* buffer, int index);
+	void setAttribBuffer2f(const float* buffer, int index);
+	void setAttribBuffer3f(const float* buffer, int index);
+	void setAttribBuffer4f(const float* buffer, int index);
 
 	void end();
 
@@ -46,6 +49,8 @@ public:
 
 private:
 	void attribGrow(int index);
+
+	void setAttribBuffer(const float* buffer, int index, int size);
 
 private:
 	unsigned int vao_;

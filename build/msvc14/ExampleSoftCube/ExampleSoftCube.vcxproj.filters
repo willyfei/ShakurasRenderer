@@ -29,7 +29,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Code\Example_Soft_Cup\Example_Soft_Cup.cpp">
+    <ClCompile Include="..\..\..\Code\ExampleSoftCube\ExampleSoftCube.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

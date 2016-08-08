@@ -33,7 +33,10 @@
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlDrawCall.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlUniformList.h">
+    <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlMipmap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlProgram.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,10 +53,13 @@
     <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlBatch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlUniformList.cpp">
+    <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlRenderStage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlRenderStage.cpp">
+    <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlMipmap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlProgram.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

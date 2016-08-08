@@ -67,10 +67,10 @@ namespace soft_cube {
 			float w = (float)viewer->width();
 			float h = (float)viewer->height();
 
-			texlist_.push_back(CreateMipmap(LoadSurface("Cube/1.png")));
-			texlist_.push_back(CreateMipmap(LoadSurface("Cube/1.jpg")));
-			texlist_.push_back(CreateMipmap(LoadSurface("Cube/2.png")));
-			texlist_.push_back(CreateMipmap(GridSurface()));
+			texlist_.push_back(CreateSoftMipmap(LoadSurface("Cube/1.png")));
+			texlist_.push_back(CreateSoftMipmap(LoadSurface("Cube/1.jpg")));
+			texlist_.push_back(CreateSoftMipmap(LoadSurface("Cube/2.png")));
+			texlist_.push_back(CreateSoftMipmap(GridSurface()));
 			itex_ = 0;
 			nspace_ = 0;
 
