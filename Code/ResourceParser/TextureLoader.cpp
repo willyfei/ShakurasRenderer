@@ -33,15 +33,16 @@ void* LoadTexture(std::string filepath, bool isrelpath, int& width, int& height)
 		return nullptr;
 	}
 
-	uint32_t* buffer = (uint32_t*)malloc(sizeof(uint32_t) * width * height);
+	uint8_t* buffer = (uint8_t*)malloc(sizeof(uint32_t) * width * height);
 
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
-			unsigned char* pp = data + 4 * (j * width + i);
-			buffer[0] = pp[2];
-			buffer[1] = pp[1];
-			buffer[2] = pp[0];
-			buffer[3] = pp[3];
+			const unsigned char* pp_src = data + 4 * (j * width + i);
+			unsigned char* pp_dst = buffer + 4 * (j * width + i);
+			pp_dst[0] = pp_src[2];
+			pp_dst[1] = pp_src[1];
+			pp_dst[2] = pp_src[0];
+			pp_dst[3] = pp_src[3];
 		}
 	}
 

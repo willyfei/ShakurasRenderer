@@ -254,6 +254,7 @@
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlBatch.h" />
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlDrawCall.h" />
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlMipmap.h" />
+    <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlPreset.h" />
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlRenderStage.h" />
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlProgram.h" />
     <ClInclude Include="stdafx.h" />

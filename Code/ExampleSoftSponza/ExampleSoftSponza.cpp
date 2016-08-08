@@ -25,7 +25,7 @@ namespace soft_sponza {
 
 	class VertexShader {
 	public:
-		void process(const UniformList& u, soft_phong::Vertex& v) {
+		void process(const UniformList& u, SoftPhongVertex& v) {
 			v.varyings.normal = v.attribs.normal;
 
 			v.varyings.eye_dir = u.eye_pos - v.pos.xyz();
@@ -41,7 +41,7 @@ namespace soft_sponza {
 
 	class FragmentShader {
 	public:
-		void process(const UniformList& u, SoftSampler& sampler, soft_phong::Fragment& f) {
+		void process(const UniformList& u, SoftSampler& sampler, SoftPhongFragment& f) {
 			Vector3f norm = f.varyings.normal;
 			Vector3f eye_dir = f.varyings.eye_dir;
 			Vector3f light_dir = f.varyings.light_dir;
@@ -66,11 +66,11 @@ namespace soft_sponza {
 		}
 	};
 
-	typedef shakuras::SoftDrawCall<UniformList, soft_phong::Vertex> DrawCall;
+	typedef shakuras::SoftDrawCall<UniformList, SoftPhongVertex> DrawCall;
 
-	typedef shakuras::SoftGeometryStage<UniformList, soft_phong::Vertex, VertexShader> GeomStage;
+	typedef shakuras::SoftGeometryStage<UniformList, SoftPhongVertex, VertexShader> GeomStage;
 
-	typedef shakuras::SoftRasterizerStage<UniformList, soft_phong::Vertex, soft_phong::Fragment, FragmentShader> RasStage;
+	typedef shakuras::SoftRasterizerStage<UniformList, SoftPhongVertex, SoftPhongFragment, FragmentShader> RasStage;
 
 	class AppStage {
 	public:
@@ -91,7 +91,7 @@ namespace soft_sponza {
 				cmd.prims.verts_.resize(mesh.verts.size());
 				for (size_t ii = 0; ii != mesh.verts.size(); ii++) {
 					const ObjVert& objv = mesh.verts[ii];
-					soft_phong::Vertex& v = cmd.prims.verts_[ii];
+					SoftPhongVertex& v = cmd.prims.verts_[ii];
 
 					v.pos.set(objv.pos.x, objv.pos.y, objv.pos.z, 1.0f);
 					v.attribs.uv = objv.uv;
@@ -109,6 +109,7 @@ namespace soft_sponza {
 				int texw = 0, texh = 0;
 				void* bits = LoadTexture(mesh.mtl.tex_full_path, false, texw, texh);
 				surface->reset(texw, texh, (uint32_t*)bits);
+				ResFree(bits);
 				cmd.uniforms.texture = CreateSoftMipmap(surface);
 
 				cmd.uniforms.ambient = mesh.mtl.ambient;

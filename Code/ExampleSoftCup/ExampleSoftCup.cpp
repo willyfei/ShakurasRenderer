@@ -27,12 +27,12 @@ namespace soft_cup {
 
 			for (size_t i = 0; i != meshs.size(); i++) {
 				const ObjMesh& mesh = meshs[i];
-				soft_phong::DrawCall& cmd = outputs_[i];
+				SoftPhongDrawCall& cmd = outputs_[i];
 
 				cmd.prims.verts_.resize(mesh.verts.size());
 				for (size_t ii = 0; ii != mesh.verts.size(); ii++) {
 					const ObjVert& objv = mesh.verts[ii];
-					soft_phong::Vertex& v = cmd.prims.verts_[ii];
+					SoftPhongVertex& v = cmd.prims.verts_[ii];
 
 					v.pos.set(objv.pos.x, objv.pos.y, objv.pos.z, 1.0f);
 					v.attribs.uv = objv.uv;
@@ -49,6 +49,7 @@ namespace soft_cup {
 				int texw = 0, texh = 0;
 				void* bits = LoadTexture(mesh.mtl.tex_full_path, false, texw, texh);
 				surface->reset(texw, texh, (uint32_t*)bits);
+				ResFree(bits);
 				cmd.uniforms.texture = CreateSoftMipmap(surface);
 
 				cmd.uniforms.ambient = mesh.mtl.ambient;
@@ -62,7 +63,7 @@ namespace soft_cup {
 			viewer_ = viewer;
 		}
 
-		void process(std::vector<soft_phong::DrawCall>& cmds) {
+		void process(std::vector<SoftPhongDrawCall>& cmds) {
 			if (viewer_->testUserMessage(kUMUp)) pos_ += 0.04f;
 			if (viewer_->testUserMessage(kUMDown)) pos_ -= 0.04f;
 			if (viewer_->testUserMessage(kUMLeft)) alpha_ -= 0.02f;
@@ -76,7 +77,7 @@ namespace soft_cup {
 			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
 
 			for (size_t i = 0; i != outputs_.size(); i++) {
-				soft_phong::DrawCall& cmd = outputs_[i];
+				SoftPhongDrawCall& cmd = outputs_[i];
 				cmd.uniforms.model_trsf = modeltrsf;//模型变换
 				cmd.uniforms.mv_trsf = modeltrsf * viewtrsf;//模型*视图变换
 				cmd.uniforms.eye_pos = eye_pos;//相机位置
@@ -88,12 +89,12 @@ namespace soft_cup {
 
 	private:
 		WinViewerPtr viewer_;
-		std::vector<soft_phong::DrawCall> outputs_;
+		std::vector<SoftPhongDrawCall> outputs_;
 		float alpha_;
 		float pos_;
 	};
 
-	typedef shakuras::Application<soft_phong::DrawCall, AppStage, soft_phong::RenderStage> Application;
+	typedef shakuras::Application<SoftPhongDrawCall, AppStage, SoftPhongRenderStage> Application;
 }
 
 

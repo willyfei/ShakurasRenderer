@@ -17,8 +17,9 @@ namespace soft_cube {
 	SoftMipmapPtr LoadMipmap(std::string tex_full_path) {
 		SoftSurfacePtr surface = std::make_shared<SoftSurface>();
 		int texw = 0, texh = 0;
-		void* bits = LoadTexture(tex_full_path, false, texw, texh);
+		void* bits = LoadTexture(tex_full_path, true, texw, texh);
 		surface->reset(texw, texh, (uint32_t*)bits);
+		ResFree(bits);
 		return CreateSoftMipmap(surface);
 	}
 
@@ -30,8 +31,8 @@ namespace soft_cube {
 		return CreateSoftMipmap(surface);
 	}
 
-	void GenerateCube(soft_phong::PrimitiveList& prims) {
-		static soft_phong::Vertex mesh[8] = {
+	void GenerateCube(SoftPhongPrimitiveList& prims) {
+		static SoftPhongVertex mesh[8] = {
 			{ { -1, -1, -1, 1 } },
 			{ { 1, -1, -1, 1 } },
 			{ { 1, 1, -1, 1 } },
@@ -43,7 +44,7 @@ namespace soft_cube {
 		};
 
 		auto draw_plane = [&](int a, int b, int c, int d) {
-			soft_phong::Vertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
+			SoftPhongVertex p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
 
 			p1.attribs.uv.set(0, 0);
 			p2.attribs.uv.set(0, 1);
@@ -103,7 +104,7 @@ namespace soft_cube {
 			viewer_ = viewer;
 		}
 
-		void process(std::vector<soft_phong::DrawCall>& cmds) {
+		void process(std::vector<SoftPhongDrawCall>& cmds) {
 			if (viewer_->testUserMessage(kUMSpace)) {
 				if (++nspace_ == 1) {
 					itex_ = (itex_ + 1) % texlist_.size();
@@ -135,7 +136,7 @@ namespace soft_cube {
 
 	private:
 		WinViewerPtr viewer_;
-		soft_phong::DrawCall output_;
+		SoftPhongDrawCall output_;
 		std::vector<SoftMipmapPtr> texlist_;
 		int itex_;
 		int nspace_;
@@ -143,7 +144,7 @@ namespace soft_cube {
 		float pos_;
 	};
 
-	typedef shakuras::Application<soft_phong::DrawCall, AppStage, soft_phong::RenderStage> Application;
+	typedef shakuras::Application<SoftPhongDrawCall, AppStage, SoftPhongRenderStage> Application;
 }
 
 
