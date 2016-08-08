@@ -65,5 +65,8 @@
     <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlProgram.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlPreset.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

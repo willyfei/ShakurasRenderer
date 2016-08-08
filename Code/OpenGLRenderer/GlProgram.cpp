@@ -23,7 +23,7 @@ void LoadShaderSrc(const char *sharder_src, GLuint shader) {
 }
 
 
-bool GlProgram::create(const char* vs_src, const char* fs_src, const std::vector<std::string>& attrib_locs) {
+bool GlProgram::initialize(const char* vs_src, const char* fs_src, const std::vector<std::string>& attrib_locs) {
 	prog_handle_ = 0;
 
 	// Create shader objects

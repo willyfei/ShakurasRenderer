@@ -212,6 +212,93 @@ inline V3 Reflect(const V3& i, const V3& n) {
 
 //æÿ’Û
 template<class S>
+class Matrix33 {
+public:
+	Matrix33() {
+		reset();
+	}
+
+public:
+	Matrix33<S>& zero() {
+		m[0][0] = m[0][1] = m[0][2] = 0.0f;
+		m[1][0] = m[1][1] = m[1][2] = 0.0f;
+		m[2][0] = m[2][1] = m[2][2] = 0.0f;
+		return *this;
+	}
+
+	Matrix33<S>& reset() {
+		m[0][0] = m[1][1] = m[2][2] = 1.0f;
+		m[0][1] = m[0][2] = 0.0f;
+		m[1][0] = m[1][2] = 0.0f;
+		m[2][0] = m[2][1] = 0.0f;
+		return *this;
+	}
+
+	Vector3<S> transform(const Vector3<S>& v1) const {
+		Vector3<S> v2;
+		v2.x = v1.x * m[0][0] + v1.y * m[1][0] + v1.z * m[2][0];
+		v2.y = v1.x * m[0][1] + v1.y * m[1][1] + v1.z * m[2][1];
+		v2.z = v1.x * m[0][2] + v1.y * m[1][2] + v1.z * m[2][2];
+		return v2;
+	}
+
+	static Matrix33<S> Scale(S x, S y, S z) {
+		Matrix33<S> mat;
+		mat.m[0][0] = x;
+		mat.m[1][1] = y;
+		mat.m[2][2] = z;
+		return mat;
+	}
+
+public:
+	std::array<std::array<S, 3>, 3> m;
+};
+
+template<class S>
+inline Matrix33<S> operator+(const Matrix33<S>& m1, const Matrix33<S>& m2) {
+	Matrix33<S> m3;
+	for (size_t i = 0; i != 3; i++) {
+		for (size_t ii = 0; ii != 3; ii++) {
+			m3.m[i][ii] = m1.m[i][ii] + m2.m[i][ii];
+		}
+	}
+	return m3;
+}
+template<class S>
+inline Matrix33<S> operator-(const Matrix33<S>& m1, const Matrix33<S>& m2) {
+	Matrix33<S> m3;
+	for (int i = 0; i != 3; i++) {
+		for (int ii = 0; ii != 3; ii++) {
+			m3.m[i][ii] = m1.m[i][ii] - m2.m[i][ii];
+		}
+	}
+	return m3;
+}
+template<class S>
+inline Matrix33<S> operator*(const Matrix33<S>& m1, const Matrix33<S>& m2) {
+	Matrix33<S> m3;
+	for (size_t i = 0; i != 3; i++) {
+		for (size_t ii = 0; ii != 3; ii++) {
+			m3.m[ii][i] = m1.m[ii][0] * m2.m[0][i] +
+				m1.m[ii][1] * m2.m[1][i] +
+				m1.m[ii][2] * m2.m[2][i];
+		}
+	}
+	return m3;
+}
+template<class S>
+inline Matrix33<S> operator*(const Matrix33<S>& m1, S t) {
+	Matrix33<S> m2;
+	for (int i = 0; i != 3; i++) {
+		for (int ii = 0; ii != 3; ii++) {
+			m2.m[i][ii] = m1[i][ii] * t;
+		}
+	}
+	return m2;
+}
+
+
+template<class S>
 class Matrix44 {
 public:
 	Matrix44() {

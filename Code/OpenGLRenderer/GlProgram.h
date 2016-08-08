@@ -13,7 +13,7 @@ public:
 	GlProgram();
 
 public:
-	bool create(const char* vs_src, const char* fs_src, const std::vector<std::string>& attrib_locs);
+	bool initialize(const char* vs_src, const char* fs_src, const std::vector<std::string>& attrib_locs);
 
 	void use();
 
@@ -27,7 +27,7 @@ public:
 	//÷ÿ‘ÿ£¨∂®÷∆uniform list
 	virtual void prepare() = 0;
 
-private:
+protected:
 	unsigned int prog_handle_;
 };
 

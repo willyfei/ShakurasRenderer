@@ -263,6 +263,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlBatch.cpp" />
     <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlMipmap.cpp" />
+    <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlPreset.cpp" />
     <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlRenderStage.cpp" />
     <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlProgram.cpp" />
     <ClCompile Include="dllmain.cpp">

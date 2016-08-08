@@ -12,7 +12,7 @@
 SHAKURAS_BEGIN;
 
 
-//Phong着色
+//典型 Fixed-Function Pipeline 的 Phong 着色
 struct SoftPhongUniformList {
 	SoftMipmapPtr texture;
 	Vector3f ambient;
