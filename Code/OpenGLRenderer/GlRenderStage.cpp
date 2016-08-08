@@ -1,4 +1,8 @@
 #include "GlRenderStage.h"
+
+#ifndef GLEW_STATIC
+#define GLEW_STATIC
+#endif
 #include "gl\glew.h"
 
 
@@ -25,7 +29,6 @@ GlRenderStage::GlRenderStage() {
 
 
 void GlRenderStage::clean() {
-	glClearColor(0.2f, 0.2f, 0.6f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
@@ -39,8 +42,9 @@ void GlRenderStage::initContext(HDC hdc) {
 
 void GlRenderStage::initStaticState() {
 	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.2f, 0.2f, 0.6f, 1.0f);
 }
-
+ 
 
 void GlRenderStage::process(std::vector<GlDrawCall>& calls) {
 	GlContextBinding ctx(hdc_, hrc_);
@@ -54,6 +58,7 @@ void GlRenderStage::process(std::vector<GlDrawCall>& calls) {
 	};
 
 	for (auto i = calls.begin(); i != calls.end(); i++) {
+		i->program->prepare();
 		std::for_each(i->batchs.begin(), i->batchs.end(), draw_batch);
 	}
 }

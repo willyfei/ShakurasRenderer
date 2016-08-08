@@ -5,7 +5,7 @@
 #include <vector>
 #include "SoftRenderer\SoftPreset.h"
 #include "Core\Application.h"
-#include "ResourceParser\SurfaceParser.h"
+#include "ResourceParser\TextureLoader.h"
 #include "PlatformSpec\WinViewer.h"
 
 
@@ -13,6 +13,22 @@ using namespace shakuras;
 
 
 namespace soft_cube {
+
+	SoftMipmapPtr LoadMipmap(std::string tex_full_path) {
+		SoftSurfacePtr surface = std::make_shared<SoftSurface>();
+		int texw = 0, texh = 0;
+		void* bits = LoadTexture(tex_full_path, false, texw, texh);
+		surface->reset(texw, texh, (uint32_t*)bits);
+		return CreateSoftMipmap(surface);
+	}
+
+	SoftMipmapPtr GridMipmap() {
+		SoftSurfacePtr surface = std::make_shared<SoftSurface>();
+		int texw = 0, texh = 0;
+		void* bits = GridTexture(texw, texh);
+		surface->reset(texw, texh, (uint32_t*)bits);
+		return CreateSoftMipmap(surface);
+	}
 
 	void GenerateCube(soft_phong::PrimitiveList& prims) {
 		static soft_phong::Vertex mesh[8] = {
@@ -67,10 +83,10 @@ namespace soft_cube {
 			float w = (float)viewer->width();
 			float h = (float)viewer->height();
 
-			texlist_.push_back(CreateSoftMipmap(LoadSurface("Cube/1.png")));
-			texlist_.push_back(CreateSoftMipmap(LoadSurface("Cube/1.jpg")));
-			texlist_.push_back(CreateSoftMipmap(LoadSurface("Cube/2.png")));
-			texlist_.push_back(CreateSoftMipmap(GridSurface()));
+			texlist_.push_back(LoadMipmap("Cube/1.png"));
+			texlist_.push_back(LoadMipmap("Cube/1.jpg"));
+			texlist_.push_back(LoadMipmap("Cube/2.png"));
+			texlist_.push_back(GridMipmap());
 			itex_ = 0;
 			nspace_ = 0;
 

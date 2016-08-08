@@ -266,14 +266,14 @@ echo ../../../../../Resource&gt;&gt;$(OutDir)ResourceDir.cfg</Command>
     <ClInclude Include="..\..\..\Code\ResourceParser\ObjParser.h" />
     <ClInclude Include="..\..\..\Code\ResourceParser\ResUtility.h" />
     <ClInclude Include="..\..\..\Code\ResourceParser\stb_image.h" />
-    <ClInclude Include="..\..\..\Code\ResourceParser\SurfaceParser.h" />
+    <ClInclude Include="..\..\..\Code\ResourceParser\TextureLoader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Code\ResourceParser\ObjParser.cpp" />
     <ClCompile Include="..\..\..\Code\ResourceParser\ResUtility.cpp" />
-    <ClCompile Include="..\..\..\Code\ResourceParser\SurfaceParser.cpp" />
+    <ClCompile Include="..\..\..\Code\ResourceParser\TextureLoader.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

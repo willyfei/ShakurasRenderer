@@ -26,7 +26,6 @@ public:
 private:
 	void initContext(HDC hdc);
 	void initStaticState();
-	void initProgram();
 
 private:
 	Profiler* profiler_;

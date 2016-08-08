@@ -23,6 +23,10 @@ public:
 		x = xx;
 		y = yy;
 	}
+
+	const S* data() const {
+		return &x;
+	}
 };
 
 template<class S>
@@ -70,6 +74,10 @@ public:
 	Vector4<S> xyzw(S w) const {
 		return Vector4<S>(x, y, z, w);
 	}
+
+	const S* data() const {
+		return &x;
+	}
 };
 
 template<class S>
@@ -115,6 +123,10 @@ public:
 
 	Vector3<S> xyz() const {
 		return Vector3<S>(x, y, z);
+	}
+
+	const S* data() const {
+		return &x;
 	}
 };
 
@@ -316,6 +328,10 @@ public:
 		mat.m[2][3] = 1;
 
 		return mat;
+	}
+
+	const S* data() const {
+		return &m[0][0];
 	}
 
 public:

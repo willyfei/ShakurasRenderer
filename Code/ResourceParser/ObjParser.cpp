@@ -1,4 +1,3 @@
-#include "SurfaceParser.h"
 #include "ObjParser.h"
 #include <array>
 #include <map>
@@ -77,7 +76,7 @@ bool LoadObjMtl(std::vector<ObjMtl>& mtls, const std::string& mtl_file, _FSPFX p
 			full_path.concat("/");
 			full_path.concat(pmtl->tex_name);
 
-			pmtl->tex = CreateSoftMipmap(LoadSurface(full_path.string(), false));
+			pmtl->tex_full_path = full_path.string();
 		}
 		else {
 			// Unrecognized command

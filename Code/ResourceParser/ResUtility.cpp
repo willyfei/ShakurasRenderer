@@ -35,3 +35,8 @@ void LoadResourceDir(std::string cfg_fname) {
 _FSPFX path ResourceDir() {
 	return g_resourcedir;
 }
+
+
+void ResFree(void* buffer) {
+	free(buffer);
+}

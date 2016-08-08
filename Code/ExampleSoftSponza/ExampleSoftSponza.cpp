@@ -3,7 +3,7 @@
 
 #include "SoftRenderer\SoftPreset.h"
 #include "Core\Application.h"
-#include "ResourceParser\SurfaceParser.h"
+#include "ResourceParser\TextureLoader.h"
 #include "PlatformSpec\WinViewer.h"
 #include "ResourceParser\ObjParser.h"
 
@@ -104,7 +104,13 @@ namespace soft_sponza {
 
 				projtrsf_ = Matrix44f::Perspective(kGSPI * 0.5f, w / h, 5.0f, 1000.0f);//ͶӰ�任
 				cmd.proj_trsf.reset();
-				cmd.uniforms.texture = mesh.mtl.tex;
+
+				SoftSurfacePtr surface = std::make_shared<SoftSurface>();
+				int texw = 0, texh = 0;
+				void* bits = LoadTexture(mesh.mtl.tex_full_path, false, texw, texh);
+				surface->reset(texw, texh, (uint32_t*)bits);
+				cmd.uniforms.texture = CreateSoftMipmap(surface);
+
 				cmd.uniforms.ambient = mesh.mtl.ambient;
 				cmd.uniforms.diffuse = mesh.mtl.diffuse;
 				cmd.uniforms.specular = mesh.mtl.specular;

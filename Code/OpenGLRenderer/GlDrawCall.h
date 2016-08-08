@@ -7,7 +7,7 @@ SHAKURAS_BEGIN;
 
 
 struct GlDrawCall {
-	GlProgram program;
+	GlProgramPtr program;
 	std::vector<GlBatchPtr> batchs;
 };
 

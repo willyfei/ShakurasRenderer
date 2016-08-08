@@ -30,10 +30,10 @@
     <ClInclude Include="..\..\..\Code\ResourceParser\stb_image.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Code\ResourceParser\SurfaceParser.h">
+    <ClInclude Include="..\..\..\Code\ResourceParser\ResUtility.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Code\ResourceParser\ResUtility.h">
+    <ClInclude Include="..\..\..\Code\ResourceParser\TextureLoader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,10 +50,10 @@
     <ClCompile Include="..\..\..\Code\ResourceParser\ObjParser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Code\ResourceParser\SurfaceParser.cpp">
+    <ClCompile Include="..\..\..\Code\ResourceParser\ResUtility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Code\ResourceParser\ResUtility.cpp">
+    <ClCompile Include="..\..\..\Code\ResourceParser\TextureLoader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -22,7 +22,6 @@ public:
 
 	std::string name;
 
-	shakuras::SoftMipmapPtr tex;
 	shakuras::Vector3f ambient;
 	shakuras::Vector3f diffuse;
 	shakuras::Vector3f specular;
@@ -32,6 +31,7 @@ public:
 	bool is_specular;
 
 	std::string tex_name;
+	std::string tex_full_path;
 };
 
 

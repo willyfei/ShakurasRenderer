@@ -4,8 +4,8 @@
 #ifndef GLEW_STATIC
 #define GLEW_STATIC
 #endif
+#include "gl\glew.h"
 
-#include <gl\glew.h>
 #include <gl\gl.h>
 
 
@@ -13,36 +13,36 @@ SHAKURAS_BEGIN;
 
 
 unsigned int GetGlPrimtiveType(short cat) {
-	unsigned int primtype = GlBatch::kNil;
+	unsigned int primtype = GlVAO::kNil;
 	switch (cat) {
-	case GlBatch::kPoints:
+	case GlVAO::kPoints:
 		primtype = GL_POINTS;
 		break;
-	case GlBatch::kLines:
+	case GlVAO::kLines:
 		primtype = GL_LINES;
 		break;
-	case GlBatch::kLineLoop:
+	case GlVAO::kLineLoop:
 		primtype = GL_LINE_LOOP;
 		break;
-	case GlBatch::kLineStrip:
+	case GlVAO::kLineStrip:
 		primtype = GL_LINE_STRIP;
 		break;
-	case GlBatch::kTriangles:
+	case GlVAO::kTriangles:
 		primtype = GL_TRIANGLES;
 		break;
-	case GlBatch::kTriangleStrip:
+	case GlVAO::kTriangleStrip:
 		primtype = GL_TRIANGLE_STRIP;
 		break;
-	case GlBatch::kTriangleFan:
+	case GlVAO::kTriangleFan:
 		primtype = GL_TRIANGLE_FAN;
 		break;
-	case GlBatch::kQuads:
+	case GlVAO::kQuads:
 		primtype = GL_QUADS;
 		break;
-	case GlBatch::kQuadStrip:
+	case GlVAO::kQuadStrip:
 		primtype = GL_QUAD_STRIP;
 		break;
-	case GlBatch::kPolygon:
+	case GlVAO::kPolygon:
 		primtype = GL_POLYGON;
 		break;
 	default:
@@ -53,7 +53,7 @@ unsigned int GetGlPrimtiveType(short cat) {
 }
 
 
-GlBatch::GlBatch() {
+GlVAO::GlVAO() {
 	vao_ = 0;
 	primtype_ = 0;
 	vertcount_ = 0;
@@ -62,7 +62,7 @@ GlBatch::GlBatch() {
 }
 
 
-GlBatch::~GlBatch() {
+GlVAO::~GlVAO() {
 	for (auto i = attrib_buffers_.begin(); i != attrib_buffers_.end(); i++) {
 		if (*i != 0) {
 			glDeleteBuffers(1, &(*i));
@@ -77,47 +77,28 @@ GlBatch::~GlBatch() {
 }
 
 
-void GlBatch::begin(short cat, int vert_count, bool is_static) {
+void GlVAO::begin(short cat, uint16_t vert_count, int attrib_count, bool is_static) {
 	primtype_ = GetGlPrimtiveType(cat);
 	vertcount_ = vert_count;
 	isstatic_ = is_static;
+
+	attrib_buffers_.resize(attrib_count, 0);
+	attib_sizebyfloats_.resize(attrib_count, 0);
 
 	glGenVertexArrays(1, &vao_);
 	glBindVertexArray(vao_);
 }
 
 
-void GlBatch::setIndexBuffer(const unsigned short* buffer, int len) {
+void GlVAO::setIndexBuffer(const uint16_t* buffer, int len) {
 	glGenBuffers(1, &index_buffer_);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * len, buffer, isstatic_? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * len, buffer, isstatic_? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
 }
 
 
-void GlBatch::setAttribBuffer1f(const float* buffer, int index) {
-	setAttribBuffer(buffer, index, 1);
-}
-
-
-void GlBatch::setAttribBuffer2f(const float* buffer, int index) {
-	setAttribBuffer(buffer, index, 2);
-}
-
-
-void GlBatch::setAttribBuffer3f(const float* buffer, int index) {
-	setAttribBuffer(buffer, index, 3);
-}
-
-
-void GlBatch::setAttribBuffer4f(const float* buffer, int index) {
-	setAttribBuffer(buffer, index, 4);
-}
-
-
-void GlBatch::setAttribBuffer(const float* buffer, int index, int sizebyfloat) {
-	attribGrow(index);
-
-	glGenBuffers(1, &attrib_buffers_.back());
+void GlVAO::setAttribBuffer(const float* buffer, int index, int sizebyfloat) {
+	glGenBuffers(1, &attrib_buffers_[index]);
 	glBindBuffer(GL_ARRAY_BUFFER, index_buffer_);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * sizebyfloat * vertcount_, buffer, isstatic_ ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
 
@@ -125,15 +106,7 @@ void GlBatch::setAttribBuffer(const float* buffer, int index, int sizebyfloat) {
 }
 
 
-void GlBatch::attribGrow(int index) {
-	while ((int)attrib_buffers_.size() < index + 1) {
-		attrib_buffers_.push_back(0);
-		attib_sizebyfloats_.push_back(0);
-	}
-}
-
-
-void GlBatch::end() {
+void GlVAO::end() {
 	auto bind_attrib_pointer = [&](size_t i) {
 		unsigned int attrib_buffer = attrib_buffers_[i];
 		int sizebyfloat = attib_sizebyfloats_[i];
@@ -155,7 +128,7 @@ void GlBatch::end() {
 }
 
 
-void GlBatch::draw() {
+void GlVAO::draw() {
 	glBindVertexArray(vao_);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
@@ -168,6 +141,91 @@ void GlBatch::draw() {
 	);
 
 	glBindVertexArray(0);
+}
+
+
+GlVAOFactory::GlVAOFactory() {
+	reset();
+}
+
+
+void GlVAOFactory::reset() {
+	cat_ = GlVAO::kNil;
+	attrib_count_ = 0;
+	vertex_count_ = 0;
+	is_static_ = false;
+	attib_sizebyfloats_.clear();
+	attribs_.clear();
+}
+
+
+void GlVAOFactory::setPrimtiveCat(short cat) {
+	cat_ = cat;
+}
+
+
+void GlVAOFactory::setAttribCount(int attrib_count) {
+	attrib_count_ = attrib_count;
+
+	attib_sizebyfloats_.resize(attrib_count, 0);
+	attribs_.resize(attrib_count);
+}
+
+
+void GlVAOFactory::setStatic(bool is_static) {
+	is_static_ = is_static;
+}
+
+
+void GlVAOFactory::addIndex(uint16_t vi) {
+	index_.push_back(vi);
+}
+
+
+void GlVAOFactory::addVertexAttrib1f(int index, float val) {
+	attib_sizebyfloats_[index] = 1;
+	attribs_[index].push_back(val);
+}
+
+
+void GlVAOFactory::addVertexAttrib2fv(int index, const float* val) {
+	attib_sizebyfloats_[index] = 2;
+	attribs_[index].push_back(val[0]);
+	attribs_[index].push_back(val[1]);
+}
+
+
+void GlVAOFactory::addVertexAttrib3fv(int index, const float* val) {
+	attib_sizebyfloats_[index] = 3;
+	attribs_[index].push_back(val[0]);
+	attribs_[index].push_back(val[1]);
+	attribs_[index].push_back(val[2]);
+}
+
+
+void GlVAOFactory::addVertexAttrib4fv(int index, const float* val) {
+	attib_sizebyfloats_[index] = 4;
+	attribs_[index].push_back(val[0]);
+	attribs_[index].push_back(val[1]);
+	attribs_[index].push_back(val[2]);
+	attribs_[index].push_back(val[3]);
+}
+
+
+GlVAOPtr GlVAOFactory::createVAO() {
+	GlVAOPtr vao = std::make_shared<GlVAO>();
+
+	vao->begin(cat_, vertex_count_, attrib_count_, is_static_);
+
+	vao->setIndexBuffer(index_.data(), (int)index_.size());
+
+	for (int i = 0; i != attrib_count_; i++) {
+		vao->setAttribBuffer(attribs_[i].data(), i, attib_sizebyfloats_[i]);
+	}
+
+	vao->end();
+
+	return vao;
 }
 
 

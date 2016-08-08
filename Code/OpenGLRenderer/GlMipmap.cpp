@@ -1,4 +1,8 @@
 #include "GlMipmap.h"
+
+#ifndef GLEW_STATIC
+#define GLEW_STATIC
+#endif
 #include "gl\glew.h"
 
 
@@ -21,8 +25,7 @@ unsigned int CreateGlMipmap(void* bits, int width, int height, int comp, int fmt
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, 0, comp, width, height, 0,
-		fmt, GL_UNSIGNED_BYTE, bits);
+	glTexImage2D(GL_TEXTURE_2D, 0, comp, width, height, 0, fmt, GL_UNSIGNED_BYTE, bits);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 

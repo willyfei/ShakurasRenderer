@@ -14,3 +14,6 @@ void LoadResourceDir(std::string cfg_fname = "ResourceDir.cfg");
 
 
 _FSPFX path ResourceDir();
+
+
+RESPARSER_DLL void ResFree(void* buffer);

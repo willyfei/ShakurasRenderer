@@ -1,17 +1,21 @@
 #include "GlProgram.h"
+
+#ifndef GLEW_STATIC
+#define GLEW_STATIC
+#endif
 #include "gl\glew.h"
+
 
 
 SHAKURAS_BEGIN;
 
 
 GlProgram::GlProgram() {
-	program_ = 0;
+	prog_handle_ = 0;
 }
 
 
-void LoadShaderSrc(const char *sharder_src, GLuint shader)
-{
+void LoadShaderSrc(const char *sharder_src, GLuint shader) {
 	GLchar* fs_string_ptr[1];
 
 	fs_string_ptr[0] = (GLchar*)sharder_src;
@@ -20,7 +24,7 @@ void LoadShaderSrc(const char *sharder_src, GLuint shader)
 
 
 bool GlProgram::create(const char* vs_src, const char* fs_src, const std::vector<std::string>& attrib_locs) {
-	program_ = 0;
+	prog_handle_ = 0;
 
 	// Create shader objects
 	GLuint vs_handle = glCreateShader(GL_VERTEX_SHADER);
@@ -73,46 +77,50 @@ bool GlProgram::create(const char* vs_src, const char* fs_src, const std::vector
 		return false;
 	}
 
-	program_ = prog_handle;
+	prog_handle_ = prog_handle;
 
 	return true;
 }
 
 
-void GlProgram::setUniform(std::string loc, float val) {
-	GLint uid = glGetUniformLocation(program_, loc.c_str());
+void GlProgram::use() {
+	glUseProgram(prog_handle_);
+}
+
+
+void GlProgram::setUniform1f(std::string loc, float val) {
+	GLint uid = glGetUniformLocation(prog_handle_, loc.c_str());
 	glUniform1f(uid, val);
 }
 
 
-void GlProgram::setUniform(std::string loc, const Vector2f& val) {
-	GLint uid = glGetUniformLocation(program_, loc.c_str());
-	glUniform2f(uid, val.x, val.y);
+void GlProgram::setUniform2fv(std::string loc, const float* val) {
+	GLint uid = glGetUniformLocation(prog_handle_, loc.c_str());
+	glUniform2fv(uid, 1, val);
 }
 
 
-void GlProgram::setUniform(std::string loc, const Vector3f& val) {
-	GLint uid = glGetUniformLocation(program_, loc.c_str());
-	glUniform3f(uid, val.x, val.y, val.z);
+void GlProgram::setUniform3fv(std::string loc, const float* val) {
+	GLint uid = glGetUniformLocation(prog_handle_, loc.c_str());
+	glUniform3fv(uid, 1, val);
 }
 
 
-void GlProgram::setUniform(std::string loc, const Vector4f& val) {
-	GLint uid = glGetUniformLocation(program_, loc.c_str());
-	glUniform4f(uid, val.x, val.y, val.z, val.w);
+void GlProgram::setUniform4fv(std::string loc, const float* val) {
+	GLint uid = glGetUniformLocation(prog_handle_, loc.c_str());
+	glUniform4fv(uid, 1, val);
 }
 
 
-void GlProgram::setUniform(std::string loc, const Matrix44f& val) {
-	GLint uid = glGetUniformLocation(program_, loc.c_str());
+void GlProgram::setUniformMatrix4fv(std::string loc, const float* val) {
+	GLint uid = glGetUniformLocation(prog_handle_, loc.c_str());
+	glUniformMatrix4fv(uid, 1, GL_FALSE, val);
+}
 
-	std::vector<float> mat;
-	mat.reserve(16);
-	std::copy(val.m[0].begin(), val.m[0].end(), std::back_inserter(mat));
-	std::copy(val.m[1].begin(), val.m[1].end(), std::back_inserter(mat));
-	std::copy(val.m[2].begin(), val.m[2].end(), std::back_inserter(mat));
-	std::copy(val.m[3].begin(), val.m[3].end(), std::back_inserter(mat));
-	glUniformMatrix4fv(uid, 1, GL_FALSE, mat.data());
+
+void GlProgram::setUniformTexture2D(std::string loc, std::string tex_full_path) {
+	GLint uid = glGetUniformLocation(prog_handle_, loc.c_str());
+	glUniform1i(uid, 0);
 }
 
 
