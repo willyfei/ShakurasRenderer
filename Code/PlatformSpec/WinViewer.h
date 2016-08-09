@@ -46,6 +46,8 @@ public:
 
 	HDC hdc();
 
+	HGLRC hrc();
+
 	int width();
 
 	int height();
@@ -61,6 +63,7 @@ public:
 	bool screen_close;
 	HWND screen_handle;
 	HDC screen_dc;
+	HGLRC screen_rc;
 	HBITMAP screen_hb;
 	HBITMAP screen_ob;
 	unsigned char* screen_fb;

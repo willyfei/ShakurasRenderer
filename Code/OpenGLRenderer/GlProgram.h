@@ -1,31 +1,34 @@
 #pragma once
+#include "GlRendererDll.h"
 #include "Core/MathAndGeometry.h"
+#include "GlMipmap.h"
 #include <string>
 #include <vector>
 #include <map>
+
+#pragma warning(push)
+#pragma warning(disable:4251)
 
 
 SHAKURAS_BEGIN;
 
 
-class GlProgram {
+class GLRENDERER_DLL GlProgram {
 public:
 	GlProgram();
 
 public:
-	bool initialize(const char* vs_src, const char* fs_src, const std::vector<std::string>& attrib_locs);
+	bool initSharder(const char* vs_src, const char* fs_src, const std::vector<std::string>& attrib_locs);
 
 	void use();
 
-	void setUniform1f(std::string loc, float val);
-	void setUniform2fv(std::string loc, const float* val);
-	void setUniform3fv(std::string loc, const float* val);
-	void setUniform4fv(std::string loc, const float* val);
-	void setUniformMatrix4fv(std::string loc, const float* val);
-	void setUniformTexture2D(std::string loc, std::string tex_full_path);
-
-	//÷ÿ‘ÿ£¨∂®÷∆uniform list
-	virtual void prepare() = 0;
+	void setUniform1f(const char* loc, float val);
+	void setUniform2fv(const char* loc, const float* val);
+	void setUniform3fv(const char* loc, const float* val);
+	void setUniform4fv(const char* loc, const float* val);
+	void setUniformMatrix3fv(const char* loc, const float* val);
+	void setUniformMatrix4fv(const char* loc, const float* val);
+	void setUniformTexture2D(const char* loc, GlMipmapPtr mipmap);
 
 protected:
 	unsigned int prog_handle_;
@@ -36,3 +39,5 @@ SHAKURAS_SHARED_PTR(GlProgram);
 
 
 SHAKURAS_END;
+
+#pragma warning(pop)

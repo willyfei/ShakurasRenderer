@@ -6,7 +6,6 @@
 #include "gl\glew.h"
 
 
-
 SHAKURAS_BEGIN;
 
 
@@ -23,8 +22,16 @@ void LoadShaderSrc(const char *sharder_src, GLuint shader) {
 }
 
 
-bool GlProgram::initialize(const char* vs_src, const char* fs_src, const std::vector<std::string>& attrib_locs) {
+bool GlProgram::initSharder(const char* vs_src, const char* fs_src, const std::vector<std::string>& attrib_locs) {
 	prog_handle_ = 0;
+
+	if (glewInit() != GLEW_OK) {
+		return false;
+	}
+
+	auto s11 = GLEW_VERSION_1_1;
+	auto s20 = GLEW_VERSION_2_0;
+	auto s30 = GLEW_VERSION_3_0;
 
 	// Create shader objects
 	GLuint vs_handle = glCreateShader(GL_VERTEX_SHADER);
@@ -88,38 +95,45 @@ void GlProgram::use() {
 }
 
 
-void GlProgram::setUniform1f(std::string loc, float val) {
-	GLint uid = glGetUniformLocation(prog_handle_, loc.c_str());
+void GlProgram::setUniform1f(const char* loc, float val) {
+	GLint uid = glGetUniformLocation(prog_handle_, loc);
 	glUniform1f(uid, val);
 }
 
 
-void GlProgram::setUniform2fv(std::string loc, const float* val) {
-	GLint uid = glGetUniformLocation(prog_handle_, loc.c_str());
+void GlProgram::setUniform2fv(const char* loc, const float* val) {
+	GLint uid = glGetUniformLocation(prog_handle_, loc);
 	glUniform2fv(uid, 1, val);
 }
 
 
-void GlProgram::setUniform3fv(std::string loc, const float* val) {
-	GLint uid = glGetUniformLocation(prog_handle_, loc.c_str());
+void GlProgram::setUniform3fv(const char* loc, const float* val) {
+	GLint uid = glGetUniformLocation(prog_handle_, loc);
 	glUniform3fv(uid, 1, val);
 }
 
 
-void GlProgram::setUniform4fv(std::string loc, const float* val) {
-	GLint uid = glGetUniformLocation(prog_handle_, loc.c_str());
+void GlProgram::setUniform4fv(const char* loc, const float* val) {
+	GLint uid = glGetUniformLocation(prog_handle_, loc);
 	glUniform4fv(uid, 1, val);
 }
 
 
-void GlProgram::setUniformMatrix4fv(std::string loc, const float* val) {
-	GLint uid = glGetUniformLocation(prog_handle_, loc.c_str());
+void GlProgram::setUniformMatrix3fv(const char* loc, const float* val) {
+	GLint uid = glGetUniformLocation(prog_handle_, loc);
+	glUniformMatrix3fv(uid, 1, GL_FALSE, val);
+}
+
+
+void GlProgram::setUniformMatrix4fv(const char* loc, const float* val) {
+	GLint uid = glGetUniformLocation(prog_handle_, loc);
 	glUniformMatrix4fv(uid, 1, GL_FALSE, val);
 }
 
 
-void GlProgram::setUniformTexture2D(std::string loc, std::string tex_full_path) {
-	GLint uid = glGetUniformLocation(prog_handle_, loc.c_str());
+void GlProgram::setUniformTexture2D(const char* loc, GlMipmapPtr mipmap) {
+	glBindTexture(GL_TEXTURE_2D, mipmap->tex_id_);
+	GLint uid = glGetUniformLocation(prog_handle_, loc);
 	glUniform1i(uid, 0);
 }
 

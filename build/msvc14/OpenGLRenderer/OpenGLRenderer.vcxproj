@@ -129,7 +129,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;OPENGLRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_GLRENDERER_DLL;WIN32;_DEBUG;_WINDOWS;_USRDLL;OPENGLRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../../../Code;../../../3rdParty/glew/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -146,7 +146,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;OPENGLRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_GLRENDERER_DLL;_DEBUG;_WINDOWS;_USRDLL;OPENGLRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../../../Code;../../../3rdParty/glew/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -165,7 +165,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OPENGLRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_GLRENDERER_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL;OPENGLRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../../../Code;../../../3rdParty/glew/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -186,7 +186,7 @@
       <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OPENGLRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_GLRENDERER_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL;OPENGLRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../../../Code;../../../3rdParty/glew/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
@@ -209,7 +209,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;OPENGLRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_GLRENDERER_DLL;NDEBUG;_WINDOWS;_USRDLL;OPENGLRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../../../Code;../../../3rdParty/glew/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -230,7 +230,7 @@
       <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;OPENGLRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_GLRENDERER_DLL;NDEBUG;_WINDOWS;_USRDLL;OPENGLRENDERER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../../../Code;../../../3rdParty/glew/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
@@ -252,9 +252,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlBatch.h" />
+    <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlContextBinding.h" />
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlDrawCall.h" />
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlMipmap.h" />
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlPreset.h" />
+    <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlRendererDll.h" />
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlRenderStage.h" />
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlProgram.h" />
     <ClInclude Include="stdafx.h" />
@@ -262,6 +264,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlBatch.cpp" />
+    <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlContextBinding.cpp" />
     <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlMipmap.cpp" />
     <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlPreset.cpp" />
     <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlRenderStage.cpp" />

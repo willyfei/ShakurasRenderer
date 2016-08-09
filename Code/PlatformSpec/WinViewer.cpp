@@ -11,10 +11,33 @@ WinViewer::WinViewer() {
 	screen_close = false;
 	screen_handle = NULL;
 	screen_dc = NULL;
+	screen_rc = NULL;
 	screen_hb = NULL;
 	screen_ob = NULL;
 	screen_fb = nullptr;
 	screen_pitch = 0;
+}
+
+HGLRC InitOpenGLWithDC(HDC hDC) {
+	PIXELFORMATDESCRIPTOR pfd =
+	{
+		sizeof(PIXELFORMATDESCRIPTOR),
+		1,
+		PFD_DRAW_TO_WINDOW | PFD_DRAW_TO_BITMAP | PFD_SUPPORT_OPENGL,
+		PFD_TYPE_RGBA,
+		24,
+		0,0,0,0,0,0,
+		0,0,0,0,0,0,0,
+		32,
+		0,0,
+		PFD_MAIN_PLANE,
+		0,
+		0,0,0
+	};
+
+	int pixelFormat = ChoosePixelFormat(hDC, &pfd);
+	BOOL res = SetPixelFormat(hDC, pixelFormat, &pfd);
+	return wglCreateContext(hDC);
 }
 
 int WinViewer::initialize(int w, int h, const char* title) {
@@ -57,6 +80,8 @@ int WinViewer::initialize(int w, int h, const char* title) {
 	screen_w = w;
 	screen_h = h;
 	screen_pitch = w * 4;
+
+	screen_rc = InitOpenGLWithDC(screen_dc);
 
 	AdjustWindowRect(&rect, GetWindowLong(screen_handle, GWL_STYLE), 0);
 	wx = rect.right - rect.left;
@@ -126,6 +151,10 @@ void* WinViewer::frameBuffer() {
 
 HDC WinViewer::hdc() {
 	return screen_dc;
+}
+
+HGLRC WinViewer::hrc() {
+	return screen_rc;
 }
 
 int WinViewer::width() {

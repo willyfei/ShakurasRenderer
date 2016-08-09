@@ -74,7 +74,7 @@ namespace soft_sponza {
 
 	class AppStage {
 	public:
-		void initialize(WinViewerPtr viewer) {
+		bool initialize(WinViewerPtr viewer) {
 			float w = (float)viewer->width();
 			float h = (float)viewer->height();
 
@@ -121,6 +121,8 @@ namespace soft_sponza {
 			move_ = 0;
 
 			viewer_ = viewer;
+
+			return true;
 		}
 
 		void process(std::vector<DrawCall>& cmds) {

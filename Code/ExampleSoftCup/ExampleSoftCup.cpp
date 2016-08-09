@@ -15,7 +15,7 @@ namespace soft_cup {
 
 	class AppStage {
 	public:
-		void initialize(WinViewerPtr viewer) {
+		bool initialize(WinViewerPtr viewer) {
 			float w = (float)viewer->width();
 			float h = (float)viewer->height();
 
@@ -61,6 +61,8 @@ namespace soft_cup {
 			pos_ = 3.5f;
 
 			viewer_ = viewer;
+
+			return true;
 		}
 
 		void process(std::vector<SoftPhongDrawCall>& cmds) {

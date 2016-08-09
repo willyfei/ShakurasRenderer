@@ -1,12 +1,16 @@
 #pragma once
+#include "GlRendererDll.h"
 #include "Core/Utility.h"
 #include <vector>
+
+#pragma warning(push) 
+#pragma warning(disable:4251)
 
 
 SHAKURAS_BEGIN;
 
 
-class GlBatch {
+class GLRENDERER_DLL GlBatch {
 public:
 	virtual ~GlBatch() {}
 	virtual void draw() = 0;
@@ -18,7 +22,7 @@ SHAKURAS_SHARED_PTR(GlBatch);
 
 //封装一个Vertex Array Object
 //析构时释放受控的gl对象
-class GlVAO : public GlBatch {
+class GLRENDERER_DLL GlVAO : public GlBatch {
 public:
 	GlVAO();
 	virtual ~GlVAO();
@@ -69,7 +73,7 @@ private:
 SHAKURAS_SHARED_PTR(GlVAO);
 
 
-class GlVAOFactory {
+class GLRENDERER_DLL GlVAOFactory {
 public:
 	GlVAOFactory();
 
@@ -90,9 +94,18 @@ public:
 
 	//顶点属性
 	void addVertexAttrib1f(int index, float val);
+	void addVertexAttrib2f(int index, float val1, float val2);
 	void addVertexAttrib2fv(int index, const float* val);
+	void addVertexAttrib3f(int index, float val1, float val2, float val3);
 	void addVertexAttrib3fv(int index, const float* val);
+	void addVertexAttrib4f(int index, float val1, float val2, float val3, float val4);
 	void addVertexAttrib4fv(int index, const float* val);
+
+	//属性数
+	uint16_t attribCount(int index) const;
+
+	//顶点数，如果属性未对齐，返回0
+	uint16_t vertCount() const;
 
 	//生成VAO
 	GlVAOPtr createVAO();
@@ -109,3 +122,6 @@ private:
 
 
 SHAKURAS_END;
+
+
+#pragma warning(pop) 

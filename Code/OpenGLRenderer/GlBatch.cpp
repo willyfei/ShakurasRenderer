@@ -188,27 +188,63 @@ void GlVAOFactory::addVertexAttrib1f(int index, float val) {
 }
 
 
-void GlVAOFactory::addVertexAttrib2fv(int index, const float* val) {
+void GlVAOFactory::addVertexAttrib2f(int index, float val1, float val2) {
 	attib_sizebyfloats_[index] = 2;
-	attribs_[index].push_back(val[0]);
-	attribs_[index].push_back(val[1]);
+	attribs_[index].push_back(val1);
+	attribs_[index].push_back(val2);
+}
+
+
+void GlVAOFactory::addVertexAttrib2fv(int index, const float* val) {
+	addVertexAttrib2f(index, val[0], val[1]);
+}
+
+
+void GlVAOFactory::addVertexAttrib3f(int index, float val1, float val2, float val3) {
+	attib_sizebyfloats_[index] = 3;
+	attribs_[index].push_back(val1);
+	attribs_[index].push_back(val2);
+	attribs_[index].push_back(val3);
 }
 
 
 void GlVAOFactory::addVertexAttrib3fv(int index, const float* val) {
-	attib_sizebyfloats_[index] = 3;
-	attribs_[index].push_back(val[0]);
-	attribs_[index].push_back(val[1]);
-	attribs_[index].push_back(val[2]);
+	addVertexAttrib3f(index, val[0], val[1], val[2]);
+}
+
+
+void GlVAOFactory::addVertexAttrib4f(int index, float val1, float val2, float val3, float val4) {
+	attib_sizebyfloats_[index] = 4;
+	attribs_[index].push_back(val1);
+	attribs_[index].push_back(val2);
+	attribs_[index].push_back(val3);
+	attribs_[index].push_back(val4);
 }
 
 
 void GlVAOFactory::addVertexAttrib4fv(int index, const float* val) {
-	attib_sizebyfloats_[index] = 4;
-	attribs_[index].push_back(val[0]);
-	attribs_[index].push_back(val[1]);
-	attribs_[index].push_back(val[2]);
-	attribs_[index].push_back(val[3]);
+	addVertexAttrib4f(index, val[0], val[1], val[2], val[3]);
+}
+
+
+uint16_t GlVAOFactory::attribCount(int index) const {
+	return (uint16_t)(attribs_[index].size() / attib_sizebyfloats_[index]);
+}
+
+
+uint16_t GlVAOFactory::vertCount() const {
+	if (attrib_count_ == 0) {
+		return 0;
+	}
+
+	uint16_t count = attribCount(0);
+	for (int i = 1; i < attrib_count_; i++) {
+		if (attribCount(i) != count) {
+			return 0;
+		}
+	}
+
+	return count;
 }
 
 

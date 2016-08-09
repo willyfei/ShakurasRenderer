@@ -33,4 +33,28 @@ unsigned int CreateGlMipmap(void* bits, int width, int height, int comp, int fmt
 }
 
 
+GlMipmap::GlMipmap() {
+	tex_id_ = 0;
+}
+
+
+GlMipmap::~GlMipmap() {
+	if (tex_id_ != 0) {
+		glDeleteTextures(1, &tex_id_);
+	}
+}
+
+
+void GlMipmap::load(void* bits, int width, int height) {
+	tex_id_ = CreateGlMipmap(bits, width, height, 4, GL_RGBA);
+}
+
+
+GlMipmapPtr CreateGlMipmap(void* bits, int width, int height) {
+	GlMipmapPtr mipmap = std::make_shared<GlMipmap>();
+	mipmap->load(bits, width, height);
+	return mipmap;
+}
+
+
 SHAKURAS_END;

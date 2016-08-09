@@ -9,9 +9,10 @@ template<class CALL, class AS, class RS>
 class Application {
 public:
 	template<class VPTR>
-	void initialize(VPTR viewer) {
-		appstage_.initialize(viewer);
+	bool initialize(VPTR viewer) {
+		bool app_ok = appstage_.initialize(viewer);
 		renstage_.initialize(viewer, profiler_);
+		return app_ok;
 	}
 
 	void process() {

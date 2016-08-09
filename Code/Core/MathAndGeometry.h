@@ -242,6 +242,10 @@ public:
 		return v2;
 	}
 
+	const S* data() const {
+		return &m[0][0];
+	}
+
 	static Matrix33<S> Scale(S x, S y, S z) {
 		Matrix33<S> mat;
 		mat.m[0][0] = x;
@@ -332,6 +336,18 @@ public:
 		return v2;
 	}
 
+	const S* data() const {
+		return &m[0][0];
+	}
+
+	Matrix33<S> mat3() const {
+		Matrix33<S> m3;
+		std::copy_n(m[0].begin(), 3, m3.m[0].begin());
+		std::copy_n(m[1].begin(), 3, m3.m[1].begin());
+		std::copy_n(m[2].begin(), 3, m3.m[2].begin());
+		return m3;
+	}
+
 	static Matrix44<S> Translate(S x, S y, S z) {
 		Matrix44<S> mat;
 		mat.m[3][0] = x;
@@ -417,10 +433,6 @@ public:
 		return mat;
 	}
 
-	const S* data() const {
-		return &m[0][0];
-	}
-
 public:
 	std::array<std::array<S, 4>, 4> m;
 };
@@ -478,6 +490,7 @@ typedef Vector2<float> Vector2f;
 typedef Vector3<float> Vector3f;
 typedef Vector4<float> Vector4f;
 typedef Matrix44<float> Matrix44f;
+typedef Matrix33<float> Matrix33f;
 
 
 #define kGSPI 3.1415926f

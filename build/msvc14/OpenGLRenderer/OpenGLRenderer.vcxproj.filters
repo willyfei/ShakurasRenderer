@@ -42,6 +42,12 @@
     <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlPreset.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlRendererDll.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Code\OpenGLRenderer\GlContextBinding.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -66,6 +72,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlPreset.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Code\OpenGLRenderer\GlContextBinding.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
