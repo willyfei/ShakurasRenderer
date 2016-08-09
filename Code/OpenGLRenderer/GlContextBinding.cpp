@@ -6,7 +6,7 @@ SHAKURAS_BEGIN;
 
 GlContextBinding::GlContextBinding(HDC hDC, HGLRC hRC)
 {
-	wglMakeCurrent(hDC, hRC);
+	BOOL res = wglMakeCurrent(hDC, hRC);
 }
 
 

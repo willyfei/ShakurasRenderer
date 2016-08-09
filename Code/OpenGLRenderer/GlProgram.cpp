@@ -4,6 +4,7 @@
 #define GLEW_STATIC
 #endif
 #include "gl\glew.h"
+#include "gl\wglew.h"
 
 
 SHAKURAS_BEGIN;
@@ -24,7 +25,8 @@ void LoadShaderSrc(const char *sharder_src, GLuint shader) {
 
 bool GlProgram::initSharder(const char* vs_src, const char* fs_src, const std::vector<std::string>& attrib_locs) {
 	prog_handle_ = 0;
-
+	
+	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) {
 		return false;
 	}

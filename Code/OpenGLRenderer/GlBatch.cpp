@@ -5,8 +5,7 @@
 #define GLEW_STATIC
 #endif
 #include "gl\glew.h"
-
-#include <gl\gl.h>
+#include "gl\wglew.h"
 
 
 SHAKURAS_BEGIN;

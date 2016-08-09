@@ -4,6 +4,7 @@
 #define GLEW_STATIC
 #endif
 #include "gl\glew.h"
+#include "gl\wglew.h"
 #include "GlContextBinding.h"
 
 
