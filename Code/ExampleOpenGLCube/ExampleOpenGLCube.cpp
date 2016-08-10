@@ -129,7 +129,6 @@ namespace opengl_cube {
 
 			prag2_ = std::make_shared<GlColorProgram>();
 			prag2_->initialize();
-			prag2_->setColor({ 1.0f, 0.0f, 0.0f });
 
 			alpha_ = 0.0f;
 			pos_ = 3.5f;

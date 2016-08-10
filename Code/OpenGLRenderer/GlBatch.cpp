@@ -11,8 +11,8 @@
 SHAKURAS_BEGIN;
 
 
-unsigned int GetGlPrimtiveType(short cat) {
-	unsigned int primtype = GlVAO::kNil;
+GLenum GetGlPrimtiveType(short cat) {
+	GLenum primtype = GL_NONE;
 	switch (cat) {
 	case GlVAO::kPoints:
 		primtype = GL_POINTS;
@@ -89,16 +89,21 @@ void GlVAO::begin(short cat, uint16_t vert_count, int attrib_count) {
 
 
 void GlVAO::setIndexBuffer(const uint16_t* buffer, int len) {
-	glGenBuffers(1, &index_buffer_);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
+	GLuint vbo = 0;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo);
+	index_buffer_ = vbo;
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * len, buffer, GL_DYNAMIC_DRAW);
 	indexcount_ = len;
 }
 
 
 void GlVAO::setAttribBuffer(const float* buffer, int index, int sizebyfloat) {
-	glGenBuffers(1, &attrib_buffers_[index]);
-	glBindBuffer(GL_ARRAY_BUFFER, attrib_buffers_[index]);
+	GLuint vbo = 0;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	attrib_buffers_[index] = vbo;
+
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * sizebyfloat * vertcount_, buffer, GL_DYNAMIC_DRAW);
 	
 	glVertexAttribPointer((GLuint)index, sizebyfloat, GL_FLOAT, GL_FALSE, 0, 0);
