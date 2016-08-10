@@ -80,7 +80,7 @@ namespace soft_cube {
 
 	class AppStage {
 	public:
-		bool initialize(WinViewerPtr viewer) {
+		bool initialize(WinMemViewerPtr viewer) {
 			float w = (float)viewer->width();
 			float h = (float)viewer->height();
 
@@ -137,7 +137,7 @@ namespace soft_cube {
 		}
 
 	private:
-		WinViewerPtr viewer_;
+		WinMemViewerPtr viewer_;
 		SoftPhongDrawCall output_;
 		std::vector<SoftMipmapPtr> texlist_;
 		int itex_;
@@ -156,7 +156,7 @@ int main()
 		"Left/Right: rotation, Up/Down: forward/backward, Space: switch texture";
 
 	int width = 1024, height = 768;
-	WinViewerPtr viewer = std::make_shared<WinViewer>();
+	WinMemViewerPtr viewer = std::make_shared<WinMemViewer>();
 	if (!viewer || viewer->initialize(width, height, title) != 0) {
 		return -1;
 	}

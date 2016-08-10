@@ -4,122 +4,44 @@
 LRESULT ScreenEventProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
+std::map<HWND, std::weak_ptr<WinViewer> > g_win_viewers;
+
+
+LRESULT ScreenEventProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+	std::shared_ptr<WinViewer> winviewer = g_win_viewers[hWnd].lock();
+	if (winviewer) {
+		LRESULT res = winviewer->onEvent(hWnd, msg, wParam, lParam);
+		if (res != 0) {
+			return res;
+		}
+	}
+	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+
 WinViewer::WinViewer() {
-	screen_w = screen_h = 0;
-	screen_mx = screen_my = screen_mb = 0;
-	screen_keys.assign(0);
-	screen_close = false;
-	screen_handle = NULL;
-	screen_dc = NULL;
-	screen_rc = NULL;
-	screen_hb = NULL;
-	screen_ob = NULL;
-	screen_fb = nullptr;
-	screen_pitch = 0;
-}
-
-HGLRC InitOpenGLWithDC(HDC hDC) {
-	PIXELFORMATDESCRIPTOR pfd =
-	{
-		sizeof(PIXELFORMATDESCRIPTOR),
-		1,
-		PFD_DRAW_TO_WINDOW | PFD_DRAW_TO_BITMAP | PFD_SUPPORT_OPENGL,
-		PFD_TYPE_RGBA,
-		24,
-		0,0,0,0,0,0,
-		0,0,0,0,0,0,0,
-		32,
-		0,0,
-		PFD_MAIN_PLANE,
-		0,
-		0,0,0
-	};
-
-	int pixelFormat = ChoosePixelFormat(hDC, &pfd);
-	BOOL res = SetPixelFormat(hDC, pixelFormat, &pfd);
-	return wglCreateContext(hDC);
-}
-
-int WinViewer::initialize(int w, int h, const char* title) {
-	WNDCLASS wc = { CS_BYTEALIGNCLIENT, (WNDPROC)ScreenEventProc, 0, 0, 0,
-		NULL, NULL, NULL, NULL, _T("SCREEN_GRPC3D") };
-	BITMAPINFO bi = { { sizeof(BITMAPINFOHEADER), w, -h, 1, 32, BI_RGB, w * h * 4UL,
-		0, 0, 0, 0, } };
-	RECT rect = { 0, 0, w, h };
-	int wx, wy, sx, sy;
-	LPVOID ptr;
-	HDC hDC;
-
-	close();
-
-	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wc.hInstance = GetModuleHandle(NULL);
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	if (!RegisterClass(&wc)) {
-		return -1;
-	}
-
-	screen_handle = CreateWindow(_T("SCREEN_GRPC3D"), title,
-		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
-		0, 0, 0, 0, NULL, NULL, wc.hInstance, NULL);
-	if (screen_handle == NULL) {
-		return -2;
-	}
-
-	hDC = GetDC(screen_handle);
-	screen_dc = CreateCompatibleDC(hDC);
-	ReleaseDC(screen_handle, hDC);
-
-	screen_hb = CreateDIBSection(screen_dc, &bi, DIB_RGB_COLORS, &ptr, 0, 0);
-	if (screen_hb == NULL) {
-		return -3;
-	}
-
-	screen_ob = (HBITMAP)SelectObject(screen_dc, screen_hb);
-	screen_fb = (unsigned char*)ptr;
-	screen_w = w;
-	screen_h = h;
-	screen_pitch = w * 4;
-
-	screen_rc = InitOpenGLWithDC(screen_dc);
-
-	AdjustWindowRect(&rect, GetWindowLong(screen_handle, GWL_STYLE), 0);
-	wx = rect.right - rect.left;
-	wy = rect.bottom - rect.top;
-	sx = (GetSystemMetrics(SM_CXSCREEN) - wx) / 2;
-	sy = (GetSystemMetrics(SM_CYSCREEN) - wy) / 2;
-	if (sy < 0) sy = 0;
-	SetWindowPos(screen_handle, NULL, sx, sy, wx, wy, (SWP_NOCOPYBITS | SWP_NOZORDER | SWP_SHOWWINDOW));
-	SetForegroundWindow(screen_handle);
-
-	ShowWindow(screen_handle, SW_NORMAL);
-	dispatch();
-
-	screen_keys.assign(0);
-	screen_close = false;
-	memset(screen_fb, 0, w * h * 4);
-
-	objects[screen_handle] = std::dynamic_pointer_cast<WinViewer>(shared_from_this());
-
-	return 0;
+	width_ = height_ = 0;
+	keys_.assign(0);
+	close_ = false;
+	hwnd_ = NULL;
 }
 
 bool WinViewer::testUserMessage(UserMessage msg) {
 	switch (msg) {
 	case kUMUp:
-		return screen_keys[VK_UP] != 0;
+		return keys_[VK_UP] != 0;
 	case kUMDown:
-		return screen_keys[VK_DOWN] != 0;
+		return keys_[VK_DOWN] != 0;
 	case kUMLeft:
-		return screen_keys[VK_LEFT] != 0;
+		return keys_[VK_LEFT] != 0;
 	case kUMRight:
-		return screen_keys[VK_RIGHT] != 0;
+		return keys_[VK_RIGHT] != 0;
 	case kUMEsc:
-		return screen_keys[VK_ESCAPE] != 0;
+		return keys_[VK_ESCAPE] != 0;
 	case kUMSpace:
-		return screen_keys[VK_SPACE] != 0;
+		return keys_[VK_SPACE] != 0;
 	case kUMClose:
-		return screen_close;
+		return close_;
 	default:
 		return false;
 	}
@@ -138,75 +60,226 @@ void WinViewer::dispatch() {
 	}
 }
 
-void WinViewer::update(void) {
-	HDC hDC = GetDC(screen_handle);
-	BitBlt(hDC, 0, 0, screen_w, screen_h, screen_dc, 0, 0, SRCCOPY);
-	ReleaseDC(screen_handle, hDC);
-	dispatch();
-}
-
-void* WinViewer::frameBuffer() {
-	return screen_fb;
-}
-
-HDC WinViewer::hdc() {
-	return screen_dc;
-}
-
-HGLRC WinViewer::hrc() {
-	return screen_rc;
-}
-
 int WinViewer::width() {
-	return screen_w;
+	return width_;
 }
 
 int WinViewer::height() {
-	return screen_h;
-}
-
-int WinViewer::close() {
-	if (screen_dc) {
-		if (screen_ob) {
-			SelectObject(screen_dc, screen_ob);
-			screen_ob = NULL;
-		}
-		DeleteDC(screen_dc);
-		screen_dc = NULL;
-	}
-	if (screen_hb) {
-		DeleteObject(screen_hb);
-		screen_hb = NULL;
-	}
-	if (screen_handle) {
-		CloseWindow(screen_handle);
-		screen_handle = NULL;
-	}
-	return 0;
+	return height_;
 }
 
 LRESULT WinViewer::onEvent(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	if (hWnd == screen_handle) {
+	if (hWnd == hwnd_) {
 		switch (msg) {
-		case WM_CLOSE: screen_close = true; return 1;
-		case WM_KEYDOWN: screen_keys[wParam & 511] = 1; return 1;
-		case WM_KEYUP: screen_keys[wParam & 511] = 0; return 1;
+		case WM_CLOSE: close_ = true; return 1;
+		case WM_KEYDOWN: keys_[wParam & 511] = 1; return 1;
+		case WM_KEYUP: keys_[wParam & 511] = 0; return 1;
 		}
 	}
 	return 0;
 }
 
 
-std::map<HWND, std::weak_ptr<WinViewer> > WinViewer::objects;
+WinMemViewer::WinMemViewer() {
+	hdc_ = NULL;
+	hbmp_ = NULL;
+	org_hbmp_ = NULL;
+	frame_buffer_ = nullptr;
+}
+
+int WinMemViewer::initialize(int w, int h, const char* title) {
+	WNDCLASS wc = { CS_BYTEALIGNCLIENT, (WNDPROC)ScreenEventProc, 0, 0, 0,
+		NULL, NULL, NULL, NULL, _T("SCREEN_GRPC3D") };
+	BITMAPINFO bi = { { sizeof(BITMAPINFOHEADER), w, -h, 1, 32, BI_RGB, w * h * 4UL,
+		0, 0, 0, 0, } };
+	RECT rect = { 0, 0, w, h };
+	int wx, wy, sx, sy;
+	LPVOID ptr;
+	HDC hDC;
+
+	close();
+
+	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wc.hInstance = GetModuleHandle(NULL);
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	if (!RegisterClass(&wc)) {
+		return -1;
+	}
+
+	hwnd_ = CreateWindow(_T("SCREEN_GRPC3D"), title,
+		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+		0, 0, 0, 0, NULL, NULL, wc.hInstance, NULL);
+	if (hwnd_ == NULL) {
+		return -2;
+	}
+
+	hDC = GetDC(hwnd_);
+	hdc_ = CreateCompatibleDC(hDC);
+	ReleaseDC(hwnd_, hDC);
+
+	hbmp_ = CreateDIBSection(hdc_, &bi, DIB_RGB_COLORS, &ptr, 0, 0);
+	if (hbmp_ == NULL) {
+		return -3;
+	}
+
+	org_hbmp_ = (HBITMAP)SelectObject(hdc_, hbmp_);
+	frame_buffer_ = (unsigned char*)ptr;
+	width_ = w;
+	height_ = h;
+
+	AdjustWindowRect(&rect, GetWindowLong(hwnd_, GWL_STYLE), 0);
+	wx = rect.right - rect.left;
+	wy = rect.bottom - rect.top;
+	sx = (GetSystemMetrics(SM_CXSCREEN) - wx) / 2;
+	sy = (GetSystemMetrics(SM_CYSCREEN) - wy) / 2;
+	if (sy < 0) sy = 0;
+	SetWindowPos(hwnd_, NULL, sx, sy, wx, wy, (SWP_NOCOPYBITS | SWP_NOZORDER | SWP_SHOWWINDOW));
+	SetForegroundWindow(hwnd_);
+
+	ShowWindow(hwnd_, SW_NORMAL);
+	dispatch();
+
+	keys_.assign(0);
+	close_ = false;
+	memset(frame_buffer_, 0, w * h * 4);
+
+	g_win_viewers[hwnd_] = shared_from_this();
+
+	return 0;
+}
+
+void WinMemViewer::update(void) {
+	HDC hDC = GetDC(hwnd_);
+	BitBlt(hDC, 0, 0, width_, height_, hdc_, 0, 0, SRCCOPY);
+	ReleaseDC(hwnd_, hDC);
+	dispatch();
+}
+
+void* WinMemViewer::frameBuffer() {
+	return frame_buffer_;
+}
+
+int WinMemViewer::close() {
+	if (hdc_) {
+		if (org_hbmp_) {
+			SelectObject(hdc_, org_hbmp_);
+			org_hbmp_ = NULL;
+		}
+		DeleteDC(hdc_);
+		hdc_ = NULL;
+	}
+	if (hbmp_) {
+		DeleteObject(hbmp_);
+		hbmp_ = NULL;
+	}
+	if (hwnd_) {
+		CloseWindow(hwnd_);
+		hwnd_ = NULL;
+	}
+	return 0;
+}
 
 
-LRESULT ScreenEventProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	std::shared_ptr<WinViewer> winviewer = WinViewer::objects[hWnd].lock();
-	if (winviewer) {
-		LRESULT res = winviewer->onEvent(hWnd, msg, wParam, lParam);
-		if (res != 0) {
-			return res;
+HGLRC InitGlContex(HDC hDC) {
+	PIXELFORMATDESCRIPTOR pfd =
+	{
+		sizeof(PIXELFORMATDESCRIPTOR),
+		1,
+		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL,
+		PFD_TYPE_RGBA,
+		24,
+		0,0,0,0,0,0,
+		0,0,0,0,0,0,0,
+		32,
+		0,0,
+		PFD_MAIN_PLANE,
+		0,
+		0,0,0
+	};
+
+	int pixelFormat = ChoosePixelFormat(hDC, &pfd);
+	BOOL res = SetPixelFormat(hDC, pixelFormat, &pfd);
+	return wglCreateContext(hDC);
+}
+
+
+WinRcViewer::WinRcViewer() {
+	hdc_ = NULL;
+	hrc_ = NULL;
+}
+
+int WinRcViewer::initialize(int w, int h, const char* title) {
+	WNDCLASS wc = { CS_BYTEALIGNCLIENT, (WNDPROC)ScreenEventProc, 0, 0, 0,
+		NULL, NULL, NULL, NULL, _T("SCREEN_GRPC3D") };
+	BITMAPINFO bi = { { sizeof(BITMAPINFOHEADER), w, -h, 1, 32, BI_RGB, w * h * 4UL,
+		0, 0, 0, 0, } };
+	RECT rect = { 0, 0, w, h };
+	int wx, wy, sx, sy;
+
+	close();
+
+	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wc.hInstance = GetModuleHandle(NULL);
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	if (!RegisterClass(&wc)) {
+		return -1;
+	}
+
+	hwnd_ = CreateWindow(_T("SCREEN_GRPC3D"), title,
+		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+		0, 0, 0, 0, NULL, NULL, wc.hInstance, NULL);
+	if (hwnd_ == NULL) {
+		return -2;
+	}
+
+	hdc_ = GetDC(hwnd_);
+	hrc_ = InitGlContex(hdc_);
+
+	width_ = w;
+	height_ = h;
+
+	AdjustWindowRect(&rect, GetWindowLong(hwnd_, GWL_STYLE), 0);
+	wx = rect.right - rect.left;
+	wy = rect.bottom - rect.top;
+	sx = (GetSystemMetrics(SM_CXSCREEN) - wx) / 2;
+	sy = (GetSystemMetrics(SM_CYSCREEN) - wy) / 2;
+	if (sy < 0) sy = 0;
+	SetWindowPos(hwnd_, NULL, sx, sy, wx, wy, (SWP_NOCOPYBITS | SWP_NOZORDER | SWP_SHOWWINDOW));
+	SetForegroundWindow(hwnd_);
+
+	ShowWindow(hwnd_, SW_NORMAL);
+	dispatch();
+
+	keys_.assign(0);
+	close_ = false;
+
+	g_win_viewers[hwnd_] = shared_from_this();
+
+	return 0;
+}
+
+void WinRcViewer::update(void) {
+	dispatch();
+}
+
+int WinRcViewer::close() {
+	if (hwnd_) {
+		if (hdc_) {
+			if (hrc_) {
+				wglMakeCurrent(hdc_, NULL);
+				wglDeleteContext(hrc_);
+				hrc_ = NULL;
+			}
+			ReleaseDC(hwnd_, hdc_);
 		}
 	}
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+	return 0;
+}
+
+HDC WinRcViewer::hdc() {
+	return hdc_; 
+}
+
+HGLRC WinRcViewer::hrc() {
+	return hrc_;
 }

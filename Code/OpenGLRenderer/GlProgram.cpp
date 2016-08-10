@@ -31,10 +31,6 @@ bool GlProgram::initSharder(const char* vs_src, const char* fs_src, const std::v
 		return false;
 	}
 
-	auto s11 = GLEW_VERSION_1_1;
-	auto s20 = GLEW_VERSION_2_0;
-	auto s30 = GLEW_VERSION_3_0;
-
 	// Create shader objects
 	GLuint vs_handle = glCreateShader(GL_VERTEX_SHADER);
 	GLuint fs_handle = glCreateShader(GL_FRAGMENT_SHADER);
@@ -51,6 +47,12 @@ bool GlProgram::initSharder(const char* vs_src, const char* fs_src, const std::v
 	GLint test_rv = 0;
 	glGetShaderiv(vs_handle, GL_COMPILE_STATUS, &test_rv);
 	if (test_rv == GL_FALSE) {
+		char sharder_info[4096];
+		GLint len = 0;
+		glGetShaderInfoLog(vs_handle, 4096, &len, sharder_info);
+		printf_s(sharder_info);
+		getchar();
+
 		glDeleteShader(vs_handle);
 		glDeleteShader(fs_handle);
 		return false;
@@ -58,6 +60,12 @@ bool GlProgram::initSharder(const char* vs_src, const char* fs_src, const std::v
 
 	glGetShaderiv(fs_handle, GL_COMPILE_STATUS, &test_rv);
 	if (test_rv == GL_FALSE) {
+		char sharder_info[4096];
+		GLint len = 0;
+		glGetShaderInfoLog(fs_handle, 4096, &len, sharder_info);
+		printf_s(sharder_info);
+		getchar();
+
 		glDeleteShader(vs_handle);
 		glDeleteShader(fs_handle);
 		return false;

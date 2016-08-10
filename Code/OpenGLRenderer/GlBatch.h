@@ -49,7 +49,7 @@ public:
 	//...
 	//draw()
 
-	void begin(short cat, uint16_t vert_count, int attrib_count, bool is_static);
+	void begin(short cat, uint16_t vert_count, int attrib_count);
 
 	void setIndexBuffer(const uint16_t* buffer, int len);
 
@@ -62,10 +62,8 @@ public:
 private:
 	unsigned int vao_;
 	unsigned int primtype_;
-	bool isstatic_;
 	uint16_t vertcount_;
 	unsigned int index_buffer_;
-	std::vector<int> attib_sizebyfloats_;
 	std::vector<unsigned int> attrib_buffers_;
 };
 
@@ -84,22 +82,21 @@ public:
 	void setPrimtiveCat(short cat);
 
 	//属性数
-	void setAttribCount(int attrib_count);
-
-	//静态图元
-	void setStatic(bool is_static);
+	void registerAttrib(int index, int size_by_float);
 
 	//顶点索引
 	void addIndex(uint16_t vi);
 
-	//顶点属性
-	void addVertexAttrib1f(int index, float val);
-	void addVertexAttrib2f(int index, float val1, float val2);
-	void addVertexAttrib2fv(int index, const float* val);
-	void addVertexAttrib3f(int index, float val1, float val2, float val3);
-	void addVertexAttrib3fv(int index, const float* val);
-	void addVertexAttrib4f(int index, float val1, float val2, float val3, float val4);
-	void addVertexAttrib4fv(int index, const float* val);
+	//添加顶点
+	uint16_t addVertex();
+
+	void setAttrib1f(int index, float val);
+	void setAttrib2f(int index, float val1, float val2);
+	void setAttrib2fv(int index, const float* val);
+	void setAttrib3f(int index, float val1, float val2, float val3);
+	void setAttrib3fv(int index, const float* val);
+	void setAttrib4f(int index, float val1, float val2, float val3, float val4);
+	void setAttrib4fv(int index, const float* val);
 
 	//属性数
 	uint16_t attribCount(int index) const;
@@ -112,11 +109,9 @@ public:
 
 private:
 	short cat_;
-	int attrib_count_;
-	uint16_t vertex_count_;
-	bool is_static_;
+	uint16_t vert_count_;
 	std::vector<uint16_t> index_;
-	std::vector<int> attib_sizebyfloats_;
+	std::vector<int> sizebyfloats_;
 	std::vector<std::vector<float> > attribs_;
 };
 

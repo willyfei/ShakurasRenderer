@@ -57,7 +57,6 @@ GlVAO::GlVAO() {
 	primtype_ = 0;
 	vertcount_ = 0;
 	index_buffer_ = 0;
-	isstatic_ = false;
 }
 
 
@@ -76,13 +75,11 @@ GlVAO::~GlVAO() {
 }
 
 
-void GlVAO::begin(short cat, uint16_t vert_count, int attrib_count, bool is_static) {
+void GlVAO::begin(short cat, uint16_t vert_count, int attrib_count) {
 	primtype_ = GetGlPrimtiveType(cat);
 	vertcount_ = vert_count;
-	isstatic_ = is_static;
 
 	attrib_buffers_.resize(attrib_count, 0);
-	attib_sizebyfloats_.resize(attrib_count, 0);
 
 	glGenVertexArrays(1, &vao_);
 	glBindVertexArray(vao_);
@@ -92,53 +89,29 @@ void GlVAO::begin(short cat, uint16_t vert_count, int attrib_count, bool is_stat
 void GlVAO::setIndexBuffer(const uint16_t* buffer, int len) {
 	glGenBuffers(1, &index_buffer_);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * len, buffer, isstatic_? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * len, buffer, GL_DYNAMIC_DRAW);
 }
 
 
 void GlVAO::setAttribBuffer(const float* buffer, int index, int sizebyfloat) {
 	glGenBuffers(1, &attrib_buffers_[index]);
-	glBindBuffer(GL_ARRAY_BUFFER, index_buffer_);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * sizebyfloat * vertcount_, buffer, isstatic_ ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
-
-	attib_sizebyfloats_[index] = sizebyfloat;
+	glBindBuffer(GL_ARRAY_BUFFER, attrib_buffers_[index]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * sizebyfloat * vertcount_, buffer, GL_DYNAMIC_DRAW);
+	
+	glVertexAttribPointer((GLuint)index, sizebyfloat, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray((GLuint)index);
 }
 
 
 void GlVAO::end() {
-	auto bind_attrib_pointer = [&](size_t i) {
-		unsigned int attrib_buffer = attrib_buffers_[i];
-		int sizebyfloat = attib_sizebyfloats_[i];
-
-		if (attrib_buffer != 0 && sizebyfloat != 0) {
-			glEnableVertexAttribArray((GLuint)i);
-			glBindBuffer(GL_ARRAY_BUFFER, attrib_buffer);
-			glVertexAttribPointer((GLuint)i, sizebyfloat, GL_FLOAT, GL_FALSE, 0, 0);
-		}
-	};
-
-	glBindVertexArray(vao_);
-
-	for (size_t i = 0; i != attrib_buffers_.size(); i++) {
-		bind_attrib_pointer(i);
-	}
-
 	glBindVertexArray(0);
 }
 
 
 void GlVAO::draw() {
 	glBindVertexArray(vao_);
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
-
-	glDrawElements(
-		primtype_,
-		vertcount_,
-		GL_UNSIGNED_SHORT,
-		(void*)0
-	);
-
+	glDrawElements(primtype_, vertcount_, GL_UNSIGNED_SHORT, nullptr);
 	glBindVertexArray(0);
 }
 
@@ -150,10 +123,8 @@ GlVAOFactory::GlVAOFactory() {
 
 void GlVAOFactory::reset() {
 	cat_ = GlVAO::kNil;
-	attrib_count_ = 0;
-	vertex_count_ = 0;
-	is_static_ = false;
-	attib_sizebyfloats_.clear();
+	vert_count_ = 0;
+	sizebyfloats_.clear();
 	attribs_.clear();
 }
 
@@ -163,16 +134,10 @@ void GlVAOFactory::setPrimtiveCat(short cat) {
 }
 
 
-void GlVAOFactory::setAttribCount(int attrib_count) {
-	attrib_count_ = attrib_count;
-
-	attib_sizebyfloats_.resize(attrib_count, 0);
-	attribs_.resize(attrib_count);
-}
-
-
-void GlVAOFactory::setStatic(bool is_static) {
-	is_static_ = is_static;
+void GlVAOFactory::registerAttrib(int index, int size_by_float) {
+	attribs_.resize(index + 1);
+	sizebyfloats_.resize(index + 1, 0);
+	sizebyfloats_[index] = size_by_float;
 }
 
 
@@ -181,81 +146,105 @@ void GlVAOFactory::addIndex(uint16_t vi) {
 }
 
 
-void GlVAOFactory::addVertexAttrib1f(int index, float val) {
-	attib_sizebyfloats_[index] = 1;
-	attribs_[index].push_back(val);
+uint16_t GlVAOFactory::addVertex() {
+	uint16_t vert_index = vert_count_;
+	vert_count_++;
+
+	static const float initer[] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+	for (size_t i = 0; i != attribs_.size(); i++) {
+		attribs_[i].insert(attribs_[i].end(), initer, initer + sizebyfloats_[i]);
+	}
+
+	return vert_index;
 }
 
 
-void GlVAOFactory::addVertexAttrib2f(int index, float val1, float val2) {
-	attib_sizebyfloats_[index] = 2;
-	attribs_[index].push_back(val1);
-	attribs_[index].push_back(val2);
+void GlVAOFactory::setAttrib1f(int index, float val) {
+	int sbf = sizebyfloats_[index];
+	if (sbf == 1) {
+		uint16_t vert_index = vert_count_ - 1;
+
+		attribs_[index][vert_index * sbf] = val;
+	}
 }
 
 
-void GlVAOFactory::addVertexAttrib2fv(int index, const float* val) {
-	addVertexAttrib2f(index, val[0], val[1]);
+void GlVAOFactory::setAttrib2f(int index, float val1, float val2) {
+	int sbf = sizebyfloats_[index];
+	if (sbf == 2) {
+		int sbf = sizebyfloats_[index];
+		uint16_t vert_index = vert_count_ - 1;
+
+		attribs_[index][vert_index * sbf] = val1;
+		attribs_[index][vert_index * sbf + 1] = val2;
+	}
 }
 
 
-void GlVAOFactory::addVertexAttrib3f(int index, float val1, float val2, float val3) {
-	attib_sizebyfloats_[index] = 3;
-	attribs_[index].push_back(val1);
-	attribs_[index].push_back(val2);
-	attribs_[index].push_back(val3);
+void GlVAOFactory::setAttrib2fv(int index, const float* val) {
+	setAttrib2f(index, val[0], val[1]);
 }
 
 
-void GlVAOFactory::addVertexAttrib3fv(int index, const float* val) {
-	addVertexAttrib3f(index, val[0], val[1], val[2]);
+void GlVAOFactory::setAttrib3f(int index, float val1, float val2, float val3) {
+	int sbf = sizebyfloats_[index];
+	if (sbf == 3) {
+		int sbf = sizebyfloats_[index];
+		uint16_t vert_index = vert_count_ - 1;
+
+		attribs_[index][vert_index * sbf] = val1;
+		attribs_[index][vert_index * sbf + 1] = val2;
+		attribs_[index][vert_index * sbf + 2] = val3;
+	}
 }
 
 
-void GlVAOFactory::addVertexAttrib4f(int index, float val1, float val2, float val3, float val4) {
-	attib_sizebyfloats_[index] = 4;
-	attribs_[index].push_back(val1);
-	attribs_[index].push_back(val2);
-	attribs_[index].push_back(val3);
-	attribs_[index].push_back(val4);
+void GlVAOFactory::setAttrib3fv(int index, const float* val) {
+	setAttrib3f(index, val[0], val[1], val[2]);
 }
 
 
-void GlVAOFactory::addVertexAttrib4fv(int index, const float* val) {
-	addVertexAttrib4f(index, val[0], val[1], val[2], val[3]);
+void GlVAOFactory::setAttrib4f(int index, float val1, float val2, float val3, float val4) {
+	int sbf = sizebyfloats_[index];
+	if (sbf == 4) {
+		int sbf = sizebyfloats_[index];
+		uint16_t vert_index = vert_count_ - 1;
+
+		attribs_[index][vert_index * sbf] = val1;
+		attribs_[index][vert_index * sbf + 1] = val2;
+		attribs_[index][vert_index * sbf + 2] = val3;
+		attribs_[index][vert_index * sbf + 3] = val4;
+	}
 }
+
+
+void GlVAOFactory::setAttrib4fv(int index, const float* val) {
+	setAttrib4f(index, val[0], val[1], val[2], val[3]);
+} 
 
 
 uint16_t GlVAOFactory::attribCount(int index) const {
-	return (uint16_t)(attribs_[index].size() / attib_sizebyfloats_[index]);
+	if (sizebyfloats_[index] == 0) {
+		return 0;
+	}
+	return (uint16_t)(attribs_[index].size() / sizebyfloats_[index]);
 }
 
 
 uint16_t GlVAOFactory::vertCount() const {
-	if (attrib_count_ == 0) {
-		return 0;
-	}
-
-	uint16_t count = attribCount(0);
-	for (int i = 1; i < attrib_count_; i++) {
-		if (attribCount(i) != count) {
-			return 0;
-		}
-	}
-
-	return count;
+	return vert_count_;
 }
 
 
 GlVAOPtr GlVAOFactory::createVAO() {
 	GlVAOPtr vao = std::make_shared<GlVAO>();
 
-	vao->begin(cat_, vertex_count_, attrib_count_, is_static_);
+	vao->begin(cat_, vertCount(), (int)attribs_.size());
 
 	vao->setIndexBuffer(index_.data(), (int)index_.size());
 
-	for (int i = 0; i != attrib_count_; i++) {
-		vao->setAttribBuffer(attribs_[i].data(), i, attib_sizebyfloats_[i]);
+	for (int i = 0; i != (int)attribs_.size(); i++) {
+		vao->setAttribBuffer(attribs_[i].data(), i, sizebyfloats_[i]);
 	}
 
 	vao->end();

@@ -10,6 +10,43 @@
 SHAKURAS_BEGIN;
 
 
+bool GlColorProgram::initialize() {
+	std::vector<std::string> attrib_locs;
+	attrib_locs.push_back("vertPos");
+	return initSharder(vertexSharderSource(), fragmentSharderSource(), attrib_locs);
+}
+
+
+void GlColorProgram::setColor(const Vector3f& color) {
+	setUniform4fv("color", color.xyzw(1.0f).data());
+}
+
+
+const char* GlColorProgram::vertexSharderSource() {
+	static const char * vs_src =
+		"attribute vec4 vertPos;"
+		"void main(void) "
+		"{"
+		"	gl_Position = vertPos;"
+		"}";
+
+	return vs_src;
+}
+
+
+const char* GlColorProgram::fragmentSharderSource() {
+	static const char * fs_src =
+		"uniform vec4 color;"
+		"void main(void) "
+		"{"
+		"	gl_FragColor = color;"
+		"}";
+
+	return fs_src;
+}
+
+
+
 bool GlPhongProgram::initialize() {
 	std::vector<std::string> attrib_locs;
 	attrib_locs.push_back("vertPos");
@@ -35,12 +72,12 @@ void GlPhongProgram::setSpecular(const Vector3f& specular) {
 
 
 void GlPhongProgram::setModelTrsf(const Matrix44f& model_trsf) {
-	setUniformMatrix3fv("mTrsf3", model_trsf.mat3().data());
+	setUniformMatrix3fv("mTrsf3", model_trsf.mat3().flat().data());
 }
 
 
 void GlPhongProgram::setMvpTrsf(const Matrix44f& mvp_trsf) {
-	setUniformMatrix4fv("mvpTrsf", mvp_trsf.data());
+	setUniformMatrix4fv("mvpTrsf", mvp_trsf.flat().data());
 }
 
 
@@ -91,10 +128,10 @@ const char* GlPhongProgram::fragmentSharderSource() {
 		"uniform vec3 diffuse;"
 		"uniform vec3 specular;"
 		"uniform sampler2D colorMap;"
-		"smooth in vec3 varyingNormal;"
-		"smooth in vec2 varyingUV;"
-		"smooth in vec3 varyingLightDir;"
-		"smooth in vec3 varyingEyeDir;"
+		"in vec3 varyingNormal;"
+		"in vec2 varyingUV;"
+		"in vec3 varyingLightDir;"
+		"in vec3 varyingEyeDir;"
 		"void main(void) "
 		"{"
 		"	vec3 norm = normalize(varyingNormal);"
@@ -110,7 +147,7 @@ const char* GlPhongProgram::fragmentSharderSource() {
 		"	float g = clamp(texColor.y * illum.y, 0.0, 1.0);"
 		"	float b = clamp(texColor.z * illum.z, 0.0, 1.0);"
 		""
-		"	gl_FragColor = vec4(r, g, b, 1.0);"
+		"	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);"
 		"}";
 
 	return fs_src;

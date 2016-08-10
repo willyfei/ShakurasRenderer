@@ -15,7 +15,7 @@ namespace soft_cup {
 
 	class AppStage {
 	public:
-		bool initialize(WinViewerPtr viewer) {
+		bool initialize(WinMemViewerPtr viewer) {
 			float w = (float)viewer->width();
 			float h = (float)viewer->height();
 
@@ -45,12 +45,14 @@ namespace soft_cup {
 
 				cmd.proj_trsf = Matrix44f::Perspective(kGSPI * 0.5f, w / h, 0.5f, 500.0f);//ͶӰ�任
 
-				SoftSurfacePtr surface = std::make_shared<SoftSurface>();
 				int texw = 0, texh = 0;
 				void* bits = LoadTexture(mesh.mtl.tex_full_path, false, texw, texh);
-				surface->reset(texw, texh, (uint32_t*)bits);
-				ResFree(bits);
-				cmd.uniforms.texture = CreateSoftMipmap(surface);
+				if (bits) {
+					SoftSurfacePtr surface = std::make_shared<SoftSurface>();
+					surface->reset(texw, texh, (uint32_t*)bits);
+					ResFree(bits);
+					cmd.uniforms.texture = CreateSoftMipmap(surface);
+				}
 
 				cmd.uniforms.ambient = mesh.mtl.ambient;
 				cmd.uniforms.diffuse = mesh.mtl.diffuse;
@@ -90,7 +92,7 @@ namespace soft_cup {
 		}
 
 	private:
-		WinViewerPtr viewer_;
+		WinMemViewerPtr viewer_;
 		std::vector<SoftPhongDrawCall> outputs_;
 		float alpha_;
 		float pos_;
@@ -106,7 +108,7 @@ int main()
 		"Left/Right: rotation, Up/Down: forward/backward";
 
 	int width = 1024, height = 768;
-	WinViewerPtr viewer = std::make_shared<WinViewer>();
+	WinMemViewerPtr viewer = std::make_shared<WinMemViewer>();
 	if (!viewer || viewer->initialize(width, height, title) != 0) {
 		return -1;
 	}

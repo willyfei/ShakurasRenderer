@@ -19,6 +19,7 @@ public:
 	template<class VPTR>
 	void initialize(VPTR viewer, Profiler& profiler) {
 		profiler_ = &profiler;
+		setContext(viewer->hdc(), viewer->hrc());
 		initGl();
 	}
 
@@ -28,6 +29,8 @@ public:
 
 private:
 	void initGl();
+
+	void setContext(HDC hdc, HGLRC hrc);
 
 private:
 	Profiler* profiler_;

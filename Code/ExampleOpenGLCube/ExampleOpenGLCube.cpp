@@ -35,52 +35,56 @@ namespace opengl_cube {
 	}
 
 	GlVAOPtr GenerateCube() {
-		static Vector4f mesh[8] = {
-			{ -1, -1, -1, 1 },
-			{ 1, -1, -1, 1 },
-			{ 1, 1, -1, 1 },
-			{ -1, 1, -1, 1 },
-			{ -1, -1, 1, 1 },
-			{ 1, -1, 1, 1 },
-			{ 1, 1, 1, 1 },
-			{ -1, 1, 1, 1 },
+		static Vector3f mesh[8] = {
+			{ -1, -1, -1 },
+			{ 1, -1, -1 },
+			{ 1, 1, -1 },
+			{ -1, 1, -1 },
+			{ -1, -1, 1 },
+			{ 1, -1, 1 },
+			{ 1, 1, 1 },
+			{ -1, 1, 1 },
 		};
 
 		GlVAOFactory factory;
 
 		factory.setPrimtiveCat(GlVAO::kTriangles);
-		factory.setAttribCount(GlPhongProgram::kAttribCount);
-		factory.setStatic(false);
+
+		factory.registerAttrib(GlPhongProgram::kVertPos, 3);
+		factory.registerAttrib(GlPhongProgram::kVertNormal, 3);
+		factory.registerAttrib(GlPhongProgram::kVertUV, 2);
 
 		auto draw_plane = [&](GlVAOFactory& factory, int a, int b, int c, int d) {
-			Vector4f p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
-			Vector3f norm = CrossProduct3((p3 - p2).xyz(), (p1 - p2).xyz());
+			Vector3f p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
+			Vector3f norm = CrossProduct3(p3 - p2, p1 - p2);
 
-			uint16_t vert_count = factory.vertCount();
+			uint16_t vert_index = factory.addVertex();
+			factory.setAttrib3fv(GlPhongProgram::kVertPos, p1.data());
+			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.setAttrib2f(GlPhongProgram::kVertUV, 0, 0);
 
-			factory.addVertexAttrib4fv(GlPhongProgram::kVertPos, p1.data());
-			factory.addVertexAttrib2f(GlPhongProgram::kVertUV, 0, 0);
-			factory.addVertexAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.addVertex();
+			factory.setAttrib3fv(GlPhongProgram::kVertPos, p2.data());
+			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.setAttrib2f(GlPhongProgram::kVertUV, 0, 1);
 
-			factory.addVertexAttrib4fv(GlPhongProgram::kVertPos, p2.data());
-			factory.addVertexAttrib2f(GlPhongProgram::kVertUV, 0, 1);
-			factory.addVertexAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.addVertex();
+			factory.setAttrib3fv(GlPhongProgram::kVertPos, p3.data());
+			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.setAttrib2f(GlPhongProgram::kVertUV, 1, 1);
 
-			factory.addVertexAttrib4fv(GlPhongProgram::kVertPos, p3.data());
-			factory.addVertexAttrib2f(GlPhongProgram::kVertUV, 1, 1);
-			factory.addVertexAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.addVertex();
+			factory.setAttrib3fv(GlPhongProgram::kVertPos, p4.data());
+			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.setAttrib2f(GlPhongProgram::kVertUV, 1, 0);
 
-			factory.addVertexAttrib4fv(GlPhongProgram::kVertPos, p4.data());
-			factory.addVertexAttrib2f(GlPhongProgram::kVertUV, 1, 0);
-			factory.addVertexAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.addIndex(vert_index);
+			factory.addIndex(vert_index + 1);
+			factory.addIndex(vert_index + 2);
 
-			factory.addIndex(vert_count);
-			factory.addIndex(vert_count + 1);
-			factory.addIndex(vert_count + 2);
-
-			factory.addIndex(vert_count + 2);
-			factory.addIndex(vert_count + 3);
-			factory.addIndex(vert_count);
+			factory.addIndex(vert_index + 2);
+			factory.addIndex(vert_index + 3);
+			factory.addIndex(vert_index);
 		};
 
 		draw_plane(factory, 0, 3, 2, 1);
@@ -95,7 +99,7 @@ namespace opengl_cube {
 
 	class AppStage {
 	public:
-		bool initialize(WinViewerPtr viewer) {
+		bool initialize(WinRcViewerPtr viewer) {
 			GlContextBinding contex(viewer->hdc(), viewer->hrc());
 
 			program_ = std::make_shared<GlPhongProgram>();
@@ -131,6 +135,8 @@ namespace opengl_cube {
 		}
 
 		void process(std::vector<GlDrawCall>& cmds) {
+			return;
+
 			if (viewer_->testUserMessage(kUMSpace)) {
 				if (++nspace_ == 1) {
 					itex_ = (itex_ + 1) % texlist_.size();
@@ -187,7 +193,7 @@ int main()
 		"Left/Right: rotation, Up/Down: forward/backward, Space: switch texture";
 
 	int width = 1024, height = 768;
-	WinViewerPtr viewer = std::make_shared<WinViewer>();
+	WinRcViewerPtr viewer = std::make_shared<WinRcViewer>();
 	if (!viewer || viewer->initialize(width, height, title) != 0) {
 		return -1;
 	}

@@ -74,7 +74,7 @@ namespace soft_sponza {
 
 	class AppStage {
 	public:
-		bool initialize(WinViewerPtr viewer) {
+		bool initialize(WinMemViewerPtr viewer) {
 			float w = (float)viewer->width();
 			float h = (float)viewer->height();
 
@@ -153,7 +153,7 @@ namespace soft_sponza {
 		}
 
 	private:
-		WinViewerPtr viewer_;
+		WinMemViewerPtr viewer_;
 		Matrix44f projtrsf_;
 		std::vector<DrawCall> outputs_;
 		int step_, move_;
@@ -171,7 +171,7 @@ int main()
 		"Left/Right: rotation, Up/Down: forward/backward";
 
 	int width = 512, height = 512;
-	WinViewerPtr viewer = std::make_shared<WinViewer>();
+	WinMemViewerPtr viewer = std::make_shared<WinMemViewer>();
 	if (!viewer || viewer->initialize(width, height, title) != 0) {
 		return -1;
 	}
