@@ -56,6 +56,7 @@ GlVAO::GlVAO() {
 	vao_ = 0;
 	primtype_ = 0;
 	vertcount_ = 0;
+	indexcount_ = 0;
 	index_buffer_ = 0;
 }
 
@@ -79,6 +80,7 @@ void GlVAO::begin(short cat, uint16_t vert_count, int attrib_count) {
 	primtype_ = GetGlPrimtiveType(cat);
 	vertcount_ = vert_count;
 
+	attrib_buffers_.clear();
 	attrib_buffers_.resize(attrib_count, 0);
 
 	glGenVertexArrays(1, &vao_);
@@ -90,6 +92,7 @@ void GlVAO::setIndexBuffer(const uint16_t* buffer, int len) {
 	glGenBuffers(1, &index_buffer_);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * len, buffer, GL_DYNAMIC_DRAW);
+	indexcount_ = len;
 }
 
 
@@ -111,7 +114,7 @@ void GlVAO::end() {
 void GlVAO::draw() {
 	glBindVertexArray(vao_);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
-	glDrawElements(primtype_, vertcount_, GL_UNSIGNED_SHORT, nullptr);
+	glDrawElements(primtype_, indexcount_, GL_UNSIGNED_SHORT, nullptr);
 	glBindVertexArray(0);
 }
 
@@ -223,14 +226,6 @@ void GlVAOFactory::setAttrib4fv(int index, const float* val) {
 } 
 
 
-uint16_t GlVAOFactory::attribCount(int index) const {
-	if (sizebyfloats_[index] == 0) {
-		return 0;
-	}
-	return (uint16_t)(attribs_[index].size() / sizebyfloats_[index]);
-}
-
-
 uint16_t GlVAOFactory::vertCount() const {
 	return vert_count_;
 }
@@ -241,11 +236,11 @@ GlVAOPtr GlVAOFactory::createVAO() {
 
 	vao->begin(cat_, vertCount(), (int)attribs_.size());
 
-	vao->setIndexBuffer(index_.data(), (int)index_.size());
-
 	for (int i = 0; i != (int)attribs_.size(); i++) {
 		vao->setAttribBuffer(attribs_[i].data(), i, sizebyfloats_[i]);
 	}
+
+	vao->setIndexBuffer(index_.data(), (int)index_.size());
 
 	vao->end();
 

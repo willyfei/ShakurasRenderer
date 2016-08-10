@@ -51,32 +51,33 @@ namespace opengl_cube {
 		factory.setPrimtiveCat(GlVAO::kTriangles);
 
 		factory.registerAttrib(GlPhongProgram::kVertPos, 3);
-		factory.registerAttrib(GlPhongProgram::kVertNormal, 3);
-		factory.registerAttrib(GlPhongProgram::kVertUV, 2);
+		/*factory.registerAttrib(GlPhongProgram::kVertNormal, 3);
+		factory.registerAttrib(GlPhongProgram::kVertUV, 2);*/
 
 		auto draw_plane = [&](GlVAOFactory& factory, int a, int b, int c, int d) {
 			Vector3f p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
 			Vector3f norm = CrossProduct3(p3 - p2, p1 - p2);
+			Normalize3(norm);
 
 			uint16_t vert_index = factory.addVertex();
 			factory.setAttrib3fv(GlPhongProgram::kVertPos, p1.data());
-			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
-			factory.setAttrib2f(GlPhongProgram::kVertUV, 0, 0);
+			/*factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.setAttrib2f(GlPhongProgram::kVertUV, 0, 0);*/
 
 			factory.addVertex();
 			factory.setAttrib3fv(GlPhongProgram::kVertPos, p2.data());
-			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
-			factory.setAttrib2f(GlPhongProgram::kVertUV, 0, 1);
+			/*factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.setAttrib2f(GlPhongProgram::kVertUV, 0, 1);*/
 
 			factory.addVertex();
 			factory.setAttrib3fv(GlPhongProgram::kVertPos, p3.data());
-			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
-			factory.setAttrib2f(GlPhongProgram::kVertUV, 1, 1);
+			/*factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.setAttrib2f(GlPhongProgram::kVertUV, 1, 1);*/
 
 			factory.addVertex();
 			factory.setAttrib3fv(GlPhongProgram::kVertPos, p4.data());
-			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
-			factory.setAttrib2f(GlPhongProgram::kVertUV, 1, 0);
+			/*factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.setAttrib2f(GlPhongProgram::kVertUV, 1, 0);*/
 
 			factory.addIndex(vert_index);
 			factory.addIndex(vert_index + 1);
@@ -126,6 +127,10 @@ namespace opengl_cube {
 			program_->setDiffuse({ 0.587609f, 0.587609f, 0.587609f });
 			program_->setSpecular({ 0.071744f, 0.071744f, 0.071744f });
 
+			prag2_ = std::make_shared<GlColorProgram>();
+			prag2_->initialize();
+			prag2_->setColor({ 1.0f, 0.0f, 0.0f });
+
 			alpha_ = 0.0f;
 			pos_ = 3.5f;
 
@@ -135,8 +140,6 @@ namespace opengl_cube {
 		}
 
 		void process(std::vector<GlDrawCall>& cmds) {
-			return;
-
 			if (viewer_->testUserMessage(kUMSpace)) {
 				if (++nspace_ == 1) {
 					itex_ = (itex_ + 1) % texlist_.size();
@@ -165,7 +168,7 @@ namespace opengl_cube {
 
 			GlDrawCall drawcall;
 			drawcall.batchs.push_back(batch_);
-			drawcall.program = program_;
+			drawcall.program = prag2_;
 
 			cmds.push_back(drawcall);
 		}
@@ -175,6 +178,7 @@ namespace opengl_cube {
 		WinViewerPtr viewer_;
 		GlVAOPtr batch_;
 		GlPhongProgramPtr program_;
+		std::shared_ptr<GlColorProgram> prag2_;
 		Matrix44f proj_trsf_;
 		std::vector<GlMipmapPtr> texlist_;
 		int itex_;

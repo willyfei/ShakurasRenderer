@@ -63,6 +63,7 @@ private:
 	unsigned int vao_;
 	unsigned int primtype_;
 	uint16_t vertcount_;
+	int indexcount_;
 	unsigned int index_buffer_;
 	std::vector<unsigned int> attrib_buffers_;
 };
@@ -97,9 +98,6 @@ public:
 	void setAttrib3fv(int index, const float* val);
 	void setAttrib4f(int index, float val1, float val2, float val3, float val4);
 	void setAttrib4fv(int index, const float* val);
-
-	//属性数
-	uint16_t attribCount(int index) const;
 
 	//顶点数，如果属性未对齐，返回0
 	uint16_t vertCount() const;

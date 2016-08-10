@@ -16,6 +16,7 @@ SHAKURAS_BEGIN;
 class GLRENDERER_DLL GlProgram {
 public:
 	GlProgram();
+	virtual ~GlProgram() {}
 
 public:
 	bool initSharder(const char* vs_src, const char* fs_src, const std::vector<std::string>& attrib_locs);
