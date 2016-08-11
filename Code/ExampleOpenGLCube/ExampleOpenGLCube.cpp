@@ -35,7 +35,7 @@ namespace opengl_cube {
 	}
 
 	GlVAOPtr GenerateCube() {
-		static const float mesh_val = 0.5f;
+		static const float mesh_val = 1.0f;
 		static Vector3f mesh[8] = {
 			{ -mesh_val, -mesh_val, -mesh_val },
 			{ mesh_val, -mesh_val, -mesh_val },
@@ -142,10 +142,10 @@ namespace opengl_cube {
 			else {
 				nspace_ = 0;
 			}
-			if (viewer_->testUserMessage(kUMUp)) pos_ += 0.04f;
-			if (viewer_->testUserMessage(kUMDown)) pos_ -= 0.04f;
-			if (viewer_->testUserMessage(kUMLeft)) alpha_ -= 0.02f;
-			if (viewer_->testUserMessage(kUMRight)) alpha_ += 0.02f;
+			if (viewer_->testUserMessage(kUMUp)) pos_ += 0.004f;
+			if (viewer_->testUserMessage(kUMDown)) pos_ -= 0.004f;
+			if (viewer_->testUserMessage(kUMLeft)) alpha_ -= 0.002f;
+			if (viewer_->testUserMessage(kUMRight)) alpha_ += 0.002f;
 
 			setUniforms();
 
