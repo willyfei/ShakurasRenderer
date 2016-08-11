@@ -35,15 +35,16 @@ namespace opengl_cube {
 	}
 
 	GlVAOPtr GenerateCube() {
+		static const float mesh_val = 0.5f;
 		static Vector3f mesh[8] = {
-			{ -1, -1, -1 },
-			{ 1, -1, -1 },
-			{ 1, 1, -1 },
-			{ -1, 1, -1 },
-			{ -1, -1, 1 },
-			{ 1, -1, 1 },
-			{ 1, 1, 1 },
-			{ -1, 1, 1 },
+			{ -mesh_val, -mesh_val, -mesh_val },
+			{ mesh_val, -mesh_val, -mesh_val },
+			{ mesh_val, mesh_val, -mesh_val },
+			{ -mesh_val, mesh_val, -mesh_val },
+			{ -mesh_val, -mesh_val, mesh_val },
+			{ mesh_val, -mesh_val, mesh_val },
+			{ mesh_val, mesh_val, mesh_val },
+			{ -mesh_val, mesh_val, mesh_val },
 		};
 
 		GlVAOFactory factory;
@@ -51,8 +52,8 @@ namespace opengl_cube {
 		factory.setPrimtiveCat(GlVAO::kTriangles);
 
 		factory.registerAttrib(GlPhongProgram::kVertPos, 3);
-		/*factory.registerAttrib(GlPhongProgram::kVertNormal, 3);
-		factory.registerAttrib(GlPhongProgram::kVertUV, 2);*/
+		factory.registerAttrib(GlPhongProgram::kVertNormal, 3);
+		factory.registerAttrib(GlPhongProgram::kVertUV, 2);
 
 		auto draw_plane = [&](GlVAOFactory& factory, int a, int b, int c, int d) {
 			Vector3f p1 = mesh[a], p2 = mesh[b], p3 = mesh[c], p4 = mesh[d];
@@ -61,23 +62,23 @@ namespace opengl_cube {
 
 			uint16_t vert_index = factory.addVertex();
 			factory.setAttrib3fv(GlPhongProgram::kVertPos, p1.data());
-			/*factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
-			factory.setAttrib2f(GlPhongProgram::kVertUV, 0, 0);*/
+			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.setAttrib2f(GlPhongProgram::kVertUV, 0, 0);
 
 			factory.addVertex();
 			factory.setAttrib3fv(GlPhongProgram::kVertPos, p2.data());
-			/*factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
-			factory.setAttrib2f(GlPhongProgram::kVertUV, 0, 1);*/
+			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.setAttrib2f(GlPhongProgram::kVertUV, 0, 1);
 
 			factory.addVertex();
 			factory.setAttrib3fv(GlPhongProgram::kVertPos, p3.data());
-			/*factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
-			factory.setAttrib2f(GlPhongProgram::kVertUV, 1, 1);*/
+			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.setAttrib2f(GlPhongProgram::kVertUV, 1, 1);
 
 			factory.addVertex();
 			factory.setAttrib3fv(GlPhongProgram::kVertPos, p4.data());
-			/*factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
-			factory.setAttrib2f(GlPhongProgram::kVertUV, 1, 0);*/
+			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
+			factory.setAttrib2f(GlPhongProgram::kVertUV, 1, 0);
 
 			factory.addIndex(vert_index);
 			factory.addIndex(vert_index + 1);
@@ -110,9 +111,6 @@ namespace opengl_cube {
 
 			batch_ = GenerateCube();
 
-			float w = (float)viewer->width();
-			float h = (float)viewer->height();
-
 			texlist_.push_back(LoadMipmap("Cube/1.png"));
 			texlist_.push_back(LoadMipmap("Cube/1.jpg"));
 			texlist_.push_back(LoadMipmap("Cube/2.png"));
@@ -120,15 +118,10 @@ namespace opengl_cube {
 			itex_ = 0;
 			nspace_ = 0;
 
-			proj_trsf_ = Matrix44f::Perspective(kGSPI * 0.6f, w / h, 1.0f, 500.0f);//投影变换
+			float aspect = (float)viewer->width() / (float)viewer->height();
+			proj_trsf_ = Matrix44f::Perspective(kGSPI * 0.6f, aspect, 1.0f, 500.0f);//投影变换
 
-			program_->setTexture(texlist_[itex_]);
-			program_->setAmbient({ 0.4f, 0.4f, 0.4f });
-			program_->setDiffuse({ 0.587609f, 0.587609f, 0.587609f });
-			program_->setSpecular({ 0.071744f, 0.071744f, 0.071744f });
-
-			prag2_ = std::make_shared<GlColorProgram>();
-			prag2_->initialize();
+			setUniforms();
 
 			alpha_ = 0.0f;
 			pos_ = 3.5f;
@@ -139,6 +132,8 @@ namespace opengl_cube {
 		}
 
 		void process(std::vector<GlDrawCall>& cmds) {
+			GlContextBinding contex(viewer_->hdc(), viewer_->hrc());
+
 			if (viewer_->testUserMessage(kUMSpace)) {
 				if (++nspace_ == 1) {
 					itex_ = (itex_ + 1) % texlist_.size();
@@ -152,6 +147,18 @@ namespace opengl_cube {
 			if (viewer_->testUserMessage(kUMLeft)) alpha_ -= 0.02f;
 			if (viewer_->testUserMessage(kUMRight)) alpha_ += 0.02f;
 
+			setUniforms();
+
+			GlDrawCall drawcall;
+			drawcall.batchs.push_back(batch_);
+			drawcall.program = program_;
+
+			cmds.push_back(drawcall);
+		}
+
+		void setUniforms() {
+			program_->use();
+
 			Vector3f eye(0, -3 - pos_, 2.0f), at(0, 0, 0), up(0, 0, 1);
 			Vector3f eye_pos = eye;
 			Vector3f light_pos(-100.0f, -100.0f, 100.0f);
@@ -159,25 +166,20 @@ namespace opengl_cube {
 			Matrix44f modeltrsf = Matrix44f::Rotate(0.0f, 0.0f, 1.0f, alpha_);
 			Matrix44f viewtrsf = Matrix44f::LookAt(eye, at, up);
 
-			program_->setTexture(texlist_[itex_]);
+			program_->setAmbient({ 0.4f, 0.4f, 0.4f });
+			program_->setDiffuse({ 0.587609f, 0.587609f, 0.587609f });
+			program_->setSpecular({ 0.071744f, 0.071744f, 0.071744f });
 			program_->setModelTrsf(modeltrsf);
 			program_->setMvpTrsf(modeltrsf * viewtrsf * proj_trsf_);
 			program_->setEyePos(eye_pos);
 			program_->setLightPos(light_pos);
-
-			GlDrawCall drawcall;
-			drawcall.batchs.push_back(batch_);
-			drawcall.program = prag2_;
-
-			cmds.push_back(drawcall);
+			program_->setTexture(texlist_[itex_]);
 		}
 
-
 	private:
-		WinViewerPtr viewer_;
+		WinRcViewerPtr viewer_;
 		GlVAOPtr batch_;
 		GlPhongProgramPtr program_;
-		std::shared_ptr<GlColorProgram> prag2_;
 		Matrix44f proj_trsf_;
 		std::vector<GlMipmapPtr> texlist_;
 		int itex_;

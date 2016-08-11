@@ -11,7 +11,7 @@ void* GridTexture(int& width, int& height) {
 	for (j = 0; j < 256; j++) {
 		for (i = 0; i < 256; i++) {
 			int x = i / 32, y = j / 32;
-			buffer[j * 256 + i] = ((x + y) & 1) ? 0xffffff : 0x3fbcef;
+			buffer[j * 256 + i] = ((x + y) & 1) ? 0xffffff : 0xefbc3f;
 		}
 	}
 
@@ -39,9 +39,9 @@ void* LoadTexture(std::string filepath, bool isrelpath, int& width, int& height)
 		for (int i = 0; i < width; ++i) {
 			const unsigned char* pp_src = data + 4 * (j * width + i);
 			unsigned char* pp_dst = buffer + 4 * (j * width + i);
-			pp_dst[0] = pp_src[2];
+			pp_dst[0] = pp_src[0];
 			pp_dst[1] = pp_src[1];
-			pp_dst[2] = pp_src[0];
+			pp_dst[2] = pp_src[2];
 			pp_dst[3] = pp_src[3];
 		}
 	}

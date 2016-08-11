@@ -147,7 +147,7 @@ const char* GlPhongProgram::fragmentSharderSource() {
 		"	float g = clamp(texColor.y * illum.y, 0.0, 1.0);"
 		"	float b = clamp(texColor.z * illum.z, 0.0, 1.0);"
 		""
-		"	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);"
+		"	gl_FragColor = vec4(r, g, b, 1.0);"
 		"}";
 
 	return fs_src;

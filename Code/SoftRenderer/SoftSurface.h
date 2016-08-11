@@ -40,7 +40,10 @@ public:
 		if (data) {
 			for (int j = 0; j < height_; ++j) {
 				for (int i = 0; i < width_; ++i) {
-					data_[j][i] = data[j*width_ + i];
+					uint32_t* c = &data_[j][i];
+					*c = data[j*width_ + i];
+					uint8_t* rgba = (uint8_t*)c;
+					std::swap(rgba[0], rgba[2]);
 				}
 			}
 		}
