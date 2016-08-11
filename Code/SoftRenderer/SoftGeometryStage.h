@@ -32,7 +32,8 @@ public:
 		Concurrency::parallel_for_each(call.prims.verts_.begin(), call.prims.verts_.end(), vert_geom_sharding_and_proj);
 
 		//cliping
-		SoftClipper<V>(call.prims, *profiler_, refuse_back_).process();
+		clipper_.reset(call.prims, *profiler_, refuse_back_);
+		clipper_.process();
 
 		//screen mapping
 		auto screen_mapping = [&](V& vert) {
@@ -65,6 +66,7 @@ private:
 	float width_, height_;
 	bool refuse_back_;
 	Profiler* profiler_;
+	SoftClipper<V> clipper_;
 };
 
 

@@ -53,14 +53,18 @@ inline V SignedDistanceLerp(const V& v1, const V& v2, float d1, float d2) {
 template<class V>
 class SoftClipper {
 public:
-	SoftClipper(SoftPrimitiveList<V>& prims, Profiler& profiler, bool refuse_back) {
-		iprims_ = &prims;
-		profiler_ = &profiler;
-		refuse_back_ = refuse_back;
+	SoftClipper() {
+		iprims_ = nullptr;
+		profiler_ = nullptr;
+		refuse_back_ = true;
 	}
 
 public:
-	void process() {
+	void reset(SoftPrimitiveList<V>& prims, Profiler& profiler, bool refuse_back) {
+		iprims_ = &prims;
+		profiler_ = &profiler;
+		refuse_back_ = refuse_back;
+
 		oris_.clear();
 		neards_.clear();
 		fards_.clear();
@@ -72,6 +76,12 @@ public:
 
 		overts_.clear();
 		otris_.clear();
+	}
+
+	void process() {
+		if (!iprims_ || !profiler_) {
+			return;
+		}
 		
 		computeOrientate();
 
@@ -448,6 +458,8 @@ private:
 
 private:
 	SoftPrimitiveList<V>* iprims_;
+	Profiler* profiler_;
+	bool refuse_back_;
 
 	std::vector<short> oris_;
 	std::vector<float> neards_;
@@ -460,9 +472,6 @@ private:
 
 	std::vector<V> overts_;
 	std::vector<std::array<size_t, 3> > otris_;
-
-	Profiler* profiler_;
-	bool refuse_back_;
 };
 
 

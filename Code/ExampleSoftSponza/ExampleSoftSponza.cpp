@@ -79,7 +79,7 @@ namespace soft_sponza {
 			float h = (float)viewer->height();
 
 			std::vector<ObjMesh> meshs;
-			LoadObjMesh("Sponza/part_of_sponza.obj", meshs, false);
+			LoadObjMesh("Sponza/sponza.obj", meshs, false);
 
 			outputs_.clear();
 			outputs_.resize(meshs.size());
