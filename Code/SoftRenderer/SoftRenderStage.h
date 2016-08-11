@@ -1,11 +1,14 @@
 #pragma once
+#include "SoftDrawCall.h"
+#include "SoftRasterizerStage.h"
+#include "SoftGeometryStage.h"
 #include "Core/Profiler.h"
 
 
 SHAKURAS_BEGIN;
 
 
-template<class CALL, class GS, class RS>
+template<class UL, class A, class V, class VS, class FS>
 class SoftRenderStage {
 public:
 	template<class VPTR>
@@ -14,7 +17,7 @@ public:
 		rasstage_.initialize(viewer->width(), viewer->height(), viewer->frameBuffer(), profiler);
 	}
 
-	void process(std::vector<CALL>& calls) {
+	void process(std::vector<SoftDrawCall<UL, A, V> >& calls) {
 		rasstage_.clean();
 
 		for (auto i = calls.begin(); i != calls.end(); i++) {
@@ -24,8 +27,8 @@ public:
 	}
 
 public:
-	GS geostage_;
-	RS rasstage_;
+	SoftGeometryStage<UL, A, V, VS> geostage_;
+	SoftRasterizerStage<UL, A, V, FS> rasstage_;
 };
 
 

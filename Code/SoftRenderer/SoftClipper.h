@@ -10,18 +10,6 @@
 SHAKURAS_BEGIN;
 
 
-/*inline int CheckCVV(const Vector4f& v) {
-	int check = 0;
-	if (v.z > v.w) check |= 1;
-	if (v.z < 0.0f) check |= 2;
-	if (v.y > v.w) check |= 4;
-	if (v.y < -v.w) check |= 8;
-	if (v.x > v.w) check |= 16;
-	if (v.x < -v.w) check |= 32;
-	return check;
-}*/
-
-
 inline bool IsCounterClockwise(const Vector4f& pos0, const Vector4f& pos1, const Vector4f& pos2) {
 	Vector2f pv_2d[3] =
 	{
@@ -50,7 +38,7 @@ inline V SignedDistanceLerp(const V& v1, const V& v2, float d1, float d2) {
 }
 
 
-template<class V>
+template<class A, class V >
 class SoftClipper {
 public:
 	SoftClipper() {
@@ -60,7 +48,7 @@ public:
 	}
 
 public:
-	void reset(SoftPrimitiveList<V>& prims, Profiler& profiler, bool refuse_back) {
+	void reset(SoftPrimitiveList<A, V>& prims, Profiler& profiler, bool refuse_back) {
 		iprims_ = &prims;
 		profiler_ = &profiler;
 		refuse_back_ = refuse_back;
@@ -144,7 +132,7 @@ private:
 
 			lerps_.push_back(mm);
 			lerpdict_[mm.first][mm.second][oo] = overts_.size();
-			overts_.push_back(V());
+			overts_.push_back(SoftVertex<A, V>());
 		}
 		else {
 			//插值两个点
@@ -152,9 +140,9 @@ private:
 
 			lerps_.push_back(mm);
 			lerpdict_[mm.first][mm.second][kTooNear] = overts_.size();
-			overts_.push_back(V());
+			overts_.push_back(SoftVertex<A, V>());
 			lerpdict_[mm.first][mm.second][kTooFar] = overts_.size();
-			overts_.push_back(V());
+			overts_.push_back(SoftVertex<A, V>());
 		}
 	}
 
@@ -211,9 +199,9 @@ private:
 		const size_t i2 = iprims_->tris_[i][1];
 		const size_t i3 = iprims_->tris_[i][2];
 
-		const V& v1 = iprims_->verts_[i1];
-		const V& v2 = iprims_->verts_[i2];
-		const V& v3 = iprims_->verts_[i3];
+		const SoftVertex<A, V>& v1 = iprims_->verts_[i1];
+		const SoftVertex<A, V>& v2 = iprims_->verts_[i2];
+		const SoftVertex<A, V>& v3 = iprims_->verts_[i3];
 
 		const short o1 = oris_[i1];
 		const short o2 = oris_[i2];
@@ -301,9 +289,9 @@ private:
 		const size_t i2 = iprims_->tris_[i][1];
 		const size_t i3 = iprims_->tris_[i][2];
 
-		const V& v1 = iprims_->verts_[i1];
-		const V& v2 = iprims_->verts_[i2];
-		const V& v3 = iprims_->verts_[i3];
+		const SoftVertex<A, V>& v1 = iprims_->verts_[i1];
+		const SoftVertex<A, V>& v2 = iprims_->verts_[i2];
+		const SoftVertex<A, V>& v3 = iprims_->verts_[i3];
 
 		const short o1 = oris_[i1];
 		const short o2 = oris_[i2];
@@ -457,7 +445,7 @@ private:
 	}
 
 private:
-	SoftPrimitiveList<V>* iprims_;
+	SoftPrimitiveList<A, V>* iprims_;
 	Profiler* profiler_;
 	bool refuse_back_;
 
@@ -470,7 +458,7 @@ private:
 
 	std::vector<std::vector<size_t> > tridict_;//[tri_index, [cliped_tri_index]]
 
-	std::vector<V> overts_;
+	std::vector<SoftVertex<A, V> > overts_;
 	std::vector<std::array<size_t, 3> > otris_;
 };
 

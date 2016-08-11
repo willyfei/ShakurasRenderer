@@ -7,7 +7,7 @@
 SHAKURAS_BEGIN;
 
 
-template<class UL, class V, class VS>
+template<class UL, class A, class V, class VS>
 class SoftGeometryStage {
 public:
 	void initialize(float w, float h, Profiler& profiler) {
@@ -17,13 +17,13 @@ public:
 		refuse_back_ = true;
 	}
 
-	void process(SoftDrawCall<UL, V>& call) {
+	void process(SoftDrawCall<UL, A, V>& call) {
 		profiler_->count("Geo-Triangle Count", (int)call.prims.tris_.size());
 
 		//vertex sharding
 		//geometry sharding£¨Œ¥ µœ÷
 		//projection transform
-		auto vert_geom_sharding_and_proj = [&](V& vert) {
+		auto vert_geom_sharding_and_proj = [&](SoftVertex<A, V>& vert) {
 			VS().process(call.uniforms, vert);
 			vert.pos = call.proj_trsf.transform(vert.pos);
 		};
@@ -36,7 +36,7 @@ public:
 		clipper_.process();
 
 		//screen mapping
-		auto screen_mapping = [&](V& vert) {
+		auto screen_mapping = [&](SoftVertex<A, V>& vert) {
 			screenMapping(vert.pos);
 		};
 		Concurrency::parallel_for_each(call.prims.verts_.begin(), call.prims.verts_.end(), screen_mapping);
@@ -66,7 +66,7 @@ private:
 	float width_, height_;
 	bool refuse_back_;
 	Profiler* profiler_;
-	SoftClipper<V> clipper_;
+	SoftClipper<A, V> clipper_;
 };
 
 

@@ -85,9 +85,9 @@ typedef SoftVertex<SoftPhongAttribList, SoftPhongVaryingList> SoftPhongVertex;
 
 typedef SoftFragment<SoftPhongVaryingList> SoftPhongFragment;
 
-typedef SoftDrawCall<SoftPhongUniformList, SoftPhongVertex> SoftPhongDrawCall;
+typedef SoftDrawCall<SoftPhongUniformList, SoftPhongAttribList, SoftPhongVaryingList> SoftPhongDrawCall;
 
-typedef SoftPrimitiveList<SoftPhongVertex> SoftPhongPrimitiveList;
+typedef SoftPrimitiveList<SoftPhongAttribList, SoftPhongVaryingList> SoftPhongPrimitiveList;
 
 
 class SoftPhongVertexShader {
@@ -135,11 +135,8 @@ public:
 	}
 };
 
-typedef SoftGeometryStage<SoftPhongUniformList, SoftPhongVertex, SoftPhongVertexShader> SoftPhongGeomStage;
 
-typedef SoftRasterizerStage<SoftPhongUniformList, SoftPhongVertex, SoftPhongFragment, SoftPhongFragmentShader> SoftPhongRasStage;
-
-typedef SoftRenderStage<SoftPhongDrawCall, SoftPhongGeomStage, SoftPhongRasStage> SoftPhongRenderStage;
+typedef SoftRenderStage<SoftPhongUniformList, SoftPhongAttribList, SoftPhongVaryingList, SoftPhongVertexShader, SoftPhongFragmentShader> SoftPhongRenderStage;
 
 
 SHAKURAS_END;

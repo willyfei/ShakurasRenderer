@@ -66,11 +66,7 @@ namespace soft_sponza {
 		}
 	};
 
-	typedef shakuras::SoftDrawCall<UniformList, SoftPhongVertex> DrawCall;
-
-	typedef shakuras::SoftGeometryStage<UniformList, SoftPhongVertex, VertexShader> GeomStage;
-
-	typedef shakuras::SoftRasterizerStage<UniformList, SoftPhongVertex, SoftPhongFragment, FragmentShader> RasStage;
+	typedef shakuras::SoftDrawCall<UniformList, SoftPhongAttribList, SoftPhongVaryingList> DrawCall;
 
 	class AppStage {
 	public:
@@ -159,7 +155,7 @@ namespace soft_sponza {
 		int step_, move_;
 	};
 
-	typedef shakuras::SoftRenderStage<DrawCall, GeomStage, RasStage> RenderStage;
+	typedef shakuras::SoftRenderStage<UniformList, SoftPhongAttribList, SoftPhongVaryingList, VertexShader, FragmentShader> RenderStage;
 
 	typedef shakuras::Application<DrawCall, AppStage, RenderStage> Application;
 }

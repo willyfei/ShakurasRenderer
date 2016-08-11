@@ -7,11 +7,11 @@
 SHAKURAS_BEGIN;
 
 
-template<class UL, class V>
+template<class UL, class A, class V>
 struct SoftDrawCall {
 	UL uniforms;
 	Matrix44f proj_trsf;
-	SoftPrimitiveList<V> prims;
+	SoftPrimitiveList<A, V> prims;
 };
 
 

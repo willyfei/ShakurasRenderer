@@ -5,7 +5,7 @@
 SHAKURAS_BEGIN;
 
 
-template<class VL>
+template<class V>
 class SoftFragment {
 public:
 	SoftFragment() : x(0), y(0), z(1.0f), weight(0.0f) {}
@@ -13,14 +13,14 @@ public:
 public:
 	int x, y;
 	float z;
-	VL varyings;
+	V varyings;
 	float weight;
 	Vector4f c;
 };
 
 
-template<class VL>
-inline Vector2f TexCoord(const VL& vl) {
+template<class V>
+inline Vector2f TexCoord(const V& vl) {
 	return Vector2f();
 }
 
