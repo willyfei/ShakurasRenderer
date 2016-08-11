@@ -2,7 +2,6 @@
 //
 
 
-#include <vector>
 #include "OpenGLRenderer\GlPreset.h"
 #include "OpenGLRenderer\GlBatch.h"
 #include "OpenGLRenderer\GlDrawCall.h"
@@ -60,7 +59,7 @@ namespace opengl_cube {
 			Vector3f norm = CrossProduct3(p3 - p2, p1 - p2);
 			Normalize3(norm);
 
-			uint16_t vert_index = factory.addVertex();
+			unsigned int vert_index = factory.addVertex();
 			factory.setAttrib3fv(GlPhongProgram::kVertPos, p1.data());
 			factory.setAttrib3fv(GlPhongProgram::kVertNormal, norm.data());
 			factory.setAttrib2f(GlPhongProgram::kVertUV, 0, 0);

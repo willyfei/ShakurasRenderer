@@ -48,10 +48,10 @@ public:
 	//end()
 	//...
 	//draw()
+	
+	void begin(short cat, unsigned int vert_count, int attrib_count);
 
-	void begin(short cat, uint16_t vert_count, int attrib_count);
-
-	void setIndexBuffer(const uint16_t* buffer, int len);
+	void setIndexBuffer(const unsigned int* buffer, int len);
 
 	void setAttribBuffer(const float* buffer, int index, int size);
 
@@ -62,7 +62,7 @@ public:
 private:
 	unsigned int vao_;
 	unsigned int primtype_;
-	uint16_t vertcount_;
+	unsigned int vertcount_;
 	int indexcount_;
 	unsigned int index_buffer_;
 	std::vector<unsigned int> attrib_buffers_;
@@ -86,10 +86,10 @@ public:
 	void registerAttrib(int index, int size_by_float);
 
 	//顶点索引
-	void addIndex(uint16_t vi);
+	void addIndex(unsigned int vi);
 
 	//添加顶点
-	uint16_t addVertex();
+	unsigned int addVertex();
 
 	void setAttrib1f(int index, float val);
 	void setAttrib2f(int index, float val1, float val2);
@@ -100,15 +100,15 @@ public:
 	void setAttrib4fv(int index, const float* val);
 
 	//顶点数，如果属性未对齐，返回0
-	uint16_t vertCount() const;
+	unsigned int vertCount() const;
 
 	//生成VAO
 	GlVAOPtr createVAO();
 
 private:
 	short cat_;
-	uint16_t vert_count_;
-	std::vector<uint16_t> index_;
+	unsigned int vert_count_;
+	std::vector<unsigned int> index_;
 	std::vector<int> sizebyfloats_;
 	std::vector<std::vector<float> > attribs_;
 };

@@ -46,7 +46,6 @@ const char* GlColorProgram::fragmentSharderSource() {
 }
 
 
-
 bool GlPhongProgram::initialize() {
 	std::vector<std::string> attrib_locs;
 	attrib_locs.push_back("vertPos");

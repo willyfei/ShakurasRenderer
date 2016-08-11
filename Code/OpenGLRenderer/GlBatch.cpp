@@ -76,7 +76,7 @@ GlVAO::~GlVAO() {
 }
 
 
-void GlVAO::begin(short cat, uint16_t vert_count, int attrib_count) {
+void GlVAO::begin(short cat, unsigned int vert_count, int attrib_count) {
 	primtype_ = GetGlPrimtiveType(cat);
 	vertcount_ = vert_count;
 
@@ -88,12 +88,12 @@ void GlVAO::begin(short cat, uint16_t vert_count, int attrib_count) {
 }
 
 
-void GlVAO::setIndexBuffer(const uint16_t* buffer, int len) {
+void GlVAO::setIndexBuffer(const unsigned int* buffer, int len) {
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo);
 	index_buffer_ = vbo;
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * len, buffer, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * len, buffer, GL_DYNAMIC_DRAW);
 	indexcount_ = len;
 }
 
@@ -119,7 +119,7 @@ void GlVAO::end() {
 void GlVAO::draw() {
 	glBindVertexArray(vao_);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
-	glDrawElements(primtype_, indexcount_, GL_UNSIGNED_SHORT, nullptr);
+	glDrawElements(primtype_, indexcount_, GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
 }
 
@@ -149,13 +149,13 @@ void GlVAOFactory::registerAttrib(int index, int size_by_float) {
 }
 
 
-void GlVAOFactory::addIndex(uint16_t vi) {
+void GlVAOFactory::addIndex(unsigned int vi) {
 	index_.push_back(vi);
 }
 
 
-uint16_t GlVAOFactory::addVertex() {
-	uint16_t vert_index = vert_count_;
+unsigned int GlVAOFactory::addVertex() {
+	unsigned int vert_index = vert_count_;
 	vert_count_++;
 
 	static const float initer[] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
@@ -170,7 +170,7 @@ uint16_t GlVAOFactory::addVertex() {
 void GlVAOFactory::setAttrib1f(int index, float val) {
 	int sbf = sizebyfloats_[index];
 	if (sbf == 1) {
-		uint16_t vert_index = vert_count_ - 1;
+		unsigned int vert_index = vert_count_ - 1;
 
 		attribs_[index][vert_index * sbf] = val;
 	}
@@ -181,7 +181,7 @@ void GlVAOFactory::setAttrib2f(int index, float val1, float val2) {
 	int sbf = sizebyfloats_[index];
 	if (sbf == 2) {
 		int sbf = sizebyfloats_[index];
-		uint16_t vert_index = vert_count_ - 1;
+		unsigned int vert_index = vert_count_ - 1;
 
 		attribs_[index][vert_index * sbf] = val1;
 		attribs_[index][vert_index * sbf + 1] = val2;
@@ -198,7 +198,7 @@ void GlVAOFactory::setAttrib3f(int index, float val1, float val2, float val3) {
 	int sbf = sizebyfloats_[index];
 	if (sbf == 3) {
 		int sbf = sizebyfloats_[index];
-		uint16_t vert_index = vert_count_ - 1;
+		unsigned int vert_index = vert_count_ - 1;
 
 		attribs_[index][vert_index * sbf] = val1;
 		attribs_[index][vert_index * sbf + 1] = val2;
@@ -216,7 +216,7 @@ void GlVAOFactory::setAttrib4f(int index, float val1, float val2, float val3, fl
 	int sbf = sizebyfloats_[index];
 	if (sbf == 4) {
 		int sbf = sizebyfloats_[index];
-		uint16_t vert_index = vert_count_ - 1;
+		unsigned int vert_index = vert_count_ - 1;
 
 		attribs_[index][vert_index * sbf] = val1;
 		attribs_[index][vert_index * sbf + 1] = val2;
@@ -231,7 +231,7 @@ void GlVAOFactory::setAttrib4fv(int index, const float* val) {
 } 
 
 
-uint16_t GlVAOFactory::vertCount() const {
+unsigned int GlVAOFactory::vertCount() const {
 	return vert_count_;
 }
 

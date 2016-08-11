@@ -44,11 +44,12 @@ void GlRenderStage::process(std::vector<GlDrawCall>& calls) {
 	};
 
 	for (auto i = calls.begin(); i != calls.end(); i++) {
-		GlProgramPtr prog = i->program;
+		GlAbsProgramPtr prog = i->program;
 		if (!prog) {
 			continue;
 		}
 		prog->use();
+		prog->prepare();
 		std::for_each(i->batchs.begin(), i->batchs.end(), draw_batch);
 	}
 
