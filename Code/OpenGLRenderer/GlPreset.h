@@ -9,31 +9,6 @@
 SHAKURAS_BEGIN;
 
 
-//纯色着色
-class GLRENDERER_DLL GlColorProgram : public GlProgram {
-public:
-	virtual ~GlColorProgram() {}
-
-public:
-	bool initialize();
-
-public:
-	enum AttribIndex {
-		kVertPos = 0, kAttribCount = 1
-	};
-
-	//uniforms
-	void setColor(const Vector3f& color);
-
-private:
-	const char* vertexSharderSource();
-	const char* fragmentSharderSource();
-};
-
-
-SHAKURAS_SHARED_PTR(GlColorProgram);
-
-
 //典型 Fixed-Function Pipeline 的 Phong 着色
 class GLRENDERER_DLL GlPhongProgram : public GlProgram {
 public:

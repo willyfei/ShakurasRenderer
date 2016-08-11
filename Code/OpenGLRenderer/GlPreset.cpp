@@ -10,42 +10,6 @@
 SHAKURAS_BEGIN;
 
 
-bool GlColorProgram::initialize() {
-	std::vector<std::string> attrib_locs;
-	attrib_locs.push_back("vertPos");
-	return initSharder(vertexSharderSource(), fragmentSharderSource(), attrib_locs);
-}
-
-
-void GlColorProgram::setColor(const Vector3f& color) {
-	setUniform4fv("color", color.xyzw(1.0f).data());
-}
-
-
-const char* GlColorProgram::vertexSharderSource() {
-	static const char * vs_src =
-		"attribute vec4 vertPos;"
-		"void main(void) "
-		"{"
-		"	gl_Position = vertPos;"
-		"}";
-
-	return vs_src;
-}
-
-
-const char* GlColorProgram::fragmentSharderSource() {
-	static const char * fs_src =
-		"uniform vec4 color;"
-		"void main(void) "
-		"{"
-		"	gl_FragColor = color;"
-		"}";
-
-	return fs_src;
-}
-
-
 bool GlPhongProgram::initialize() {
 	std::vector<std::string> attrib_locs;
 	attrib_locs.push_back("vertPos");
