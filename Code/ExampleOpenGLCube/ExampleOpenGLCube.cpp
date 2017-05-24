@@ -101,7 +101,11 @@ namespace opengl_cube {
 	class AppStage {
 	public:
 		bool initialize(WinRcViewerPtr viewer) {
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 			GlContextBinding contex(viewer->hdc(), viewer->hrc());
+#elif defined(__ANDROID__)
+			GlContextBinding contex(app_);
+#endif
 
 			program_ = std::make_shared<GlPhongProgram>();
 			if (!program_->initialize()) {
@@ -131,7 +135,12 @@ namespace opengl_cube {
 		}
 
 		void process(std::vector<GlDrawCall>& cmds) {
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 			GlContextBinding contex(viewer_->hdc(), viewer_->hrc());
+#elif defined(__ANDROID__)
+			GlContextBinding contex(app_);
+#endif
+			
 
 			if (viewer_->testUserMessage(kUMSpace)) {
 				if (++nspace_ == 1) {
@@ -185,6 +194,7 @@ namespace opengl_cube {
 		int nspace_;
 		float alpha_;
 		float pos_;
+		android_app* app_;
 	};
 
 	typedef shakuras::Application<GlDrawCall, AppStage, GlRenderStage> Application;
@@ -213,7 +223,8 @@ int main()
 		app.process();
 
 		viewer->update();
-		Sleep(1);
+		//Sleep(1);
+		sleep(1);
 	}
 
 	return 0;

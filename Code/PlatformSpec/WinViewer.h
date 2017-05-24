@@ -1,14 +1,17 @@
 #pragma once
 #include "Core/MathAndGeometry.h"
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 #include <Windows.h>
 #include <tchar.h>
+#elif defined(__ANDROID__)
+#endif
 #include <map>
-
+#include <array>
 
 #ifdef _PLATFORMSPEC_DLL
-#    define PLATFORMSPEC_DLL   __declspec(dllexport)
+#    define PLATFORMSPEC_DLL   KLAYGE_SYMBOL_EXPORT
 #else
-#    define PLATFORMSPEC_DLL   __declspec(dllimport)
+#    define PLATFORMSPEC_DLL   KLAYGE_SYMBOL_IMPORT
 #endif
 
 
@@ -47,13 +50,18 @@ public:
 
 	virtual int close() = 0;
 
-	virtual LRESULT onEvent(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 protected:
 	int width_, height_;
 	std::array<int, 512> keys_;
 	bool close_;
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	HWND hwnd_;
+public:
+	virtual LRESULT onEvent(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+#elif defined(__ANDROID__)
+#endif
 };
 
 
@@ -74,6 +82,7 @@ public:
 
 	void* frameBuffer();
 
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	HDC hdc() { return NULL; }
 	HGLRC hrc() { return NULL; }
 
@@ -81,6 +90,10 @@ protected:
 	HDC hdc_;
 	HBITMAP hbmp_;
 	HBITMAP org_hbmp_;
+#elif defined(__ANDROID__)
+#endif
+
+protected:
 	unsigned char* frame_buffer_;
 };
 
@@ -100,6 +113,7 @@ public:
 
 	virtual int close();
 
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	HDC hdc();
 
 	HGLRC hrc();
@@ -107,6 +121,9 @@ public:
 protected:
 	HDC hdc_;
 	HGLRC hrc_;
+#elif defined(__ANDROID__)
+#endif
+
 };
 
 

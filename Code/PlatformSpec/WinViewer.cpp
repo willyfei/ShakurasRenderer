@@ -1,6 +1,6 @@
 #include "WinViewer.h"
 
-
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 LRESULT ScreenEventProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
@@ -17,16 +17,24 @@ LRESULT ScreenEventProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
-
+#elif defined(__ANDROID__)
+#endif
 
 WinViewer::WinViewer() {
-	width_ = height_ = 0;
-	keys_.assign(0);
-	close_ = false;
+
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	hwnd_ = NULL;
+#elif defined(__ANDROID__)
+#endif
+
+	width_ = height_ = 0;
+	//keys_.assign(0);
+	close_ = false;
+	
 }
 
 bool WinViewer::testUserMessage(UserMessage msg) {
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	switch (msg) {
 	case kUMUp:
 		return keys_[VK_UP] != 0;
@@ -44,10 +52,15 @@ bool WinViewer::testUserMessage(UserMessage msg) {
 		return close_;
 	default:
 		return false;
-	}
+}
+#elif defined(__ANDROID__)
+#endif
+
+	return false;
 }
 
 void WinViewer::dispatch() {
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	MSG msg;
 	while (true) {
 		if (!PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
@@ -58,6 +71,10 @@ void WinViewer::dispatch() {
 		}
 		DispatchMessage(&msg);
 	}
+#elif defined(__ANDROID__)
+#endif
+
+	
 }
 
 int WinViewer::width() {
@@ -68,6 +85,7 @@ int WinViewer::height() {
 	return height_;
 }
 
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 LRESULT WinViewer::onEvent(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	if (hWnd == hwnd_) {
 		switch (msg) {
@@ -78,16 +96,24 @@ LRESULT WinViewer::onEvent(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	}
 	return 0;
 }
-
+#elif defined(__ANDROID__)
+#endif
 
 WinMemViewer::WinMemViewer() {
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	hdc_ = NULL;
 	hbmp_ = NULL;
 	org_hbmp_ = NULL;
+#elif defined(__ANDROID__)
+#endif
+
+	
 	frame_buffer_ = nullptr;
 }
 
 int WinMemViewer::initialize(int w, int h, const char* title) {
+
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	WNDCLASS wc = { CS_BYTEALIGNCLIENT, (WNDPROC)ScreenEventProc, 0, 0, 0,
 		NULL, NULL, NULL, NULL, _T("SCREEN_GRPC3D") };
 	BITMAPINFO bi = { { sizeof(BITMAPINFOHEADER), w, -h, 1, 32, BI_RGB, w * h * 4UL,
@@ -144,15 +170,22 @@ int WinMemViewer::initialize(int w, int h, const char* title) {
 	memset(frame_buffer_, 0, w * h * 4);
 
 	g_win_viewers[hwnd_] = shared_from_this();
+#elif defined(__ANDROID__)
+#endif
+	
 
 	return 0;
 }
 
 void WinMemViewer::update(void) {
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	HDC hDC = GetDC(hwnd_);
 	BitBlt(hDC, 0, 0, width_, height_, hdc_, 0, 0, SRCCOPY);
 	ReleaseDC(hwnd_, hDC);
 	dispatch();
+#elif defined(__ANDROID__)
+#endif
+	
 }
 
 void* WinMemViewer::frameBuffer() {
@@ -160,6 +193,7 @@ void* WinMemViewer::frameBuffer() {
 }
 
 int WinMemViewer::close() {
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	if (hdc_) {
 		if (org_hbmp_) {
 			SelectObject(hdc_, org_hbmp_);
@@ -176,9 +210,13 @@ int WinMemViewer::close() {
 		CloseWindow(hwnd_);
 		hwnd_ = NULL;
 	}
+#elif defined(__ANDROID__)
+#endif
+	
 	return 0;
 }
 
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 
 HGLRC InitGlContex(HDC hDC) {
 	PIXELFORMATDESCRIPTOR pfd =
@@ -202,13 +240,21 @@ HGLRC InitGlContex(HDC hDC) {
 	return wglCreateContext(hDC);
 }
 
+#elif defined(__ANDROID__)
+#endif
+
 
 WinRcViewer::WinRcViewer() {
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	hdc_ = NULL;
 	hrc_ = NULL;
+#elif defined(__ANDROID__)
+#endif
+	
 }
 
 int WinRcViewer::initialize(int w, int h, const char* title) {
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	WNDCLASS wc = { CS_BYTEALIGNCLIENT, (WNDPROC)ScreenEventProc, 0, 0, 0,
 		NULL, NULL, NULL, NULL, _T("SCREEN_GRPC3D") };
 	BITMAPINFO bi = { { sizeof(BITMAPINFOHEADER), w, -h, 1, 32, BI_RGB, w * h * 4UL,
@@ -254,6 +300,8 @@ int WinRcViewer::initialize(int w, int h, const char* title) {
 	close_ = false;
 
 	g_win_viewers[hwnd_] = shared_from_this();
+#elif defined(__ANDROID__)
+#endif
 
 	return 0;
 }
@@ -263,6 +311,7 @@ void WinRcViewer::update(void) {
 }
 
 int WinRcViewer::close() {
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	if (hwnd_) {
 		if (hdc_) {
 			if (hrc_) {
@@ -273,13 +322,19 @@ int WinRcViewer::close() {
 			ReleaseDC(hwnd_, hdc_);
 		}
 	}
+#elif defined(__ANDROID__)
+#endif
+	
 	return 0;
 }
 
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 HDC WinRcViewer::hdc() {
-	return hdc_; 
+	return hdc_;
 }
 
 HGLRC WinRcViewer::hrc() {
 	return hrc_;
 }
+#elif defined(__ANDROID__)
+#endif

@@ -3,8 +3,6 @@
 #ifndef GLEW_STATIC
 #define GLEW_STATIC
 #endif
-#include "gl\glew.h"
-#include "gl\wglew.h"
 
 
 SHAKURAS_BEGIN;
@@ -26,11 +24,12 @@ void LoadShaderSrc(const char *sharder_src, GLuint shader) {
 bool GlProgram::initSharder(const char* vs_src, const char* fs_src, const std::vector<std::string>& attrib_locs) {
 	prog_handle_ = 0;
 	
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) {
 		return false;
 	}
-
+#endif
 	// Create shader objects
 	GLuint vs_handle = glCreateShader(GL_VERTEX_SHADER);
 	GLuint fs_handle = glCreateShader(GL_FRAGMENT_SHADER);
@@ -50,7 +49,7 @@ bool GlProgram::initSharder(const char* vs_src, const char* fs_src, const std::v
 		char sharder_info[4096];
 		GLint len = 0;
 		glGetShaderInfoLog(vs_handle, 4096, &len, sharder_info);
-		printf_s(sharder_info);
+		printf(sharder_info);
 		getchar();
 
 		glDeleteShader(vs_handle);
@@ -63,7 +62,7 @@ bool GlProgram::initSharder(const char* vs_src, const char* fs_src, const std::v
 		char sharder_info[4096];
 		GLint len = 0;
 		glGetShaderInfoLog(fs_handle, 4096, &len, sharder_info);
-		printf_s(sharder_info);
+		printf(sharder_info);
 		getchar();
 
 		glDeleteShader(vs_handle);

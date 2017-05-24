@@ -1,6 +1,6 @@
 #include "ResUtility.h"
 #include <fstream>
-#include <filesystem>
+//#include <filesystem>
 
 
 _FSPFX path g_resourcedir;

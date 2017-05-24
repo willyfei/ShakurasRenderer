@@ -5,8 +5,6 @@
 #ifndef GLEW_STATIC
 #define GLEW_STATIC
 #endif
-#include "gl\glew.h"
-#include "gl\wglew.h"
 
 
 SHAKURAS_BEGIN;
@@ -14,8 +12,14 @@ SHAKURAS_BEGIN;
 
 GlRenderStage::GlRenderStage() {
 	profiler_ = nullptr;
+
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	hrc_ = nullptr;
 	hdc_ = nullptr;
+#elif defined(__ANDROID__)
+	app_ = nullptr;
+#endif
+	
 }
 
 
@@ -25,7 +29,11 @@ void GlRenderStage::clean() {
 
 
 void GlRenderStage::initGl() {
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	GlContextBinding ctx(hdc_, hrc_);
+#elif defined(__ANDROID__)
+	GlContextBinding ctx(app_);
+#endif
 
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.2f, 0.6f, 1.0f);
@@ -33,7 +41,11 @@ void GlRenderStage::initGl() {
 
 
 void GlRenderStage::process(std::vector<GlDrawCall>& calls) {
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	GlContextBinding ctx(hdc_, hrc_);
+#elif defined(__ANDROID__)
+	GlContextBinding ctx(app_);
+#endif
 
 	clean();
 	
@@ -56,11 +68,17 @@ void GlRenderStage::process(std::vector<GlDrawCall>& calls) {
 	glFinish();
 }
 
-
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 void GlRenderStage::setContext(HDC hdc, HGLRC hrc) {
 	hdc_ = hdc;
 	hrc_ = hrc;
 }
+#elif defined(__ANDROID__)
+void GlRenderStage::setContext(android_app* app) {
+	app_ = app;
+}
+#endif
+
 
 
 SHAKURAS_END;

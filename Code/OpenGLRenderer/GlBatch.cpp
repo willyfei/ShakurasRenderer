@@ -1,12 +1,8 @@
 #include "GlBatch.h"
-#include <windows.h>
 
 #ifndef GLEW_STATIC
 #define GLEW_STATIC
 #endif
-#include "gl\glew.h"
-#include "gl\wglew.h"
-
 
 SHAKURAS_BEGIN;
 
@@ -35,6 +31,7 @@ GLenum GetGlPrimtiveType(short cat) {
 	case GlVAO::kTriangleFan:
 		primtype = GL_TRIANGLE_FAN;
 		break;
+#if !defined(__ANDROID__)
 	case GlVAO::kQuads:
 		primtype = GL_QUADS;
 		break;
@@ -44,6 +41,7 @@ GLenum GetGlPrimtiveType(short cat) {
 	case GlVAO::kPolygon:
 		primtype = GL_POLYGON;
 		break;
+#endif
 	default:
 		break;
 	}
