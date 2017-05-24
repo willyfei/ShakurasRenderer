@@ -1,0 +1,11 @@
+D:\wyf_root\develop\Git\ShakurasRenderer\build\android\Shakuras\Shakuras.Packaging\ARM\Debug\Shakuras.apk.recipe
+D:\wyf_root\develop\Git\ShakurasRenderer\build\android\Shakuras\Shakuras.Packaging\ARM\Debug\Shakuras.apk.recipe.merged
+D:\wyf_root\develop\Git\ShakurasRenderer\build\android\Shakuras\Shakuras.Packaging\ARM\Debug\Package\libs\armeabi-v7a\libShakuras.so
+D:\wyf_root\develop\Git\ShakurasRenderer\build\android\Shakuras\Shakuras.Packaging\ARM\Debug\Package\libs\armeabi-v7a\libgnustl_static.a
+D:\wyf_root\develop\Git\ShakurasRenderer\build\android\Shakuras\Shakuras.Packaging\ARM\Debug\Package\res\values\strings.xml
+D:\wyf_root\develop\Git\ShakurasRenderer\build\android\Shakuras\Shakuras.Packaging\ARM\Debug\Package\AndroidManifest.xml
+D:\wyf_root\develop\Git\ShakurasRenderer\build\android\Shakuras\Shakuras.Packaging\ARM\Debug\Package\project.properties
+D:\wyf_root\develop\Git\ShakurasRenderer\build\android\Shakuras\Shakuras.Packaging\ARM\Debug\Package\build.xml
+D:\wyf_root\develop\Git\ShakurasRenderer\build\android\Shakuras\Shakuras.Packaging\ARM\Debug\FileStringReplace.incremental
+D:\wyf_root\develop\Git\ShakurasRenderer\build\android\Shakuras\Shakuras.Packaging\ARM\Debug\Shakuras.apk
+D:\wyf_root\develop\Git\ShakurasRenderer\build\android\Shakuras\Shakuras.Packaging\ARM\Debug\Shakuras.lastsuccessfuldeploy
