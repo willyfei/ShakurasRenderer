@@ -1,8 +1,0 @@
-﻿  ANDROID_HOME=D:\wyf_root\develop\env\Android\sdk
-  ANT_HOME=D:\wyf_root\develop\env\apache-ant-1.10.1
-  JAVA_HOME=D:\wyf_root\ProgramFiles\Java\jdk1.8.0_131
-  NDK_ROOT=D:\wyf_root\develop\env\android-ndk-r12b
-  pch.h
-  android_native_app_glue.c
-  main.cpp
-  Shakuras.NativeActivity.vcxproj -> D:\wyf_root\develop\Git\ShakurasRenderer\build\android\ARM\Debug\libShakuras.so
