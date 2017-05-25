@@ -1,1 +1,0 @@
-$(AntDependencies)=;$(ApplicationId)=applicationId = "";$(ConfigurationType)=application;$(AarDependencies)=;$(AarDependenciesSettings)=;$(ApplicationName)=Shakuras;$(AndroidAppLibName)=Shakuras;$(AndroidBuildToolsVersion)=19.1.0;$(AndroidAPILevelNumber)=19;$(androidapilevel)=android-19;$(projectname)=Shakuras.Packaging;
