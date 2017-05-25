@@ -150,10 +150,12 @@
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <CppLanguageStandard>c++1y</CppLanguageStandard>
+      <AdditionalOptions>-v %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <LibraryDependencies>m;c++;c++abi;EGL;GLESv1_CM;GLESv2;GLESv3;OpenGLRenderer;%(LibraryDependencies)</LibraryDependencies>
       <AdditionalLibraryDirectories>../../ARM/Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>-v %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -167,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Code\ExampleOpenGLCube\ExampleOpenGLCube.cpp" />
+    <ClCompile Include="..\..\..\..\Code\OpenGLRenderer\GlProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OpenGLRenderer\OpenGLRenderer.vcxproj">

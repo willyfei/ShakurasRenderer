@@ -1,0 +1,47 @@
+编译KlayGE-Android记事
+1. -l m、c++、c++abi 解决一大堆编译错误
+2. libc++_shared.so的问题(坑了我两次，引起编译通过，但不能调试或运行崩溃)
+3. app_dummy()函数的重要性
+4. 使用NDK编译的时候出现 undefined reference to
+	最近一段时间在使用NDK进行编译的时候一直出现undefined reference to的问题
+	代码写的没有问题, 在visual studio中也能找到定义, 可是在NDK中就是出现这个问题过不去.
+	使用nm, objdump 查看.o文件也是发现就是那几个函数未定义;
+	多番GOOGLE之下 找到了问题所在
+	解决问题:  在Android.mk中加入  LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
+	引用:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	Add the line
+	LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
+	to the Android.mk file and it should work.  As explained in the ndk doc, it is because the ndk performs a debug checking even for avoiding runtime linking error and for some motivations it doesn't find the correct references in a pre-built library. Hope it coulds help.
+	http://stackoverflow.com/questions/7209971/ndk-build-undefined-reference-to-errors-when-statically-linking-to-libxml-a
+
+	Although using LOCAL_ALLOW_UNDEFINED_SUMBOLS := true will get the code to compile, it may result in the program not running. It will cause a library not found error at run time. Unless you are sure this is what you want I would recomend only using it if you are sure the shared library with the symbols will be installed on the device.
+	>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	PS:
+	Android.mk文件来向NDK编译系统描述你的源代码
+	Application.mk文件向NDK编译系统描述你的应用程序需要的原生代码。
+	nm输出字符	含义
+	R			Read only symbol. 比如在代码中有一个const MAXDATA = 3095; 则MAXDATA就是一个Read only symbol
+	N			这是一个调试符号
+	D			这是一个已经初始化的变量的符号。比如代码中int  i = 1和char *str = "Hello"则i和str都是这种类型的符号
+	T			Text段的符号。子程序都是这种符号，比如文件中实现了一个函数function，则function就是这种符号
+	U			未定义的符号。如果文件中引用了不存在的函数，则这些未定义的函数符号就是这种类型
+	S			未初始化的符号，比如全局变量int s;则s的符号就是此类型
+	objdump -j .text -Sl objtest | more
+	-S 尽可能反汇编出源代码，尤其当编译的时候指定了-g这种调试参数时，
+	   效果比较明显。隐含了-d参数。
+	-l 用文件名和行号标注相应的目标代码，仅仅和-d、-D或者-r一起使用
+	  使用-ld和使用-d的区别不是很大，
+
+	1.nm -D libxxx.so 打印出符号信息。
+	我一般这样用：nm -D libxxx.so | grep T
+	2.ldd libxxx.so 查看依赖关系
+	3.readelf -a libxxxx.so 用来读取elf信息
+	我一般这样用：readelf -a libxxx.so |grep NEEDED 这样也可以读取依赖关系
+	4.objdump -d libxxxx.so
+	5.rmp -qfl libxxx.so 这样可以查看so库里面包含的内容，头文件等
+	6.file libxxx.so 这样可以查看so库的属性
+5. 在一个so中实例化另一个so中的类(IDE=VS2015)，编译的时候报了个undefined reference to 的链接问题,添加引用了也不行,该困扰了我两天
+ 	其实很简单，怕再次忘记，把解决方案做个笔记。
+	第一种方案. 在Android.mk文件中把xxx.c文件写入LOCAL_SRC_FILES :=中
+	另外一种方案：在android.mk中加入 LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
+	感觉第一种方案比较正统
